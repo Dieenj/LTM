@@ -1,0 +1,3 @@
+/home/cuong/DuAnPMCSF/File_Management_App/build/CMakeFiles/FileServer.dir
+/home/cuong/DuAnPMCSF/File_Management_App/build/CMakeFiles/edit_cache.dir
+/home/cuong/DuAnPMCSF/File_Management_App/build/CMakeFiles/rebuild_cache.dir

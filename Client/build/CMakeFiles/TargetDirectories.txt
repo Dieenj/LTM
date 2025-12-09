@@ -1,0 +1,5 @@
+/home/cuong/DuAnPMCSF/File_Management_App/Client/build/CMakeFiles/FileClient.dir
+/home/cuong/DuAnPMCSF/File_Management_App/Client/build/CMakeFiles/edit_cache.dir
+/home/cuong/DuAnPMCSF/File_Management_App/Client/build/CMakeFiles/rebuild_cache.dir
+/home/cuong/DuAnPMCSF/File_Management_App/Client/build/CMakeFiles/FileClient_autogen_timestamp_deps.dir
+/home/cuong/DuAnPMCSF/File_Management_App/Client/build/CMakeFiles/FileClient_autogen.dir
