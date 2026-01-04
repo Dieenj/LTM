@@ -8,15 +8,15 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/home/cuong/DuAnPMCSF/File_Management_App/Server/Core/src/db/DBManager.cpp" "CMakeFiles/FileServer.dir/Core/src/db/DBManager.cpp.o" "gcc" "CMakeFiles/FileServer.dir/Core/src/db/DBManager.cpp.o.d"
-  "/home/cuong/DuAnPMCSF/File_Management_App/Server/Core/src/handler/AuthHandler.cpp" "CMakeFiles/FileServer.dir/Core/src/handler/AuthHandler.cpp.o" "gcc" "CMakeFiles/FileServer.dir/Core/src/handler/AuthHandler.cpp.o.d"
-  "/home/cuong/DuAnPMCSF/File_Management_App/Server/Core/src/handler/CmdHandler.cpp" "CMakeFiles/FileServer.dir/Core/src/handler/CmdHandler.cpp.o" "gcc" "CMakeFiles/FileServer.dir/Core/src/handler/CmdHandler.cpp.o.d"
-  "/home/cuong/DuAnPMCSF/File_Management_App/Server/Core/src/handler/FileIOHandler.cpp" "CMakeFiles/FileServer.dir/Core/src/handler/FileIOHandler.cpp.o" "gcc" "CMakeFiles/FileServer.dir/Core/src/handler/FileIOHandler.cpp.o.d"
-  "/home/cuong/DuAnPMCSF/File_Management_App/Server/Core/src/main.cpp" "CMakeFiles/FileServer.dir/Core/src/main.cpp.o" "gcc" "CMakeFiles/FileServer.dir/Core/src/main.cpp.o.d"
-  "/home/cuong/DuAnPMCSF/File_Management_App/Server/Core/src/monitor/ThreadMonitor.cpp" "CMakeFiles/FileServer.dir/Core/src/monitor/ThreadMonitor.cpp.o" "gcc" "CMakeFiles/FileServer.dir/Core/src/monitor/ThreadMonitor.cpp.o.d"
-  "/home/cuong/DuAnPMCSF/File_Management_App/Server/Core/src/thread/AcceptThread.cpp" "CMakeFiles/FileServer.dir/Core/src/thread/AcceptThread.cpp.o" "gcc" "CMakeFiles/FileServer.dir/Core/src/thread/AcceptThread.cpp.o.d"
-  "/home/cuong/DuAnPMCSF/File_Management_App/Server/Core/src/thread/DedicatedThread.cpp" "CMakeFiles/FileServer.dir/Core/src/thread/DedicatedThread.cpp.o" "gcc" "CMakeFiles/FileServer.dir/Core/src/thread/DedicatedThread.cpp.o.d"
-  "/home/cuong/DuAnPMCSF/File_Management_App/Server/Core/src/thread/WorkerThread.cpp" "CMakeFiles/FileServer.dir/Core/src/thread/WorkerThread.cpp.o" "gcc" "CMakeFiles/FileServer.dir/Core/src/thread/WorkerThread.cpp.o.d"
+  "/mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server/Core/src/db/DBManager.cpp" "CMakeFiles/FileServer.dir/Core/src/db/DBManager.cpp.o" "gcc" "CMakeFiles/FileServer.dir/Core/src/db/DBManager.cpp.o.d"
+  "/mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server/Core/src/handler/AuthHandler.cpp" "CMakeFiles/FileServer.dir/Core/src/handler/AuthHandler.cpp.o" "gcc" "CMakeFiles/FileServer.dir/Core/src/handler/AuthHandler.cpp.o.d"
+  "/mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server/Core/src/handler/CmdHandler.cpp" "CMakeFiles/FileServer.dir/Core/src/handler/CmdHandler.cpp.o" "gcc" "CMakeFiles/FileServer.dir/Core/src/handler/CmdHandler.cpp.o.d"
+  "/mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server/Core/src/handler/FileIOHandler.cpp" "CMakeFiles/FileServer.dir/Core/src/handler/FileIOHandler.cpp.o" "gcc" "CMakeFiles/FileServer.dir/Core/src/handler/FileIOHandler.cpp.o.d"
+  "/mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server/Core/src/main.cpp" "CMakeFiles/FileServer.dir/Core/src/main.cpp.o" "gcc" "CMakeFiles/FileServer.dir/Core/src/main.cpp.o.d"
+  "/mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server/Core/src/monitor/ThreadMonitor.cpp" "CMakeFiles/FileServer.dir/Core/src/monitor/ThreadMonitor.cpp.o" "gcc" "CMakeFiles/FileServer.dir/Core/src/monitor/ThreadMonitor.cpp.o.d"
+  "/mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server/Core/src/thread/AcceptThread.cpp" "CMakeFiles/FileServer.dir/Core/src/thread/AcceptThread.cpp.o" "gcc" "CMakeFiles/FileServer.dir/Core/src/thread/AcceptThread.cpp.o.d"
+  "/mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server/Core/src/thread/DedicatedThread.cpp" "CMakeFiles/FileServer.dir/Core/src/thread/DedicatedThread.cpp.o" "gcc" "CMakeFiles/FileServer.dir/Core/src/thread/DedicatedThread.cpp.o.d"
+  "/mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server/Core/src/thread/WorkerThread.cpp" "CMakeFiles/FileServer.dir/Core/src/thread/WorkerThread.cpp.o" "gcc" "CMakeFiles/FileServer.dir/Core/src/thread/WorkerThread.cpp.o.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

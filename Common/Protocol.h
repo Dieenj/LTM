@@ -14,6 +14,11 @@
 #define CMD_UPLOAD_CHECK "SITE QUOTA_CHECK" // Kiểm tra dung lượng
 #define CMD_UPLOAD "STOR"           // Upload file
 #define CMD_DOWNLOAD "RETR"         // Download file
+#define CMD_GET_FOLDER_STRUCTURE "GET_FOLDER_STRUCTURE"
+#define CMD_SHARE_FOLDER "SHARE_FOLDER"
+#define CMD_UPLOAD_FOLDER_FILE "UPLOAD_FOLDER_FILE"
+#define CMD_CHECK_SHARE_PROGRESS "CHECK_SHARE_PROGRESS"
+#define CMD_CANCEL_FOLDER_SHARE "CANCEL_FOLDER_SHARE"
 
 // --- Mã Trạng Thái (Status Codes) ---
 #define CODE_OK "200"

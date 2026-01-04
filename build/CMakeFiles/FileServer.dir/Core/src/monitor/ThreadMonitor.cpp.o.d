@@ -1,8 +1,8 @@
 CMakeFiles/FileServer.dir/Core/src/monitor/ThreadMonitor.cpp.o: \
- /home/cuong/DuAnPMCSF/File_Management_App/Server/Core/src/monitor/ThreadMonitor.cpp \
+ /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server/Core/src/monitor/ThreadMonitor.cpp \
  /usr/include/stdc-predef.h \
- /home/cuong/DuAnPMCSF/File_Management_App/Server/Core/include/thread_monitor.h \
- /home/cuong/DuAnPMCSF/File_Management_App/Server/Core/include/server_config.h \
+ /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server/Core/include/thread_monitor.h \
+ /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server/Core/include/server_config.h \
  /usr/include/c++/13/thread /usr/include/c++/13/bits/requires_hosted.h \
  /usr/include/x86_64-linux-gnu/c++/13/bits/c++config.h \
  /usr/include/x86_64-linux-gnu/c++/13/bits/os_defines.h \
@@ -178,7 +178,7 @@ CMakeFiles/FileServer.dir/Core/src/monitor/ThreadMonitor.cpp.o: \
  /usr/include/c++/13/bits/basic_ios.tcc \
  /usr/include/c++/13/bits/ostream.tcc /usr/include/c++/13/istream \
  /usr/include/c++/13/bits/istream.tcc \
- /home/cuong/DuAnPMCSF/File_Management_App/Server/Core/include/thread_manager.h \
+ /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server/Core/include/thread_manager.h \
  /usr/include/c++/13/algorithm /usr/include/c++/13/bits/stl_algo.h \
  /usr/include/c++/13/bits/algorithmfwd.h \
  /usr/include/c++/13/bits/stl_heap.h \
@@ -186,7 +186,7 @@ CMakeFiles/FileServer.dir/Core/src/monitor/ThreadMonitor.cpp.o: \
  /usr/include/c++/13/bits/stl_tempbuf.h \
  /usr/include/c++/13/pstl/glue_algorithm_defs.h \
  /usr/include/c++/13/pstl/execution_defs.h \
- /home/cuong/DuAnPMCSF/File_Management_App/Server/Core/include/server.h \
+ /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server/Core/include/server.h \
  /usr/include/netinet/in.h /usr/include/x86_64-linux-gnu/sys/socket.h \
  /usr/include/x86_64-linux-gnu/bits/types/struct_iovec.h \
  /usr/include/x86_64-linux-gnu/bits/socket.h \

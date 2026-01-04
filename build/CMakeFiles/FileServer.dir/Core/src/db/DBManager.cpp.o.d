@@ -1,7 +1,7 @@
 CMakeFiles/FileServer.dir/Core/src/db/DBManager.cpp.o: \
- /home/cuong/DuAnPMCSF/File_Management_App/Server/Core/src/db/DBManager.cpp \
+ /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server/Core/src/db/DBManager.cpp \
  /usr/include/stdc-predef.h \
- /home/cuong/DuAnPMCSF/File_Management_App/Server/Core/src/db/../../include/db_manager.h \
+ /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server/Core/src/db/../../include/db_manager.h \
  /usr/include/c++/13/string /usr/include/c++/13/bits/requires_hosted.h \
  /usr/include/x86_64-linux-gnu/c++/13/bits/c++config.h \
  /usr/include/x86_64-linux-gnu/c++/13/bits/os_defines.h \
@@ -131,9 +131,11 @@ CMakeFiles/FileServer.dir/Core/src/db/DBManager.cpp.o: \
  /usr/include/mysql/client_plugin.h /usr/include/c++/13/stdlib.h \
  /usr/include/mysql/plugin_auth_common.h \
  /usr/include/mysql/mysql_version.h /usr/include/mysql/mysql_time.h \
- /usr/include/mysql/errmsg.h /usr/include/c++/13/iostream \
- /usr/include/c++/13/ostream /usr/include/c++/13/ios \
- /usr/include/c++/13/exception /usr/include/c++/13/bits/exception_ptr.h \
+ /usr/include/mysql/errmsg.h \
+ /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server/Core/src/db/../../include/db_config.h \
+ /usr/include/c++/13/iostream /usr/include/c++/13/ostream \
+ /usr/include/c++/13/ios /usr/include/c++/13/exception \
+ /usr/include/c++/13/bits/exception_ptr.h \
  /usr/include/c++/13/bits/cxxabi_init_exception.h \
  /usr/include/c++/13/typeinfo /usr/include/c++/13/bits/nested_exception.h \
  /usr/include/c++/13/bits/ios_base.h /usr/include/c++/13/ext/atomicity.h \

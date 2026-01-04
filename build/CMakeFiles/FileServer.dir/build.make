@@ -53,10 +53,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/cuong/DuAnPMCSF/File_Management_App/Server
+CMAKE_SOURCE_DIR = /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/cuong/DuAnPMCSF/File_Management_App/build
+CMAKE_BINARY_DIR = /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/build
 
 # Include any dependencies generated for this target.
 include CMakeFiles/FileServer.dir/depend.make
@@ -70,130 +70,130 @@ include CMakeFiles/FileServer.dir/progress.make
 include CMakeFiles/FileServer.dir/flags.make
 
 CMakeFiles/FileServer.dir/Core/src/db/DBManager.cpp.o: CMakeFiles/FileServer.dir/flags.make
-CMakeFiles/FileServer.dir/Core/src/db/DBManager.cpp.o: /home/cuong/DuAnPMCSF/File_Management_App/Server/Core/src/db/DBManager.cpp
+CMakeFiles/FileServer.dir/Core/src/db/DBManager.cpp.o: /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server/Core/src/db/DBManager.cpp
 CMakeFiles/FileServer.dir/Core/src/db/DBManager.cpp.o: CMakeFiles/FileServer.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/cuong/DuAnPMCSF/File_Management_App/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/FileServer.dir/Core/src/db/DBManager.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/FileServer.dir/Core/src/db/DBManager.cpp.o -MF CMakeFiles/FileServer.dir/Core/src/db/DBManager.cpp.o.d -o CMakeFiles/FileServer.dir/Core/src/db/DBManager.cpp.o -c /home/cuong/DuAnPMCSF/File_Management_App/Server/Core/src/db/DBManager.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/FileServer.dir/Core/src/db/DBManager.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/FileServer.dir/Core/src/db/DBManager.cpp.o -MF CMakeFiles/FileServer.dir/Core/src/db/DBManager.cpp.o.d -o CMakeFiles/FileServer.dir/Core/src/db/DBManager.cpp.o -c /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server/Core/src/db/DBManager.cpp
 
 CMakeFiles/FileServer.dir/Core/src/db/DBManager.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/FileServer.dir/Core/src/db/DBManager.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/cuong/DuAnPMCSF/File_Management_App/Server/Core/src/db/DBManager.cpp > CMakeFiles/FileServer.dir/Core/src/db/DBManager.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server/Core/src/db/DBManager.cpp > CMakeFiles/FileServer.dir/Core/src/db/DBManager.cpp.i
 
 CMakeFiles/FileServer.dir/Core/src/db/DBManager.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/FileServer.dir/Core/src/db/DBManager.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/cuong/DuAnPMCSF/File_Management_App/Server/Core/src/db/DBManager.cpp -o CMakeFiles/FileServer.dir/Core/src/db/DBManager.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server/Core/src/db/DBManager.cpp -o CMakeFiles/FileServer.dir/Core/src/db/DBManager.cpp.s
 
 CMakeFiles/FileServer.dir/Core/src/handler/AuthHandler.cpp.o: CMakeFiles/FileServer.dir/flags.make
-CMakeFiles/FileServer.dir/Core/src/handler/AuthHandler.cpp.o: /home/cuong/DuAnPMCSF/File_Management_App/Server/Core/src/handler/AuthHandler.cpp
+CMakeFiles/FileServer.dir/Core/src/handler/AuthHandler.cpp.o: /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server/Core/src/handler/AuthHandler.cpp
 CMakeFiles/FileServer.dir/Core/src/handler/AuthHandler.cpp.o: CMakeFiles/FileServer.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/cuong/DuAnPMCSF/File_Management_App/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/FileServer.dir/Core/src/handler/AuthHandler.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/FileServer.dir/Core/src/handler/AuthHandler.cpp.o -MF CMakeFiles/FileServer.dir/Core/src/handler/AuthHandler.cpp.o.d -o CMakeFiles/FileServer.dir/Core/src/handler/AuthHandler.cpp.o -c /home/cuong/DuAnPMCSF/File_Management_App/Server/Core/src/handler/AuthHandler.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/FileServer.dir/Core/src/handler/AuthHandler.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/FileServer.dir/Core/src/handler/AuthHandler.cpp.o -MF CMakeFiles/FileServer.dir/Core/src/handler/AuthHandler.cpp.o.d -o CMakeFiles/FileServer.dir/Core/src/handler/AuthHandler.cpp.o -c /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server/Core/src/handler/AuthHandler.cpp
 
 CMakeFiles/FileServer.dir/Core/src/handler/AuthHandler.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/FileServer.dir/Core/src/handler/AuthHandler.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/cuong/DuAnPMCSF/File_Management_App/Server/Core/src/handler/AuthHandler.cpp > CMakeFiles/FileServer.dir/Core/src/handler/AuthHandler.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server/Core/src/handler/AuthHandler.cpp > CMakeFiles/FileServer.dir/Core/src/handler/AuthHandler.cpp.i
 
 CMakeFiles/FileServer.dir/Core/src/handler/AuthHandler.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/FileServer.dir/Core/src/handler/AuthHandler.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/cuong/DuAnPMCSF/File_Management_App/Server/Core/src/handler/AuthHandler.cpp -o CMakeFiles/FileServer.dir/Core/src/handler/AuthHandler.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server/Core/src/handler/AuthHandler.cpp -o CMakeFiles/FileServer.dir/Core/src/handler/AuthHandler.cpp.s
 
 CMakeFiles/FileServer.dir/Core/src/handler/CmdHandler.cpp.o: CMakeFiles/FileServer.dir/flags.make
-CMakeFiles/FileServer.dir/Core/src/handler/CmdHandler.cpp.o: /home/cuong/DuAnPMCSF/File_Management_App/Server/Core/src/handler/CmdHandler.cpp
+CMakeFiles/FileServer.dir/Core/src/handler/CmdHandler.cpp.o: /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server/Core/src/handler/CmdHandler.cpp
 CMakeFiles/FileServer.dir/Core/src/handler/CmdHandler.cpp.o: CMakeFiles/FileServer.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/cuong/DuAnPMCSF/File_Management_App/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/FileServer.dir/Core/src/handler/CmdHandler.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/FileServer.dir/Core/src/handler/CmdHandler.cpp.o -MF CMakeFiles/FileServer.dir/Core/src/handler/CmdHandler.cpp.o.d -o CMakeFiles/FileServer.dir/Core/src/handler/CmdHandler.cpp.o -c /home/cuong/DuAnPMCSF/File_Management_App/Server/Core/src/handler/CmdHandler.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/FileServer.dir/Core/src/handler/CmdHandler.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/FileServer.dir/Core/src/handler/CmdHandler.cpp.o -MF CMakeFiles/FileServer.dir/Core/src/handler/CmdHandler.cpp.o.d -o CMakeFiles/FileServer.dir/Core/src/handler/CmdHandler.cpp.o -c /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server/Core/src/handler/CmdHandler.cpp
 
 CMakeFiles/FileServer.dir/Core/src/handler/CmdHandler.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/FileServer.dir/Core/src/handler/CmdHandler.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/cuong/DuAnPMCSF/File_Management_App/Server/Core/src/handler/CmdHandler.cpp > CMakeFiles/FileServer.dir/Core/src/handler/CmdHandler.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server/Core/src/handler/CmdHandler.cpp > CMakeFiles/FileServer.dir/Core/src/handler/CmdHandler.cpp.i
 
 CMakeFiles/FileServer.dir/Core/src/handler/CmdHandler.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/FileServer.dir/Core/src/handler/CmdHandler.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/cuong/DuAnPMCSF/File_Management_App/Server/Core/src/handler/CmdHandler.cpp -o CMakeFiles/FileServer.dir/Core/src/handler/CmdHandler.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server/Core/src/handler/CmdHandler.cpp -o CMakeFiles/FileServer.dir/Core/src/handler/CmdHandler.cpp.s
 
 CMakeFiles/FileServer.dir/Core/src/handler/FileIOHandler.cpp.o: CMakeFiles/FileServer.dir/flags.make
-CMakeFiles/FileServer.dir/Core/src/handler/FileIOHandler.cpp.o: /home/cuong/DuAnPMCSF/File_Management_App/Server/Core/src/handler/FileIOHandler.cpp
+CMakeFiles/FileServer.dir/Core/src/handler/FileIOHandler.cpp.o: /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server/Core/src/handler/FileIOHandler.cpp
 CMakeFiles/FileServer.dir/Core/src/handler/FileIOHandler.cpp.o: CMakeFiles/FileServer.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/cuong/DuAnPMCSF/File_Management_App/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/FileServer.dir/Core/src/handler/FileIOHandler.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/FileServer.dir/Core/src/handler/FileIOHandler.cpp.o -MF CMakeFiles/FileServer.dir/Core/src/handler/FileIOHandler.cpp.o.d -o CMakeFiles/FileServer.dir/Core/src/handler/FileIOHandler.cpp.o -c /home/cuong/DuAnPMCSF/File_Management_App/Server/Core/src/handler/FileIOHandler.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/FileServer.dir/Core/src/handler/FileIOHandler.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/FileServer.dir/Core/src/handler/FileIOHandler.cpp.o -MF CMakeFiles/FileServer.dir/Core/src/handler/FileIOHandler.cpp.o.d -o CMakeFiles/FileServer.dir/Core/src/handler/FileIOHandler.cpp.o -c /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server/Core/src/handler/FileIOHandler.cpp
 
 CMakeFiles/FileServer.dir/Core/src/handler/FileIOHandler.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/FileServer.dir/Core/src/handler/FileIOHandler.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/cuong/DuAnPMCSF/File_Management_App/Server/Core/src/handler/FileIOHandler.cpp > CMakeFiles/FileServer.dir/Core/src/handler/FileIOHandler.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server/Core/src/handler/FileIOHandler.cpp > CMakeFiles/FileServer.dir/Core/src/handler/FileIOHandler.cpp.i
 
 CMakeFiles/FileServer.dir/Core/src/handler/FileIOHandler.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/FileServer.dir/Core/src/handler/FileIOHandler.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/cuong/DuAnPMCSF/File_Management_App/Server/Core/src/handler/FileIOHandler.cpp -o CMakeFiles/FileServer.dir/Core/src/handler/FileIOHandler.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server/Core/src/handler/FileIOHandler.cpp -o CMakeFiles/FileServer.dir/Core/src/handler/FileIOHandler.cpp.s
 
 CMakeFiles/FileServer.dir/Core/src/main.cpp.o: CMakeFiles/FileServer.dir/flags.make
-CMakeFiles/FileServer.dir/Core/src/main.cpp.o: /home/cuong/DuAnPMCSF/File_Management_App/Server/Core/src/main.cpp
+CMakeFiles/FileServer.dir/Core/src/main.cpp.o: /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server/Core/src/main.cpp
 CMakeFiles/FileServer.dir/Core/src/main.cpp.o: CMakeFiles/FileServer.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/cuong/DuAnPMCSF/File_Management_App/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/FileServer.dir/Core/src/main.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/FileServer.dir/Core/src/main.cpp.o -MF CMakeFiles/FileServer.dir/Core/src/main.cpp.o.d -o CMakeFiles/FileServer.dir/Core/src/main.cpp.o -c /home/cuong/DuAnPMCSF/File_Management_App/Server/Core/src/main.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/FileServer.dir/Core/src/main.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/FileServer.dir/Core/src/main.cpp.o -MF CMakeFiles/FileServer.dir/Core/src/main.cpp.o.d -o CMakeFiles/FileServer.dir/Core/src/main.cpp.o -c /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server/Core/src/main.cpp
 
 CMakeFiles/FileServer.dir/Core/src/main.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/FileServer.dir/Core/src/main.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/cuong/DuAnPMCSF/File_Management_App/Server/Core/src/main.cpp > CMakeFiles/FileServer.dir/Core/src/main.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server/Core/src/main.cpp > CMakeFiles/FileServer.dir/Core/src/main.cpp.i
 
 CMakeFiles/FileServer.dir/Core/src/main.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/FileServer.dir/Core/src/main.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/cuong/DuAnPMCSF/File_Management_App/Server/Core/src/main.cpp -o CMakeFiles/FileServer.dir/Core/src/main.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server/Core/src/main.cpp -o CMakeFiles/FileServer.dir/Core/src/main.cpp.s
 
 CMakeFiles/FileServer.dir/Core/src/monitor/ThreadMonitor.cpp.o: CMakeFiles/FileServer.dir/flags.make
-CMakeFiles/FileServer.dir/Core/src/monitor/ThreadMonitor.cpp.o: /home/cuong/DuAnPMCSF/File_Management_App/Server/Core/src/monitor/ThreadMonitor.cpp
+CMakeFiles/FileServer.dir/Core/src/monitor/ThreadMonitor.cpp.o: /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server/Core/src/monitor/ThreadMonitor.cpp
 CMakeFiles/FileServer.dir/Core/src/monitor/ThreadMonitor.cpp.o: CMakeFiles/FileServer.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/cuong/DuAnPMCSF/File_Management_App/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/FileServer.dir/Core/src/monitor/ThreadMonitor.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/FileServer.dir/Core/src/monitor/ThreadMonitor.cpp.o -MF CMakeFiles/FileServer.dir/Core/src/monitor/ThreadMonitor.cpp.o.d -o CMakeFiles/FileServer.dir/Core/src/monitor/ThreadMonitor.cpp.o -c /home/cuong/DuAnPMCSF/File_Management_App/Server/Core/src/monitor/ThreadMonitor.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/FileServer.dir/Core/src/monitor/ThreadMonitor.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/FileServer.dir/Core/src/monitor/ThreadMonitor.cpp.o -MF CMakeFiles/FileServer.dir/Core/src/monitor/ThreadMonitor.cpp.o.d -o CMakeFiles/FileServer.dir/Core/src/monitor/ThreadMonitor.cpp.o -c /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server/Core/src/monitor/ThreadMonitor.cpp
 
 CMakeFiles/FileServer.dir/Core/src/monitor/ThreadMonitor.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/FileServer.dir/Core/src/monitor/ThreadMonitor.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/cuong/DuAnPMCSF/File_Management_App/Server/Core/src/monitor/ThreadMonitor.cpp > CMakeFiles/FileServer.dir/Core/src/monitor/ThreadMonitor.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server/Core/src/monitor/ThreadMonitor.cpp > CMakeFiles/FileServer.dir/Core/src/monitor/ThreadMonitor.cpp.i
 
 CMakeFiles/FileServer.dir/Core/src/monitor/ThreadMonitor.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/FileServer.dir/Core/src/monitor/ThreadMonitor.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/cuong/DuAnPMCSF/File_Management_App/Server/Core/src/monitor/ThreadMonitor.cpp -o CMakeFiles/FileServer.dir/Core/src/monitor/ThreadMonitor.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server/Core/src/monitor/ThreadMonitor.cpp -o CMakeFiles/FileServer.dir/Core/src/monitor/ThreadMonitor.cpp.s
 
 CMakeFiles/FileServer.dir/Core/src/thread/AcceptThread.cpp.o: CMakeFiles/FileServer.dir/flags.make
-CMakeFiles/FileServer.dir/Core/src/thread/AcceptThread.cpp.o: /home/cuong/DuAnPMCSF/File_Management_App/Server/Core/src/thread/AcceptThread.cpp
+CMakeFiles/FileServer.dir/Core/src/thread/AcceptThread.cpp.o: /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server/Core/src/thread/AcceptThread.cpp
 CMakeFiles/FileServer.dir/Core/src/thread/AcceptThread.cpp.o: CMakeFiles/FileServer.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/cuong/DuAnPMCSF/File_Management_App/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/FileServer.dir/Core/src/thread/AcceptThread.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/FileServer.dir/Core/src/thread/AcceptThread.cpp.o -MF CMakeFiles/FileServer.dir/Core/src/thread/AcceptThread.cpp.o.d -o CMakeFiles/FileServer.dir/Core/src/thread/AcceptThread.cpp.o -c /home/cuong/DuAnPMCSF/File_Management_App/Server/Core/src/thread/AcceptThread.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/FileServer.dir/Core/src/thread/AcceptThread.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/FileServer.dir/Core/src/thread/AcceptThread.cpp.o -MF CMakeFiles/FileServer.dir/Core/src/thread/AcceptThread.cpp.o.d -o CMakeFiles/FileServer.dir/Core/src/thread/AcceptThread.cpp.o -c /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server/Core/src/thread/AcceptThread.cpp
 
 CMakeFiles/FileServer.dir/Core/src/thread/AcceptThread.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/FileServer.dir/Core/src/thread/AcceptThread.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/cuong/DuAnPMCSF/File_Management_App/Server/Core/src/thread/AcceptThread.cpp > CMakeFiles/FileServer.dir/Core/src/thread/AcceptThread.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server/Core/src/thread/AcceptThread.cpp > CMakeFiles/FileServer.dir/Core/src/thread/AcceptThread.cpp.i
 
 CMakeFiles/FileServer.dir/Core/src/thread/AcceptThread.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/FileServer.dir/Core/src/thread/AcceptThread.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/cuong/DuAnPMCSF/File_Management_App/Server/Core/src/thread/AcceptThread.cpp -o CMakeFiles/FileServer.dir/Core/src/thread/AcceptThread.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server/Core/src/thread/AcceptThread.cpp -o CMakeFiles/FileServer.dir/Core/src/thread/AcceptThread.cpp.s
 
 CMakeFiles/FileServer.dir/Core/src/thread/DedicatedThread.cpp.o: CMakeFiles/FileServer.dir/flags.make
-CMakeFiles/FileServer.dir/Core/src/thread/DedicatedThread.cpp.o: /home/cuong/DuAnPMCSF/File_Management_App/Server/Core/src/thread/DedicatedThread.cpp
+CMakeFiles/FileServer.dir/Core/src/thread/DedicatedThread.cpp.o: /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server/Core/src/thread/DedicatedThread.cpp
 CMakeFiles/FileServer.dir/Core/src/thread/DedicatedThread.cpp.o: CMakeFiles/FileServer.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/cuong/DuAnPMCSF/File_Management_App/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/FileServer.dir/Core/src/thread/DedicatedThread.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/FileServer.dir/Core/src/thread/DedicatedThread.cpp.o -MF CMakeFiles/FileServer.dir/Core/src/thread/DedicatedThread.cpp.o.d -o CMakeFiles/FileServer.dir/Core/src/thread/DedicatedThread.cpp.o -c /home/cuong/DuAnPMCSF/File_Management_App/Server/Core/src/thread/DedicatedThread.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/FileServer.dir/Core/src/thread/DedicatedThread.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/FileServer.dir/Core/src/thread/DedicatedThread.cpp.o -MF CMakeFiles/FileServer.dir/Core/src/thread/DedicatedThread.cpp.o.d -o CMakeFiles/FileServer.dir/Core/src/thread/DedicatedThread.cpp.o -c /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server/Core/src/thread/DedicatedThread.cpp
 
 CMakeFiles/FileServer.dir/Core/src/thread/DedicatedThread.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/FileServer.dir/Core/src/thread/DedicatedThread.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/cuong/DuAnPMCSF/File_Management_App/Server/Core/src/thread/DedicatedThread.cpp > CMakeFiles/FileServer.dir/Core/src/thread/DedicatedThread.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server/Core/src/thread/DedicatedThread.cpp > CMakeFiles/FileServer.dir/Core/src/thread/DedicatedThread.cpp.i
 
 CMakeFiles/FileServer.dir/Core/src/thread/DedicatedThread.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/FileServer.dir/Core/src/thread/DedicatedThread.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/cuong/DuAnPMCSF/File_Management_App/Server/Core/src/thread/DedicatedThread.cpp -o CMakeFiles/FileServer.dir/Core/src/thread/DedicatedThread.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server/Core/src/thread/DedicatedThread.cpp -o CMakeFiles/FileServer.dir/Core/src/thread/DedicatedThread.cpp.s
 
 CMakeFiles/FileServer.dir/Core/src/thread/WorkerThread.cpp.o: CMakeFiles/FileServer.dir/flags.make
-CMakeFiles/FileServer.dir/Core/src/thread/WorkerThread.cpp.o: /home/cuong/DuAnPMCSF/File_Management_App/Server/Core/src/thread/WorkerThread.cpp
+CMakeFiles/FileServer.dir/Core/src/thread/WorkerThread.cpp.o: /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server/Core/src/thread/WorkerThread.cpp
 CMakeFiles/FileServer.dir/Core/src/thread/WorkerThread.cpp.o: CMakeFiles/FileServer.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/cuong/DuAnPMCSF/File_Management_App/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/FileServer.dir/Core/src/thread/WorkerThread.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/FileServer.dir/Core/src/thread/WorkerThread.cpp.o -MF CMakeFiles/FileServer.dir/Core/src/thread/WorkerThread.cpp.o.d -o CMakeFiles/FileServer.dir/Core/src/thread/WorkerThread.cpp.o -c /home/cuong/DuAnPMCSF/File_Management_App/Server/Core/src/thread/WorkerThread.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/FileServer.dir/Core/src/thread/WorkerThread.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/FileServer.dir/Core/src/thread/WorkerThread.cpp.o -MF CMakeFiles/FileServer.dir/Core/src/thread/WorkerThread.cpp.o.d -o CMakeFiles/FileServer.dir/Core/src/thread/WorkerThread.cpp.o -c /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server/Core/src/thread/WorkerThread.cpp
 
 CMakeFiles/FileServer.dir/Core/src/thread/WorkerThread.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/FileServer.dir/Core/src/thread/WorkerThread.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/cuong/DuAnPMCSF/File_Management_App/Server/Core/src/thread/WorkerThread.cpp > CMakeFiles/FileServer.dir/Core/src/thread/WorkerThread.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server/Core/src/thread/WorkerThread.cpp > CMakeFiles/FileServer.dir/Core/src/thread/WorkerThread.cpp.i
 
 CMakeFiles/FileServer.dir/Core/src/thread/WorkerThread.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/FileServer.dir/Core/src/thread/WorkerThread.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/cuong/DuAnPMCSF/File_Management_App/Server/Core/src/thread/WorkerThread.cpp -o CMakeFiles/FileServer.dir/Core/src/thread/WorkerThread.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server/Core/src/thread/WorkerThread.cpp -o CMakeFiles/FileServer.dir/Core/src/thread/WorkerThread.cpp.s
 
 # Object files for target FileServer
 FileServer_OBJECTS = \
@@ -221,7 +221,7 @@ FileServer: CMakeFiles/FileServer.dir/Core/src/thread/DedicatedThread.cpp.o
 FileServer: CMakeFiles/FileServer.dir/Core/src/thread/WorkerThread.cpp.o
 FileServer: CMakeFiles/FileServer.dir/build.make
 FileServer: CMakeFiles/FileServer.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/cuong/DuAnPMCSF/File_Management_App/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Linking CXX executable FileServer"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Linking CXX executable FileServer"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/FileServer.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -233,6 +233,6 @@ CMakeFiles/FileServer.dir/clean:
 .PHONY : CMakeFiles/FileServer.dir/clean
 
 CMakeFiles/FileServer.dir/depend:
-	cd /home/cuong/DuAnPMCSF/File_Management_App/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/cuong/DuAnPMCSF/File_Management_App/Server /home/cuong/DuAnPMCSF/File_Management_App/Server /home/cuong/DuAnPMCSF/File_Management_App/build /home/cuong/DuAnPMCSF/File_Management_App/build /home/cuong/DuAnPMCSF/File_Management_App/build/CMakeFiles/FileServer.dir/DependInfo.cmake "--color=$(COLOR)"
+	cd /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/build /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/build /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/build/CMakeFiles/FileServer.dir/DependInfo.cmake "--color=$(COLOR)"
 .PHONY : CMakeFiles/FileServer.dir/depend
 

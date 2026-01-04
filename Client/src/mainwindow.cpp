@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+#include "FolderShareDialog.h"
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QHeaderView>
@@ -6,6 +7,7 @@
 #include <QLabel>
 #include <QFileDialog>
 #include <QInputDialog>
+#include <QMenu>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     netManager = new NetworkManager(this);
@@ -84,12 +86,14 @@ QWidget* MainWindow::createDashboardPage() {
     QPushButton *btnDownload = new QPushButton("Download Selected");
     QPushButton *btnShare = new QPushButton("Share File");
     QPushButton *btnDelete = new QPushButton("Delete File");
+    QPushButton *btnShareFolder = new QPushButton("Share Folder");
     
     btnLayout->addWidget(btnRefresh);
     btnLayout->addWidget(btnUpload);
     btnLayout->addWidget(btnDownload);
     btnLayout->addWidget(btnShare);
     btnLayout->addWidget(btnDelete);
+    btnLayout->addWidget(btnShareFolder);
     btnLayout->addStretch();
     
     // Tạo TabWidget với 2 tabs
@@ -101,6 +105,11 @@ QWidget* MainWindow::createDashboardPage() {
     fileTable->setHorizontalHeaderLabels({"Filename", "Size", "Owner"});
     fileTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     fileTable->setSelectionBehavior(QTableWidget::SelectRows);
+    
+    // Enable context menu cho fileTable
+    fileTable->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(fileTable, &QTableWidget::customContextMenuRequested, 
+            this, &MainWindow::showContextMenu);
     
     // Tab 2: Shared Files
     sharedFileTable = new QTableWidget;
@@ -121,8 +130,10 @@ QWidget* MainWindow::createDashboardPage() {
     connect(btnDownload, &QPushButton::clicked, this, &MainWindow::onDownloadClicked);
     connect(btnShare, &QPushButton::clicked, this, &MainWindow::onShareClicked);
     connect(btnDelete, &QPushButton::clicked, this, &MainWindow::onDeleteClicked);
+    connect(btnShareFolder, &QPushButton::clicked, this, &MainWindow::onShareFolderClicked);
     connect(btnLogout, &QPushButton::clicked, this, &MainWindow::onLogoutClicked);
     connect(tabWidget, &QTabWidget::currentChanged, this, &MainWindow::onTabChanged);
+    
     return p;
 }
 
@@ -306,4 +317,110 @@ void MainWindow::handleLogout() {
     passInput->clear();
     
     QMessageBox::information(this, "Logout", "You have been logged out successfully.");
+}
+
+// ===== FOLDER SHARE IMPLEMENTATION =====
+
+void MainWindow::onShareFolderClicked() {
+    // Chỉ share được từ "My Files" tab
+    if (tabWidget->currentIndex() != 0) {
+        QMessageBox::warning(this, "Share Folder", 
+            "You can only share folders from 'My Files' tab!");
+        return;
+    }
+    
+    // DEMO VERSION: Prompt user để nhập folder_id, folder_name
+    // Trong production, bạn sẽ có UI tree view để chọn folder
+    
+    bool ok;
+    
+    // Step 1: Nhập folder ID
+    QString folderIdStr = QInputDialog::getText(this, "Share Folder",
+                                                "Enter Folder ID:",
+                                                QLineEdit::Normal, "123", &ok);
+    if (!ok || folderIdStr.isEmpty()) {
+        return;
+    }
+    
+    long long folderId = folderIdStr.toLongLong(&ok);
+    if (!ok) {
+        QMessageBox::warning(this, "Share Folder", "Invalid folder ID!");
+        return;
+    }
+    
+    // Step 2: Nhập folder name
+    QString folderName = QInputDialog::getText(this, "Share Folder",
+                                               "Enter Folder Name:",
+                                               QLineEdit::Normal, "MyFolder", &ok);
+    if (!ok || folderName.isEmpty()) {
+        return;
+    }
+    
+    // Step 3: Nhập target username
+    QString targetUser = QInputDialog::getText(this, "Share Folder",
+                                              QString("Share folder '%1' to username:")
+                                              .arg(folderName),
+                                              QLineEdit::Normal, "guest", &ok);
+    if (!ok || targetUser.isEmpty()) {
+        return;
+    }
+    
+    // Step 4: Chọn local folder path (nơi chứa folder cần upload)
+    QString localPath = QFileDialog::getExistingDirectory(this,
+                                                          "Select Folder Location",
+                                                          QDir::homePath(),
+                                                          QFileDialog::ShowDirsOnly);
+    if (localPath.isEmpty()) {
+        QMessageBox::information(this, "Share Folder", "Folder selection cancelled.");
+        return;
+    }
+    
+    // Verify folder exists
+    QString fullFolderPath = localPath + "/" + folderName;
+    QDir dir(fullFolderPath);
+    if (!dir.exists()) {
+        QMessageBox::critical(this, "Share Folder", 
+            QString("Folder not found at: %1\n\nPlease make sure the folder exists locally.")
+            .arg(fullFolderPath));
+        return;
+    }
+    
+    // Show folder share dialog
+    FolderShareDialog *dialog = new FolderShareDialog(
+        folderId, 
+        folderName, 
+        targetUser, 
+        netManager, 
+        this
+    );
+    
+    // Set local folder path
+    dialog->setLocalFolderPath(localPath);
+    
+    dialog->exec();
+    delete dialog;
+}
+
+void MainWindow::showContextMenu(const QPoint &pos) {
+    int row = fileTable->rowAt(pos.y());
+    if (row < 0) return;
+    
+    QMenu menu(this);
+    
+    // NOTE: Trong production, bạn cần thêm logic để detect folder vs file
+    // Giả sử bạn thêm data vào QTableWidgetItem để track is_folder
+    
+    // For now, show both options
+    QAction *shareFileAction = menu.addAction("Share File");
+    QAction *shareFolderAction = menu.addAction("Share Folder");
+    menu.addSeparator();
+    QAction *downloadAction = menu.addAction("Download");
+    QAction *deleteAction = menu.addAction("Delete");
+    
+    connect(shareFileAction, &QAction::triggered, this, &MainWindow::onShareClicked);
+    connect(shareFolderAction, &QAction::triggered, this, &MainWindow::onShareFolderClicked);
+    connect(downloadAction, &QAction::triggered, this, &MainWindow::onDownloadClicked);
+    connect(deleteAction, &QAction::triggered, this, &MainWindow::onDeleteClicked);
+    
+    menu.exec(fileTable->mapToGlobal(pos));
 }

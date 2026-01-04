@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/c++
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/home/cuong/DuAnPMCSF/File_Management_App/Server/Core/include -I/home/cuong/DuAnPMCSF/File_Management_App/Server/../Common
+CXX_INCLUDES = -I/mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server/Core/include -I/mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server/../Common
 
 CXX_FLAGS = -std=gnu++17
 

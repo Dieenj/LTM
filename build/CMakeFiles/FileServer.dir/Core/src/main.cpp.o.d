@@ -1,7 +1,7 @@
 CMakeFiles/FileServer.dir/Core/src/main.cpp.o: \
- /home/cuong/DuAnPMCSF/File_Management_App/Server/Core/src/main.cpp \
+ /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server/Core/src/main.cpp \
  /usr/include/stdc-predef.h \
- /home/cuong/DuAnPMCSF/File_Management_App/Server/Core/src/../include/thread_manager.h \
+ /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server/Core/src/../include/thread_manager.h \
  /usr/include/c++/13/vector /usr/include/c++/13/bits/requires_hosted.h \
  /usr/include/x86_64-linux-gnu/c++/13/bits/c++config.h \
  /usr/include/x86_64-linux-gnu/c++/13/bits/os_defines.h \
@@ -148,7 +148,7 @@ CMakeFiles/FileServer.dir/Core/src/main.cpp.o: \
  /usr/include/c++/13/bits/std_abs.h \
  /usr/include/c++/13/pstl/glue_algorithm_defs.h \
  /usr/include/c++/13/pstl/execution_defs.h \
- /home/cuong/DuAnPMCSF/File_Management_App/Server/Core/src/../include/server.h \
+ /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server/Core/src/../include/server.h \
  /usr/include/c++/13/string /usr/include/c++/13/bits/char_traits.h \
  /usr/include/c++/13/bits/localefwd.h \
  /usr/include/x86_64-linux-gnu/c++/13/bits/c++locale.h \
@@ -183,7 +183,7 @@ CMakeFiles/FileServer.dir/Core/src/main.cpp.o: \
  /usr/include/asm-generic/sockios.h \
  /usr/include/x86_64-linux-gnu/bits/types/struct_osockaddr.h \
  /usr/include/x86_64-linux-gnu/bits/in.h \
- /home/cuong/DuAnPMCSF/File_Management_App/Server/Core/src/../include/db_manager.h \
+ /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server/Core/src/../include/db_manager.h \
  /usr/include/mysql/mysql.h \
  /usr/lib/gcc/x86_64-linux-gnu/13/include/stdbool.h \
  /usr/include/mysql/field_types.h /usr/include/mysql/my_list.h \
@@ -194,8 +194,8 @@ CMakeFiles/FileServer.dir/Core/src/main.cpp.o: \
  /usr/include/mysql/plugin_auth_common.h \
  /usr/include/mysql/mysql_version.h /usr/include/mysql/mysql_time.h \
  /usr/include/mysql/errmsg.h \
- /home/cuong/DuAnPMCSF/File_Management_App/Server/Core/src/../include/thread_monitor.h \
- /home/cuong/DuAnPMCSF/File_Management_App/Server/Core/src/../include/server_config.h \
+ /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server/Core/src/../include/thread_monitor.h \
+ /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server/Core/src/../include/server_config.h \
  /usr/include/c++/13/chrono /usr/include/c++/13/set \
  /usr/include/c++/13/bits/stl_set.h \
  /usr/include/c++/13/bits/stl_multiset.h /usr/include/c++/13/iostream \
@@ -215,7 +215,7 @@ CMakeFiles/FileServer.dir/Core/src/main.cpp.o: \
  /usr/include/c++/13/bits/basic_ios.tcc \
  /usr/include/c++/13/bits/ostream.tcc /usr/include/c++/13/istream \
  /usr/include/c++/13/bits/istream.tcc \
- /home/cuong/DuAnPMCSF/File_Management_App/Server/Core/src/../include/server_config.h \
+ /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server/Core/src/../include/server_config.h \
  /usr/include/c++/13/csignal /usr/include/signal.h \
  /usr/include/x86_64-linux-gnu/bits/signum-generic.h \
  /usr/include/x86_64-linux-gnu/bits/signum-arch.h \

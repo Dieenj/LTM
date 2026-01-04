@@ -1,7 +1,7 @@
 CMakeFiles/FileServer.dir/Core/src/handler/AuthHandler.cpp.o: \
- /home/cuong/DuAnPMCSF/File_Management_App/Server/Core/src/handler/AuthHandler.cpp \
+ /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server/Core/src/handler/AuthHandler.cpp \
  /usr/include/stdc-predef.h \
- /home/cuong/DuAnPMCSF/File_Management_App/Server/Core/src/handler/../../include/request_handler.h \
+ /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server/Core/src/handler/../../include/request_handler.h \
  /usr/include/c++/13/string /usr/include/c++/13/bits/requires_hosted.h \
  /usr/include/x86_64-linux-gnu/c++/13/bits/c++config.h \
  /usr/include/x86_64-linux-gnu/c++/13/bits/os_defines.h \
@@ -120,7 +120,7 @@ CMakeFiles/FileServer.dir/Core/src/handler/AuthHandler.cpp.o: \
  /usr/include/c++/13/bits/stl_vector.h \
  /usr/include/c++/13/bits/stl_bvector.h \
  /usr/include/c++/13/bits/vector.tcc \
- /home/cuong/DuAnPMCSF/File_Management_App/Server/Core/src/handler/../../include/server.h \
+ /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server/Core/src/handler/../../include/server.h \
  /usr/include/c++/13/map /usr/include/c++/13/bits/stl_tree.h \
  /usr/include/c++/13/ext/aligned_buffer.h \
  /usr/include/c++/13/bits/node_handle.h \
@@ -145,7 +145,7 @@ CMakeFiles/FileServer.dir/Core/src/handler/AuthHandler.cpp.o: \
  /usr/include/asm-generic/sockios.h \
  /usr/include/x86_64-linux-gnu/bits/types/struct_osockaddr.h \
  /usr/include/x86_64-linux-gnu/bits/in.h \
- /home/cuong/DuAnPMCSF/File_Management_App/Server/Core/src/handler/../../include/db_manager.h \
+ /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server/Core/src/handler/../../include/db_manager.h \
  /usr/include/mysql/mysql.h \
  /usr/lib/gcc/x86_64-linux-gnu/13/include/stdbool.h \
  /usr/lib/gcc/x86_64-linux-gnu/13/include/stdint.h /usr/include/stdint.h \
@@ -158,4 +158,4 @@ CMakeFiles/FileServer.dir/Core/src/handler/AuthHandler.cpp.o: \
  /usr/include/mysql/plugin_auth_common.h \
  /usr/include/mysql/mysql_version.h /usr/include/mysql/mysql_time.h \
  /usr/include/mysql/errmsg.h \
- /home/cuong/DuAnPMCSF/File_Management_App/Server/Core/src/handler/../../../../Common/Protocol.h
+ /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server/Core/src/handler/../../../../Common/Protocol.h

@@ -1,7 +1,7 @@
 CMakeFiles/FileServer.dir/Core/src/handler/FileIOHandler.cpp.o: \
- /home/cuong/DuAnPMCSF/File_Management_App/Server/Core/src/handler/FileIOHandler.cpp \
+ /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server/Core/src/handler/FileIOHandler.cpp \
  /usr/include/stdc-predef.h \
- /home/cuong/DuAnPMCSF/File_Management_App/Server/Core/src/handler/../../include/request_handler.h \
+ /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server/Core/src/handler/../../include/request_handler.h \
  /usr/include/c++/13/string /usr/include/c++/13/bits/requires_hosted.h \
  /usr/include/x86_64-linux-gnu/c++/13/bits/c++config.h \
  /usr/include/x86_64-linux-gnu/c++/13/bits/os_defines.h \
@@ -120,7 +120,7 @@ CMakeFiles/FileServer.dir/Core/src/handler/FileIOHandler.cpp.o: \
  /usr/include/c++/13/bits/stl_vector.h \
  /usr/include/c++/13/bits/stl_bvector.h \
  /usr/include/c++/13/bits/vector.tcc \
- /home/cuong/DuAnPMCSF/File_Management_App/Server/Core/src/handler/../../include/server.h \
+ /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server/Core/src/handler/../../include/server.h \
  /usr/include/c++/13/map /usr/include/c++/13/bits/stl_tree.h \
  /usr/include/c++/13/ext/aligned_buffer.h \
  /usr/include/c++/13/bits/node_handle.h \
@@ -145,7 +145,7 @@ CMakeFiles/FileServer.dir/Core/src/handler/FileIOHandler.cpp.o: \
  /usr/include/asm-generic/sockios.h \
  /usr/include/x86_64-linux-gnu/bits/types/struct_osockaddr.h \
  /usr/include/x86_64-linux-gnu/bits/in.h \
- /home/cuong/DuAnPMCSF/File_Management_App/Server/Core/src/handler/../../include/db_manager.h \
+ /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server/Core/src/handler/../../include/db_manager.h \
  /usr/include/mysql/mysql.h \
  /usr/lib/gcc/x86_64-linux-gnu/13/include/stdbool.h \
  /usr/lib/gcc/x86_64-linux-gnu/13/include/stdint.h /usr/include/stdint.h \
@@ -158,7 +158,7 @@ CMakeFiles/FileServer.dir/Core/src/handler/FileIOHandler.cpp.o: \
  /usr/include/mysql/plugin_auth_common.h \
  /usr/include/mysql/mysql_version.h /usr/include/mysql/mysql_time.h \
  /usr/include/mysql/errmsg.h \
- /home/cuong/DuAnPMCSF/File_Management_App/Server/Core/src/handler/../../../../Common/Protocol.h \
+ /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Server/Core/src/handler/../../../../Common/Protocol.h \
  /usr/include/c++/13/iostream /usr/include/c++/13/ostream \
  /usr/include/c++/13/ios /usr/include/c++/13/exception \
  /usr/include/c++/13/bits/exception_ptr.h \
@@ -195,4 +195,23 @@ CMakeFiles/FileServer.dir/Core/src/handler/FileIOHandler.cpp.o: \
  /usr/include/c++/13/bits/locale_facets.tcc \
  /usr/include/c++/13/bits/basic_ios.tcc \
  /usr/include/c++/13/bits/ostream.tcc /usr/include/c++/13/istream \
- /usr/include/c++/13/bits/istream.tcc
+ /usr/include/c++/13/bits/istream.tcc /usr/include/c++/13/filesystem \
+ /usr/include/c++/13/bits/fs_fwd.h /usr/include/c++/13/cstdint \
+ /usr/include/c++/13/bits/chrono.h /usr/include/c++/13/ratio \
+ /usr/include/c++/13/limits /usr/include/c++/13/ctime \
+ /usr/include/c++/13/bits/parse_numbers.h \
+ /usr/include/c++/13/bits/fs_path.h /usr/include/c++/13/locale \
+ /usr/include/c++/13/bits/locale_facets_nonio.h \
+ /usr/include/x86_64-linux-gnu/c++/13/bits/time_members.h \
+ /usr/include/x86_64-linux-gnu/c++/13/bits/messages_members.h \
+ /usr/include/libintl.h /usr/include/c++/13/bits/codecvt.h \
+ /usr/include/c++/13/bits/locale_facets_nonio.tcc \
+ /usr/include/c++/13/bits/locale_conv.h /usr/include/c++/13/iomanip \
+ /usr/include/c++/13/bits/quoted_string.h /usr/include/c++/13/sstream \
+ /usr/include/c++/13/bits/sstream.tcc /usr/include/c++/13/codecvt \
+ /usr/include/c++/13/ext/concurrence.h \
+ /usr/include/c++/13/bits/shared_ptr.h \
+ /usr/include/c++/13/bits/shared_ptr_base.h \
+ /usr/include/c++/13/bits/allocated_ptr.h \
+ /usr/include/c++/13/bits/unique_ptr.h /usr/include/c++/13/bits/fs_dir.h \
+ /usr/include/c++/13/bits/fs_ops.h

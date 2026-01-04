@@ -1,3 +1,5 @@
-/home/cuong/DuAnPMCSF/File_Management_App/build/CMakeFiles/FileServer.dir
-/home/cuong/DuAnPMCSF/File_Management_App/build/CMakeFiles/edit_cache.dir
-/home/cuong/DuAnPMCSF/File_Management_App/build/CMakeFiles/rebuild_cache.dir
+/mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/build/CMakeFiles/FileClient.dir
+/mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/build/CMakeFiles/edit_cache.dir
+/mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/build/CMakeFiles/rebuild_cache.dir
+/mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/build/CMakeFiles/FileClient_autogen_timestamp_deps.dir
+/mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/build/CMakeFiles/FileClient_autogen.dir
