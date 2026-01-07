@@ -57,10 +57,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/cuong/DuAnPMCSF/File_Management_App/Server
+CMAKE_SOURCE_DIR = /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Client
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/cuong/DuAnPMCSF/File_Management_App/build
+CMAKE_BINARY_DIR = /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -87,9 +87,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/cuong/DuAnPMCSF/File_Management_App/build/CMakeFiles /home/cuong/DuAnPMCSF/File_Management_App/build//CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/build/CMakeFiles /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/build//CMakeFiles/progress.marks
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/cuong/DuAnPMCSF/File_Management_App/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -117,233 +117,163 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named FileServer
+# Target rules for targets named FileClient
 
 # Build rule for target.
-FileServer: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 FileServer
-.PHONY : FileServer
+FileClient: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 FileClient
+.PHONY : FileClient
 
 # fast build rule for target.
-FileServer/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FileServer.dir/build.make CMakeFiles/FileServer.dir/build
-.PHONY : FileServer/fast
+FileClient/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FileClient.dir/build.make CMakeFiles/FileClient.dir/build
+.PHONY : FileClient/fast
 
-Core/src/db/DBManager.o: Core/src/db/DBManager.cpp.o
-.PHONY : Core/src/db/DBManager.o
+#=============================================================================
+# Target rules for targets named FileClient_autogen_timestamp_deps
 
-# target to build an object file
-Core/src/db/DBManager.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FileServer.dir/build.make CMakeFiles/FileServer.dir/Core/src/db/DBManager.cpp.o
-.PHONY : Core/src/db/DBManager.cpp.o
+# Build rule for target.
+FileClient_autogen_timestamp_deps: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 FileClient_autogen_timestamp_deps
+.PHONY : FileClient_autogen_timestamp_deps
 
-Core/src/db/DBManager.i: Core/src/db/DBManager.cpp.i
-.PHONY : Core/src/db/DBManager.i
+# fast build rule for target.
+FileClient_autogen_timestamp_deps/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FileClient_autogen_timestamp_deps.dir/build.make CMakeFiles/FileClient_autogen_timestamp_deps.dir/build
+.PHONY : FileClient_autogen_timestamp_deps/fast
 
-# target to preprocess a source file
-Core/src/db/DBManager.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FileServer.dir/build.make CMakeFiles/FileServer.dir/Core/src/db/DBManager.cpp.i
-.PHONY : Core/src/db/DBManager.cpp.i
+#=============================================================================
+# Target rules for targets named FileClient_autogen
 
-Core/src/db/DBManager.s: Core/src/db/DBManager.cpp.s
-.PHONY : Core/src/db/DBManager.s
+# Build rule for target.
+FileClient_autogen: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 FileClient_autogen
+.PHONY : FileClient_autogen
 
-# target to generate assembly for a file
-Core/src/db/DBManager.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FileServer.dir/build.make CMakeFiles/FileServer.dir/Core/src/db/DBManager.cpp.s
-.PHONY : Core/src/db/DBManager.cpp.s
+# fast build rule for target.
+FileClient_autogen/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FileClient_autogen.dir/build.make CMakeFiles/FileClient_autogen.dir/build
+.PHONY : FileClient_autogen/fast
 
-Core/src/handler/AuthHandler.o: Core/src/handler/AuthHandler.cpp.o
-.PHONY : Core/src/handler/AuthHandler.o
-
-# target to build an object file
-Core/src/handler/AuthHandler.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FileServer.dir/build.make CMakeFiles/FileServer.dir/Core/src/handler/AuthHandler.cpp.o
-.PHONY : Core/src/handler/AuthHandler.cpp.o
-
-Core/src/handler/AuthHandler.i: Core/src/handler/AuthHandler.cpp.i
-.PHONY : Core/src/handler/AuthHandler.i
-
-# target to preprocess a source file
-Core/src/handler/AuthHandler.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FileServer.dir/build.make CMakeFiles/FileServer.dir/Core/src/handler/AuthHandler.cpp.i
-.PHONY : Core/src/handler/AuthHandler.cpp.i
-
-Core/src/handler/AuthHandler.s: Core/src/handler/AuthHandler.cpp.s
-.PHONY : Core/src/handler/AuthHandler.s
-
-# target to generate assembly for a file
-Core/src/handler/AuthHandler.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FileServer.dir/build.make CMakeFiles/FileServer.dir/Core/src/handler/AuthHandler.cpp.s
-.PHONY : Core/src/handler/AuthHandler.cpp.s
-
-Core/src/handler/CmdHandler.o: Core/src/handler/CmdHandler.cpp.o
-.PHONY : Core/src/handler/CmdHandler.o
+FileClient_autogen/mocs_compilation.o: FileClient_autogen/mocs_compilation.cpp.o
+.PHONY : FileClient_autogen/mocs_compilation.o
 
 # target to build an object file
-Core/src/handler/CmdHandler.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FileServer.dir/build.make CMakeFiles/FileServer.dir/Core/src/handler/CmdHandler.cpp.o
-.PHONY : Core/src/handler/CmdHandler.cpp.o
+FileClient_autogen/mocs_compilation.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FileClient.dir/build.make CMakeFiles/FileClient.dir/FileClient_autogen/mocs_compilation.cpp.o
+.PHONY : FileClient_autogen/mocs_compilation.cpp.o
 
-Core/src/handler/CmdHandler.i: Core/src/handler/CmdHandler.cpp.i
-.PHONY : Core/src/handler/CmdHandler.i
+FileClient_autogen/mocs_compilation.i: FileClient_autogen/mocs_compilation.cpp.i
+.PHONY : FileClient_autogen/mocs_compilation.i
 
 # target to preprocess a source file
-Core/src/handler/CmdHandler.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FileServer.dir/build.make CMakeFiles/FileServer.dir/Core/src/handler/CmdHandler.cpp.i
-.PHONY : Core/src/handler/CmdHandler.cpp.i
+FileClient_autogen/mocs_compilation.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FileClient.dir/build.make CMakeFiles/FileClient.dir/FileClient_autogen/mocs_compilation.cpp.i
+.PHONY : FileClient_autogen/mocs_compilation.cpp.i
 
-Core/src/handler/CmdHandler.s: Core/src/handler/CmdHandler.cpp.s
-.PHONY : Core/src/handler/CmdHandler.s
+FileClient_autogen/mocs_compilation.s: FileClient_autogen/mocs_compilation.cpp.s
+.PHONY : FileClient_autogen/mocs_compilation.s
 
 # target to generate assembly for a file
-Core/src/handler/CmdHandler.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FileServer.dir/build.make CMakeFiles/FileServer.dir/Core/src/handler/CmdHandler.cpp.s
-.PHONY : Core/src/handler/CmdHandler.cpp.s
+FileClient_autogen/mocs_compilation.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FileClient.dir/build.make CMakeFiles/FileClient.dir/FileClient_autogen/mocs_compilation.cpp.s
+.PHONY : FileClient_autogen/mocs_compilation.cpp.s
 
-Core/src/handler/FileIOHandler.o: Core/src/handler/FileIOHandler.cpp.o
-.PHONY : Core/src/handler/FileIOHandler.o
+src/FolderShareDialog.o: src/FolderShareDialog.cpp.o
+.PHONY : src/FolderShareDialog.o
 
 # target to build an object file
-Core/src/handler/FileIOHandler.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FileServer.dir/build.make CMakeFiles/FileServer.dir/Core/src/handler/FileIOHandler.cpp.o
-.PHONY : Core/src/handler/FileIOHandler.cpp.o
+src/FolderShareDialog.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FileClient.dir/build.make CMakeFiles/FileClient.dir/src/FolderShareDialog.cpp.o
+.PHONY : src/FolderShareDialog.cpp.o
 
-Core/src/handler/FileIOHandler.i: Core/src/handler/FileIOHandler.cpp.i
-.PHONY : Core/src/handler/FileIOHandler.i
+src/FolderShareDialog.i: src/FolderShareDialog.cpp.i
+.PHONY : src/FolderShareDialog.i
 
 # target to preprocess a source file
-Core/src/handler/FileIOHandler.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FileServer.dir/build.make CMakeFiles/FileServer.dir/Core/src/handler/FileIOHandler.cpp.i
-.PHONY : Core/src/handler/FileIOHandler.cpp.i
+src/FolderShareDialog.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FileClient.dir/build.make CMakeFiles/FileClient.dir/src/FolderShareDialog.cpp.i
+.PHONY : src/FolderShareDialog.cpp.i
 
-Core/src/handler/FileIOHandler.s: Core/src/handler/FileIOHandler.cpp.s
-.PHONY : Core/src/handler/FileIOHandler.s
+src/FolderShareDialog.s: src/FolderShareDialog.cpp.s
+.PHONY : src/FolderShareDialog.s
 
 # target to generate assembly for a file
-Core/src/handler/FileIOHandler.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FileServer.dir/build.make CMakeFiles/FileServer.dir/Core/src/handler/FileIOHandler.cpp.s
-.PHONY : Core/src/handler/FileIOHandler.cpp.s
+src/FolderShareDialog.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FileClient.dir/build.make CMakeFiles/FileClient.dir/src/FolderShareDialog.cpp.s
+.PHONY : src/FolderShareDialog.cpp.s
 
-Core/src/main.o: Core/src/main.cpp.o
-.PHONY : Core/src/main.o
+src/main.o: src/main.cpp.o
+.PHONY : src/main.o
 
 # target to build an object file
-Core/src/main.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FileServer.dir/build.make CMakeFiles/FileServer.dir/Core/src/main.cpp.o
-.PHONY : Core/src/main.cpp.o
+src/main.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FileClient.dir/build.make CMakeFiles/FileClient.dir/src/main.cpp.o
+.PHONY : src/main.cpp.o
 
-Core/src/main.i: Core/src/main.cpp.i
-.PHONY : Core/src/main.i
+src/main.i: src/main.cpp.i
+.PHONY : src/main.i
 
 # target to preprocess a source file
-Core/src/main.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FileServer.dir/build.make CMakeFiles/FileServer.dir/Core/src/main.cpp.i
-.PHONY : Core/src/main.cpp.i
+src/main.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FileClient.dir/build.make CMakeFiles/FileClient.dir/src/main.cpp.i
+.PHONY : src/main.cpp.i
 
-Core/src/main.s: Core/src/main.cpp.s
-.PHONY : Core/src/main.s
+src/main.s: src/main.cpp.s
+.PHONY : src/main.s
 
 # target to generate assembly for a file
-Core/src/main.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FileServer.dir/build.make CMakeFiles/FileServer.dir/Core/src/main.cpp.s
-.PHONY : Core/src/main.cpp.s
+src/main.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FileClient.dir/build.make CMakeFiles/FileClient.dir/src/main.cpp.s
+.PHONY : src/main.cpp.s
 
-Core/src/monitor/ThreadMonitor.o: Core/src/monitor/ThreadMonitor.cpp.o
-.PHONY : Core/src/monitor/ThreadMonitor.o
+src/mainwindow.o: src/mainwindow.cpp.o
+.PHONY : src/mainwindow.o
 
 # target to build an object file
-Core/src/monitor/ThreadMonitor.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FileServer.dir/build.make CMakeFiles/FileServer.dir/Core/src/monitor/ThreadMonitor.cpp.o
-.PHONY : Core/src/monitor/ThreadMonitor.cpp.o
+src/mainwindow.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FileClient.dir/build.make CMakeFiles/FileClient.dir/src/mainwindow.cpp.o
+.PHONY : src/mainwindow.cpp.o
 
-Core/src/monitor/ThreadMonitor.i: Core/src/monitor/ThreadMonitor.cpp.i
-.PHONY : Core/src/monitor/ThreadMonitor.i
+src/mainwindow.i: src/mainwindow.cpp.i
+.PHONY : src/mainwindow.i
 
 # target to preprocess a source file
-Core/src/monitor/ThreadMonitor.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FileServer.dir/build.make CMakeFiles/FileServer.dir/Core/src/monitor/ThreadMonitor.cpp.i
-.PHONY : Core/src/monitor/ThreadMonitor.cpp.i
+src/mainwindow.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FileClient.dir/build.make CMakeFiles/FileClient.dir/src/mainwindow.cpp.i
+.PHONY : src/mainwindow.cpp.i
 
-Core/src/monitor/ThreadMonitor.s: Core/src/monitor/ThreadMonitor.cpp.s
-.PHONY : Core/src/monitor/ThreadMonitor.s
+src/mainwindow.s: src/mainwindow.cpp.s
+.PHONY : src/mainwindow.s
 
 # target to generate assembly for a file
-Core/src/monitor/ThreadMonitor.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FileServer.dir/build.make CMakeFiles/FileServer.dir/Core/src/monitor/ThreadMonitor.cpp.s
-.PHONY : Core/src/monitor/ThreadMonitor.cpp.s
+src/mainwindow.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FileClient.dir/build.make CMakeFiles/FileClient.dir/src/mainwindow.cpp.s
+.PHONY : src/mainwindow.cpp.s
 
-Core/src/thread/AcceptThread.o: Core/src/thread/AcceptThread.cpp.o
-.PHONY : Core/src/thread/AcceptThread.o
+src/modules/network_manager.o: src/modules/network_manager.cpp.o
+.PHONY : src/modules/network_manager.o
 
 # target to build an object file
-Core/src/thread/AcceptThread.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FileServer.dir/build.make CMakeFiles/FileServer.dir/Core/src/thread/AcceptThread.cpp.o
-.PHONY : Core/src/thread/AcceptThread.cpp.o
+src/modules/network_manager.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FileClient.dir/build.make CMakeFiles/FileClient.dir/src/modules/network_manager.cpp.o
+.PHONY : src/modules/network_manager.cpp.o
 
-Core/src/thread/AcceptThread.i: Core/src/thread/AcceptThread.cpp.i
-.PHONY : Core/src/thread/AcceptThread.i
-
-# target to preprocess a source file
-Core/src/thread/AcceptThread.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FileServer.dir/build.make CMakeFiles/FileServer.dir/Core/src/thread/AcceptThread.cpp.i
-.PHONY : Core/src/thread/AcceptThread.cpp.i
-
-Core/src/thread/AcceptThread.s: Core/src/thread/AcceptThread.cpp.s
-.PHONY : Core/src/thread/AcceptThread.s
-
-# target to generate assembly for a file
-Core/src/thread/AcceptThread.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FileServer.dir/build.make CMakeFiles/FileServer.dir/Core/src/thread/AcceptThread.cpp.s
-.PHONY : Core/src/thread/AcceptThread.cpp.s
-
-Core/src/thread/DedicatedThread.o: Core/src/thread/DedicatedThread.cpp.o
-.PHONY : Core/src/thread/DedicatedThread.o
-
-# target to build an object file
-Core/src/thread/DedicatedThread.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FileServer.dir/build.make CMakeFiles/FileServer.dir/Core/src/thread/DedicatedThread.cpp.o
-.PHONY : Core/src/thread/DedicatedThread.cpp.o
-
-Core/src/thread/DedicatedThread.i: Core/src/thread/DedicatedThread.cpp.i
-.PHONY : Core/src/thread/DedicatedThread.i
+src/modules/network_manager.i: src/modules/network_manager.cpp.i
+.PHONY : src/modules/network_manager.i
 
 # target to preprocess a source file
-Core/src/thread/DedicatedThread.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FileServer.dir/build.make CMakeFiles/FileServer.dir/Core/src/thread/DedicatedThread.cpp.i
-.PHONY : Core/src/thread/DedicatedThread.cpp.i
+src/modules/network_manager.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FileClient.dir/build.make CMakeFiles/FileClient.dir/src/modules/network_manager.cpp.i
+.PHONY : src/modules/network_manager.cpp.i
 
-Core/src/thread/DedicatedThread.s: Core/src/thread/DedicatedThread.cpp.s
-.PHONY : Core/src/thread/DedicatedThread.s
-
-# target to generate assembly for a file
-Core/src/thread/DedicatedThread.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FileServer.dir/build.make CMakeFiles/FileServer.dir/Core/src/thread/DedicatedThread.cpp.s
-.PHONY : Core/src/thread/DedicatedThread.cpp.s
-
-Core/src/thread/WorkerThread.o: Core/src/thread/WorkerThread.cpp.o
-.PHONY : Core/src/thread/WorkerThread.o
-
-# target to build an object file
-Core/src/thread/WorkerThread.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FileServer.dir/build.make CMakeFiles/FileServer.dir/Core/src/thread/WorkerThread.cpp.o
-.PHONY : Core/src/thread/WorkerThread.cpp.o
-
-Core/src/thread/WorkerThread.i: Core/src/thread/WorkerThread.cpp.i
-.PHONY : Core/src/thread/WorkerThread.i
-
-# target to preprocess a source file
-Core/src/thread/WorkerThread.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FileServer.dir/build.make CMakeFiles/FileServer.dir/Core/src/thread/WorkerThread.cpp.i
-.PHONY : Core/src/thread/WorkerThread.cpp.i
-
-Core/src/thread/WorkerThread.s: Core/src/thread/WorkerThread.cpp.s
-.PHONY : Core/src/thread/WorkerThread.s
+src/modules/network_manager.s: src/modules/network_manager.cpp.s
+.PHONY : src/modules/network_manager.s
 
 # target to generate assembly for a file
-Core/src/thread/WorkerThread.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FileServer.dir/build.make CMakeFiles/FileServer.dir/Core/src/thread/WorkerThread.cpp.s
-.PHONY : Core/src/thread/WorkerThread.cpp.s
+src/modules/network_manager.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FileClient.dir/build.make CMakeFiles/FileClient.dir/src/modules/network_manager.cpp.s
+.PHONY : src/modules/network_manager.cpp.s
 
 # Help Target
 help:
@@ -353,34 +283,24 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
-	@echo "... FileServer"
-	@echo "... Core/src/db/DBManager.o"
-	@echo "... Core/src/db/DBManager.i"
-	@echo "... Core/src/db/DBManager.s"
-	@echo "... Core/src/handler/AuthHandler.o"
-	@echo "... Core/src/handler/AuthHandler.i"
-	@echo "... Core/src/handler/AuthHandler.s"
-	@echo "... Core/src/handler/CmdHandler.o"
-	@echo "... Core/src/handler/CmdHandler.i"
-	@echo "... Core/src/handler/CmdHandler.s"
-	@echo "... Core/src/handler/FileIOHandler.o"
-	@echo "... Core/src/handler/FileIOHandler.i"
-	@echo "... Core/src/handler/FileIOHandler.s"
-	@echo "... Core/src/main.o"
-	@echo "... Core/src/main.i"
-	@echo "... Core/src/main.s"
-	@echo "... Core/src/monitor/ThreadMonitor.o"
-	@echo "... Core/src/monitor/ThreadMonitor.i"
-	@echo "... Core/src/monitor/ThreadMonitor.s"
-	@echo "... Core/src/thread/AcceptThread.o"
-	@echo "... Core/src/thread/AcceptThread.i"
-	@echo "... Core/src/thread/AcceptThread.s"
-	@echo "... Core/src/thread/DedicatedThread.o"
-	@echo "... Core/src/thread/DedicatedThread.i"
-	@echo "... Core/src/thread/DedicatedThread.s"
-	@echo "... Core/src/thread/WorkerThread.o"
-	@echo "... Core/src/thread/WorkerThread.i"
-	@echo "... Core/src/thread/WorkerThread.s"
+	@echo "... FileClient_autogen"
+	@echo "... FileClient_autogen_timestamp_deps"
+	@echo "... FileClient"
+	@echo "... FileClient_autogen/mocs_compilation.o"
+	@echo "... FileClient_autogen/mocs_compilation.i"
+	@echo "... FileClient_autogen/mocs_compilation.s"
+	@echo "... src/FolderShareDialog.o"
+	@echo "... src/FolderShareDialog.i"
+	@echo "... src/FolderShareDialog.s"
+	@echo "... src/main.o"
+	@echo "... src/main.i"
+	@echo "... src/main.s"
+	@echo "... src/mainwindow.o"
+	@echo "... src/mainwindow.i"
+	@echo "... src/mainwindow.s"
+	@echo "... src/modules/network_manager.o"
+	@echo "... src/modules/network_manager.i"
+	@echo "... src/modules/network_manager.s"
 .PHONY : help
 
 

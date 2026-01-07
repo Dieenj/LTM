@@ -1,3 +1,4 @@
 {
-    "cmake.sourceDirectory": "C:/Users/Admin/Documents/Lập trình mạng TH/File_Management_App/Client"
+    "cmake.sourceDirectory": "C:/Users/Admin/Documents/LTM/Client",
+    "cmake.ignoreCMakeListsMissing": true
 }

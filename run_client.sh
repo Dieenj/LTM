@@ -1,17 +1,21 @@
-#!/bin/bash
-# Script để chạy Client (yêu cầu môi trường X11)
+#!/usr/bin/env bash
+# Script để build & chạy Client (Qt/X11)
+
+set -e
 
 echo "[Script] Building client..."
-cd "$(dirname "$0")/Client"
-mkdir -p build
-cd build
-cmake .. > /dev/null 2>&1
+
+ROOT_DIR="$(cd "$(dirname "$0")" && pwd)"
+CLIENT_DIR="$ROOT_DIR/Client"
+BUILD_DIR="$CLIENT_DIR/build"
+
+rm -rf "$BUILD_DIR"
+
+mkdir -p "$BUILD_DIR"
+cd "$BUILD_DIR"
+
+cmake "$CLIENT_DIR"
 cmake --build . -j$(nproc)
 
-if [ $? -eq 0 ]; then
-    echo "[Script] Build successful! Starting client..."
-    ./FileClient
-else
-    echo "[Script] Build failed!"
-    exit 1
-fi
+echo "[Script] Build successful! Starting client..."
+./FileClient

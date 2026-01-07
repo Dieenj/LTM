@@ -4,33 +4,47 @@
 #include <QMainWindow>
 #include <QStackedWidget>
 #include <QLineEdit>
+#include <QPushButton>
 #include <QTableWidget>
 #include <QTabWidget>
-#include <QPushButton>
+#include <QLabel>
+#include <QProgressDialog>
+#include <QHBoxLayout>
+#include <QStack>
 #include "network_manager.h"
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = nullptr);
+    explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
 private slots:
     void onConnectBtnClicked();
     void onLoginBtnClicked();
-    void onRefreshClicked(); // Nút làm mới danh sách
-    void onUploadClicked();  // Nút upload file
-    void onDownloadClicked(); // Nút download file
-    void onShareClicked();   // Nút share file
-    void onDeleteClicked();  // Nút xóa file
-    void onLogoutClicked();  // Nút đăng xuất
-    void onTabChanged(int index);  // Chuyển tab
-    
-    // Slots nhận tín hiệu từ NetworkManager
+    void onRegisterBtnClicked();
     void handleLoginSuccess();
+    void handleRegisterSuccess(QString msg);
+    void handleRegisterFailed(QString msg);
+
+    void onRefreshClicked();
+    void onUploadClicked();
+    void onDownloadClicked();
+    void onShareClicked();
+    void onDeleteClicked();
+    void onLogoutClicked();
+    void onTabChanged(int index);
+    
+    void showContextMenu(const QPoint &pos);
+    void onFolderDoubleClicked(int row, int column);
+    void onBackButtonClicked();
+    void onBreadcrumbClicked();
+
     void handleFileList(QString data);
+    void handleUploadStarted(QString filename);
     void handleUploadProgress(QString msg);
+    void handleDownloadStarted(QString filename);
     void handleDownloadComplete(QString filename);
     void handleShareResult(bool success, QString msg);
     void handleDeleteResult(bool success, QString msg);
@@ -41,18 +55,29 @@ private:
     QWidget* createLoginPage();
     QWidget* createDashboardPage();
 
-    NetworkManager *netManager;
     QStackedWidget *stackedWidget;
     
-    // UI Elements Login
     QLineEdit *hostInput;
     QLineEdit *userInput;
     QLineEdit *passInput;
     
-    // UI Elements Dashboard
     QTabWidget *tabWidget;
-    QTableWidget *fileTable;        // My Files
-    QTableWidget *sharedFileTable;  // Shared Files
+    QTableWidget *fileTable;
+    QTableWidget *sharedFileTable;
+    QPushButton *backButton;
+    QLabel *pathLabel;
+    QHBoxLayout *breadcrumbLayout;
+    
+    long long currentFolderId;
+    QString currentFolderPath;
+    QString currentUsername;
+    
+    QStack<long long> folderHistory;
+    
+    NetworkManager *netManager;
+    
+    QProgressDialog *uploadProgressDialog;
+    QProgressDialog *downloadProgressDialog;
 };
 
-#endif // MAINWINDOW_H
+#endif
