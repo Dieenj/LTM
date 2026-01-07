@@ -1,3 +1,4 @@
 {
-    "cmake.sourceDirectory": "/mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Client"
+    "cmake.sourceDirectory": "C:/Users/Admin/Documents/LTM/Client",
+    "cmake.ignoreCMakeListsMissing": true
 }

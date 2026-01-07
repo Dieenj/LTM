@@ -8,24 +8,30 @@
 #include <QFileDialog>
 #include <QInputDialog>
 #include <QMenu>
+#include <QCoreApplication>
+#include <QTimer>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     netManager = new NetworkManager(this);
-    currentFolderId = 0;  // Start at root
+    currentFolderId = 0;
     currentFolderPath = "/";
+    uploadProgressDialog = nullptr;
+    downloadProgressDialog = nullptr;
     setupUI();
-
-    // Kết nối các tín hiệu logic mạng với giao diện
     connect(netManager, &NetworkManager::loginSuccess, this, &MainWindow::handleLoginSuccess);
     connect(netManager, &NetworkManager::loginFailed, this, [this](QString msg){
         QMessageBox::critical(this, "Login Error", msg);
     });
+    connect(netManager, &NetworkManager::registerSuccess, this, &MainWindow::handleRegisterSuccess);
+    connect(netManager, &NetworkManager::registerFailed, this, &MainWindow::handleRegisterFailed);
     connect(netManager, &NetworkManager::fileListReceived, this, &MainWindow::handleFileList);
     connect(netManager, &NetworkManager::connectionStatus, this, [this](bool success, QString msg){
         if(success) QMessageBox::information(this, "Network", msg);
         else QMessageBox::warning(this, "Network", msg);
     });
+    connect(netManager, &NetworkManager::uploadStarted, this, &MainWindow::handleUploadStarted);
     connect(netManager, &NetworkManager::uploadProgress, this, &MainWindow::handleUploadProgress);
+    connect(netManager, &NetworkManager::downloadStarted, this, &MainWindow::handleDownloadStarted);
     connect(netManager, &NetworkManager::downloadComplete, this, &MainWindow::handleDownloadComplete);
     connect(netManager, &NetworkManager::shareResult, this, &MainWindow::handleShareResult);
     connect(netManager, &NetworkManager::deleteResult, this, &MainWindow::handleDeleteResult);
@@ -36,8 +42,8 @@ MainWindow::~MainWindow() {}
 
 void MainWindow::setupUI() {
     stackedWidget = new QStackedWidget(this);
-    stackedWidget->addWidget(createLoginPage());     // Index 0
-    stackedWidget->addWidget(createDashboardPage()); // Index 1
+    stackedWidget->addWidget(createLoginPage());
+    stackedWidget->addWidget(createDashboardPage());
     setCentralWidget(stackedWidget);
     resize(800, 500);
 }
@@ -51,28 +57,30 @@ QWidget* MainWindow::createLoginPage() {
     passInput = new QLineEdit; passInput->setPlaceholderText("Password");
     passInput->setEchoMode(QLineEdit::Password);
     
-    QPushButton *btnConnect = new QPushButton("1. Connect Server");
-    QPushButton *btnLogin = new QPushButton("2. Login");
+    QPushButton *btnConnect = new QPushButton("Connect Server");
+    QPushButton *btnLogin = new QPushButton("Login");
+    QPushButton *btnRegister = new QPushButton("Register New Account");
 
     l->addWidget(new QLabel("Server IP:"));
     l->addWidget(hostInput);
     l->addWidget(btnConnect);
     l->addSpacing(20);
+    l->addWidget(new QLabel("<b>Login or Register:</b>"));
     l->addWidget(userInput);
     l->addWidget(passInput);
     l->addWidget(btnLogin);
+    l->addWidget(btnRegister);
     l->addStretch();
 
     connect(btnConnect, &QPushButton::clicked, this, &MainWindow::onConnectBtnClicked);
     connect(btnLogin, &QPushButton::clicked, this, &MainWindow::onLoginBtnClicked);
+    connect(btnRegister, &QPushButton::clicked, this, &MainWindow::onRegisterBtnClicked);
     return p;
 }
 
 QWidget* MainWindow::createDashboardPage() {
     QWidget *p = new QWidget;
     QVBoxLayout *l = new QVBoxLayout(p);
-
-    // Top bar với nút Logout
     QHBoxLayout *topBar = new QHBoxLayout;
     QLabel *welcomeLabel = new QLabel("File Management Dashboard");
     QPushButton *btnLogout = new QPushButton("Logout");
@@ -80,12 +88,10 @@ QWidget* MainWindow::createDashboardPage() {
     topBar->addWidget(welcomeLabel);
     topBar->addStretch();
     topBar->addWidget(btnLogout);
-
-    // Buttons row
     QHBoxLayout *btnLayout = new QHBoxLayout;
     QPushButton *btnRefresh = new QPushButton("Refresh");
-    QPushButton *btnUpload = new QPushButton("Upload File");
-    QPushButton *btnDownload = new QPushButton("Download Selected");
+    QPushButton *btnUpload = new QPushButton("Upload");
+    QPushButton *btnDownload = new QPushButton("Download");
     QPushButton *btnShare = new QPushButton("Share");
     QPushButton *btnDelete = new QPushButton("Delete File");
     
@@ -95,56 +101,47 @@ QWidget* MainWindow::createDashboardPage() {
     btnLayout->addWidget(btnShare);
     btnLayout->addWidget(btnDelete);
     btnLayout->addStretch();
-    
-    // Navigation bar (back button and path)
     QHBoxLayout *navLayout = new QHBoxLayout;
     backButton = new QPushButton("← Back");
     backButton->setMaximumWidth(80);
-    backButton->setEnabled(false);  // Disabled at root
-    pathLabel = new QLabel("Current Path: /");
-    pathLabel->setStyleSheet("font-weight: bold; padding: 5px;");
+    backButton->setEnabled(false);
+    
+    pathLabel = new QLabel("Home/");
+    pathLabel->setStyleSheet(
+        "QLabel { font-weight: bold; color: #2c3e50; padding: 5px 10px; background-color: #f5f5f5; border: 1px solid #ddd; border-radius: 4px; }"
+    );
+    
+    breadcrumbLayout = new QHBoxLayout;
+    breadcrumbLayout->addWidget(pathLabel);
+    breadcrumbLayout->setSpacing(0);
+    breadcrumbLayout->setContentsMargins(0, 0, 0, 0);
+    
     navLayout->addWidget(backButton);
-    navLayout->addWidget(pathLabel);
+    navLayout->addLayout(breadcrumbLayout, 1);
     navLayout->addStretch();
-    
-    // Tạo TabWidget với 2 tabs
     tabWidget = new QTabWidget;
-    
-    // Tab 1: My Files
     fileTable = new QTableWidget;
     fileTable->setColumnCount(6);
     fileTable->setHorizontalHeaderLabels({"Filename", "Type", "Size", "Owner", "ID", "Hidden_Type"});
     fileTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     fileTable->setSelectionBehavior(QTableWidget::SelectRows);
-    
-    // Hide ID and Hidden_Type columns
+    fileTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
     fileTable->setColumnHidden(4, true);
     fileTable->setColumnHidden(5, true);
-    
-    // Enable double-click to navigate into folders
     connect(fileTable, &QTableWidget::cellDoubleClicked, this, &MainWindow::onFolderDoubleClicked);
-    
-    // Enable context menu cho fileTable
     fileTable->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(fileTable, &QTableWidget::customContextMenuRequested, 
             this, &MainWindow::showContextMenu);
     
-    // Tab 2: Shared Files
     sharedFileTable = new QTableWidget;
-    sharedFileTable->setColumnCount(6); // Add 2 hidden columns: ID and Hidden_Type
+    sharedFileTable->setColumnCount(6);
     sharedFileTable->setHorizontalHeaderLabels({"Filename", "Type", "Size", "Shared By", "ID", "Hidden_Type"});
     sharedFileTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     sharedFileTable->setSelectionBehavior(QTableWidget::SelectRows);
-    sharedFileTable->setEditTriggers(QAbstractItemView::NoEditTriggers); // Disable editing
-    
-    // Hide ID and Hidden_Type columns
+    sharedFileTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
     sharedFileTable->setColumnHidden(4, true);
     sharedFileTable->setColumnHidden(5, true);
-    
-    // Enable double-click to navigate into shared folders
     connect(sharedFileTable, &QTableWidget::cellDoubleClicked, this, &MainWindow::onFolderDoubleClicked);
-    
-    // Enable context menu for sharedFileTable
     sharedFileTable->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(sharedFileTable, &QTableWidget::customContextMenuRequested, 
             this, &MainWindow::showContextMenu);
@@ -169,8 +166,6 @@ QWidget* MainWindow::createDashboardPage() {
     return p;
 }
 
-// --- Logic UI ---
-
 void MainWindow::onConnectBtnClicked() {
     netManager->connectToServer(hostInput->text(), 8080);
 }
@@ -179,72 +174,93 @@ void MainWindow::onLoginBtnClicked() {
     netManager->login(userInput->text(), passInput->text());
 }
 
+void MainWindow::onRegisterBtnClicked() {
+    QString username = userInput->text().trimmed();
+    QString password = passInput->text().trimmed();
+    
+    if (username.isEmpty() || password.isEmpty()) {
+        QMessageBox::warning(this, "Register", "Please enter both username and password!");
+        return;
+    }
+    
+    if (username.length() < 3) {
+        QMessageBox::warning(this, "Register", "Username must be at least 3 characters!");
+        return;
+    }
+    
+    if (password.length() < 4) {
+        QMessageBox::warning(this, "Register", "Password must be at least 4 characters!");
+        return;
+    }
+    
+    QMessageBox::StandardButton reply;
+    reply = QMessageBox::question(this, "Confirm Registration", 
+                                  QString("Register new account with username: %1?").arg(username),
+                                  QMessageBox::Yes | QMessageBox::No);
+    
+    if (reply == QMessageBox::Yes) {
+        netManager->registerAccount(username, password);
+    }
+}
+
+void MainWindow::handleRegisterSuccess(QString msg) {
+    QMessageBox::information(this, "Registration Success", 
+                            msg + "\n\nYou can now login with your credentials.");
+    passInput->clear();
+}
+
+void MainWindow::handleRegisterFailed(QString msg) {
+    QMessageBox::critical(this, "Registration Failed", msg);
+}
+
 void MainWindow::handleLoginSuccess() {
+    currentUsername = userInput->text();
     stackedWidget->setCurrentIndex(1);
     netManager->requestFileList();
 }
 
 void MainWindow::onRefreshClicked() {
-    // Refresh tab hiện tại
     onTabChanged(tabWidget->currentIndex());
 }
 
 void MainWindow::onTabChanged(int index) {
-    qDebug() << "[MainWindow] Tab changed to:" << index;
-    
-    // Reset navigation state
     currentFolderId = 0;
     currentFolderPath = "/";
-    pathLabel->setText("Current Path: /");
+    folderHistory.clear();
+    
+    if (index == 0) {
+        pathLabel->setText("Home/");
+    } else {
+        pathLabel->setText("Shared/");
+    }
+    
     backButton->setEnabled(false);
     
     if (index == 0) {
-        qDebug() << "[MainWindow] Requesting My Files list";
         netManager->requestFileList(0);
     } else if (index == 1) {
-        qDebug() << "[MainWindow] Requesting Shared Files list";
         netManager->requestSharedFileList(-1);
     }
 }
 
 void MainWindow::handleFileList(QString data) {
-    // Debug: In ra data nhận được
-    qDebug() << "[MainWindow] handleFileList called";
-    qDebug() << "[MainWindow] Raw data length:" << data.length();
-    qDebug() << "[MainWindow] Raw data:" << data;
-    
-    // Xác định table nào cần update
     QTableWidget* targetTable = (tabWidget->currentIndex() == 0) ? fileTable : sharedFileTable;
-    
-    // Xóa dữ liệu cũ
     targetTable->setRowCount(0);
     
-    // Check empty
     if (data.isEmpty()) {
-        qDebug() << "[MainWindow] Empty file list received";
         return;
     }
     
-    // Split thành các dòng
     QStringList rows = data.split('\n', Qt::SkipEmptyParts);
-    qDebug() << "[MainWindow] Number of rows after split:" << rows.size();
     
-    // Parse từng dòng
-    int successCount = 0;
     for (int i = 0; i < rows.size(); i++) {
         const QString &line = rows[i].trimmed();
         
-        qDebug() << "[MainWindow] Processing row" << i << ":" << line;
-        
-        // Skip empty lines
         if (line.isEmpty()) {
-            qDebug() << "[MainWindow] Skipping empty line";
             continue;
         }
         
-        // Split by |
         QStringList cols = line.split('|');
-        qDebug() << "[MainWindow] Columns found:" << cols.size();
         
         if (cols.size() >= 5) {
             int row = targetTable->rowCount();
@@ -253,60 +269,38 @@ void MainWindow::handleFileList(QString data) {
             QString type = cols[1].trimmed();
             QString sizeStr = cols[2].trimmed();
             
-            // Format size for display
             QString displaySize;
-            if (type == "Folder") {
-                // For folders, show total size of contents
-                long long bytes = sizeStr.toLongLong();
-                if (bytes == 0) {
-                    displaySize = "Empty";
-                } else if (bytes < 1024) {
-                    displaySize = QString::number(bytes) + " B";
-                } else if (bytes < 1024 * 1024) {
-                    displaySize = QString::number(bytes / 1024.0, 'f', 1) + " KB";
-                } else if (bytes < 1024 * 1024 * 1024) {
-                    displaySize = QString::number(bytes / (1024.0 * 1024.0), 'f', 1) + " MB";
-                } else {
-                    displaySize = QString::number(bytes / (1024.0 * 1024.0 * 1024.0), 'f', 2) + " GB";
-                }
+            long long bytes = sizeStr.toLongLong();
+            
+            if (type == "Folder" && bytes == 0) {
+                displaySize = "Empty";
+            } else if (bytes < 1024) {
+                displaySize = QString::number(bytes) + " B";
+            } else if (bytes < 1024 * 1024) {
+                displaySize = QString::number(bytes / 1024.0, 'f', 1) + " KB";
+            } else if (bytes < 1024 * 1024 * 1024) {
+                displaySize = QString::number(bytes / (1024.0 * 1024.0), 'f', 1) + " MB";
             } else {
-                // For files, just show size
-                displaySize = sizeStr;
+                displaySize = QString::number(bytes / (1024.0 * 1024.0 * 1024.0), 'f', 2) + " GB";
             }
             
-            // Check which table we're updating
             if (targetTable == fileTable) {
-                // My Files table: Name|Type|Size|Owner|ID|Hidden_Type
-                targetTable->setItem(row, 0, new QTableWidgetItem(cols[0].trimmed())); // Filename
-                targetTable->setItem(row, 1, new QTableWidgetItem(type)); // Type (File/Folder)
-                targetTable->setItem(row, 2, new QTableWidgetItem(displaySize)); // Size
-                targetTable->setItem(row, 3, new QTableWidgetItem(cols[3].trimmed())); // Owner
-                targetTable->setItem(row, 4, new QTableWidgetItem(cols[4].trimmed())); // file_id (hidden)
-                targetTable->setItem(row, 5, new QTableWidgetItem(type)); // Type copy for easy access
-                qDebug() << "[MyFiles] Row" << row << ":" << cols[0] << "|" << type << "|" << displaySize << "|" << cols[3];
+                targetTable->setItem(row, 0, new QTableWidgetItem(cols[0].trimmed()));
+                targetTable->setItem(row, 1, new QTableWidgetItem(type));
+                targetTable->setItem(row, 2, new QTableWidgetItem(displaySize));
+                targetTable->setItem(row, 3, new QTableWidgetItem(cols[3].trimmed()));
+                targetTable->setItem(row, 4, new QTableWidgetItem(cols[4].trimmed()));
+                targetTable->setItem(row, 5, new QTableWidgetItem(type));
             } else {
-                // Shared Files table: Filename|Type|Size|Shared By|ID|Hidden_Type
-                // Data format from server: Name|Type|Size|Owner|file_id
-                targetTable->setItem(row, 0, new QTableWidgetItem(cols[0].trimmed())); // Filename
-                targetTable->setItem(row, 1, new QTableWidgetItem(type)); // Type (File/Folder)
-                targetTable->setItem(row, 2, new QTableWidgetItem(displaySize)); // Size
-                targetTable->setItem(row, 3, new QTableWidgetItem(cols[3].trimmed())); // Shared By (Owner)
-                targetTable->setItem(row, 4, new QTableWidgetItem(cols[4].trimmed())); // file_id (hidden)
-                targetTable->setItem(row, 5, new QTableWidgetItem(type)); // Type copy for easy access
-                qDebug() << "[SharedFiles] Row" << row << ":" << cols[0] << "|" << type << "|" << displaySize << "|" << cols[3] << "|" << cols[4];
+                targetTable->setItem(row, 0, new QTableWidgetItem(cols[0].trimmed()));
+                targetTable->setItem(row, 1, new QTableWidgetItem(type));
+                targetTable->setItem(row, 2, new QTableWidgetItem(displaySize));
+                targetTable->setItem(row, 3, new QTableWidgetItem(cols[3].trimmed()));
+                targetTable->setItem(row, 4, new QTableWidgetItem(cols[4].trimmed()));
+                targetTable->setItem(row, 5, new QTableWidgetItem(type));
             }
-            
-            successCount++;
-            qDebug() << "[MainWindow] Added row" << row << ":" 
-                     << cols[0] << "|" << type << "|" << displaySize << "|" << cols[3] << "|" << cols[4];
-        } else {
-            qDebug() << "[MainWindow] WARNING: Row has insufficient columns:" << line;
-            qDebug() << "[MainWindow] Columns:" << cols;
         }
     }
-    
-    qDebug() << "[MainWindow] Successfully added" << successCount << "files to table";
-    qDebug() << "[MainWindow] Final table row count:" << targetTable->rowCount();
 }
 
 void MainWindow::onUploadClicked() {
@@ -317,7 +311,6 @@ void MainWindow::onUploadClicked() {
 }
 
 void MainWindow::onDownloadClicked() {
-    // Lấy table hiện tại dựa vào tab
     QTableWidget* currentTable = (tabWidget->currentIndex() == 0) ? fileTable : sharedFileTable;
     
     int row = currentTable->currentRow();
@@ -328,7 +321,12 @@ void MainWindow::onDownloadClicked() {
     
     QString filename = currentTable->item(row, 0)->text();
     
-    // Cho phép người dùng chọn nơi lưu file
+    QString itemType = currentTable->item(row, 5)->text();
+    if (itemType == "Folder") {
+        QMessageBox::warning(this, "Download", "Cannot download folders!\nPlease select a file.");
+        return;
+    }
+    
     QString savePath = QFileDialog::getSaveFileName(this, 
                                                      "Save File As",
                                                      QDir::homePath() + "/Downloads/" + filename,
@@ -339,16 +337,59 @@ void MainWindow::onDownloadClicked() {
     }
 }
 
+void MainWindow::handleUploadStarted(QString filename) {
+    if (uploadProgressDialog) {
+        delete uploadProgressDialog;
+    }
+    
+    uploadProgressDialog = new QProgressDialog("Uploading: " + filename, QString(), 0, 100, this);
+    uploadProgressDialog->setWindowModality(Qt::WindowModal);
+    uploadProgressDialog->setMinimumDuration(0);
+    uploadProgressDialog->setCancelButton(nullptr);
+    uploadProgressDialog->setValue(0);
+    uploadProgressDialog->show();
+    uploadProgressDialog->raise();
+    uploadProgressDialog->activateWindow();
+    QCoreApplication::processEvents();
+}
+
 void MainWindow::handleUploadProgress(QString msg) {
+    if (uploadProgressDialog) {
+        uploadProgressDialog->close();
+        delete uploadProgressDialog;
+        uploadProgressDialog = nullptr;
+    }
+    
     QMessageBox::information(this, "Upload", msg);
 }
 
+void MainWindow::handleDownloadStarted(QString filename) {
+    if (downloadProgressDialog) {
+        delete downloadProgressDialog;
+    }
+    
+    downloadProgressDialog = new QProgressDialog("Downloading: " + filename, QString(), 0, 100, this);
+    downloadProgressDialog->setWindowModality(Qt::WindowModal);
+    downloadProgressDialog->setMinimumDuration(0);
+    downloadProgressDialog->setCancelButton(nullptr);
+    downloadProgressDialog->setValue(0);
+    downloadProgressDialog->show();
+    downloadProgressDialog->raise();
+    downloadProgressDialog->activateWindow();
+    QCoreApplication::processEvents();
+}
+
 void MainWindow::handleDownloadComplete(QString filename) {
-    QMessageBox::information(this, "Download", "File saved: " + filename);
+    if (downloadProgressDialog) {
+        downloadProgressDialog->close();
+        delete downloadProgressDialog;
+        downloadProgressDialog = nullptr;
+    }
+    
+    QMessageBox::information(this, "Download", filename);
 }
 
 void MainWindow::onShareClicked() {
-    // Chỉ share được từ "My Files" tab
     if (tabWidget->currentIndex() != 0) {
         QMessageBox::warning(this, "Share", "You can only share from 'My Files' tab!");
         return;
@@ -361,8 +402,8 @@ void MainWindow::onShareClicked() {
     }
     
     QTableWidgetItem *nameItem = fileTable->item(row, 0);
-    QTableWidgetItem *typeItem = fileTable->item(row, 5);  // Hidden Type column
-    QTableWidgetItem *idItem = fileTable->item(row, 4);    // Hidden ID column
+    QTableWidgetItem *typeItem = fileTable->item(row, 5);
+    QTableWidgetItem *idItem = fileTable->item(row, 4);
     
     if (!nameItem || !typeItem) {
         QMessageBox::warning(this, "Share", "Invalid selection!");
@@ -373,7 +414,6 @@ void MainWindow::onShareClicked() {
     QString itemType = typeItem->text();
     bool isFolder = (itemType == "Folder");
     
-    // Get target username
     bool ok;
     QString targetUser = QInputDialog::getText(this, "Share " + itemType,
                                               QString("Share %1 '%2' with username:")
@@ -383,7 +423,6 @@ void MainWindow::onShareClicked() {
         return;
     }
     
-    // Confirm share action
     QMessageBox::StandardButton reply;
     reply = QMessageBox::question(this, "Confirm Share",
                                   QString("Share %1 '%2' with user '%3'?")
@@ -394,7 +433,6 @@ void MainWindow::onShareClicked() {
         return;
     }
     
-    // Send share request based on type
     if (isFolder) {
         if (!idItem) {
             QMessageBox::warning(this, "Share Folder", "Invalid folder data!");
@@ -420,7 +458,6 @@ void MainWindow::handleShareResult(bool success, QString msg) {
 }
 
 void MainWindow::onDeleteClicked() {
-    // Chỉ xóa được file trong "My Files"
     if (tabWidget->currentIndex() != 0) {
         QMessageBox::warning(this, "Delete", "You can only delete files from 'My Files' tab!");
         return;
@@ -434,7 +471,6 @@ void MainWindow::onDeleteClicked() {
     
     QString filename = fileTable->item(row, 0)->text();
     
-    // Xác nhận xóa
     auto reply = QMessageBox::question(this, "Delete File",
                                        "Are you sure you want to delete \"" + filename + "\"?",
                                        QMessageBox::Yes | QMessageBox::No);
@@ -446,7 +482,6 @@ void MainWindow::onDeleteClicked() {
 void MainWindow::handleDeleteResult(bool success, QString msg) {
     if (success) {
         QMessageBox::information(this, "Delete", msg);
-        // Refresh danh sách sau khi xóa
         netManager->requestFileList();
     } else {
         QMessageBox::warning(this, "Delete", msg);
@@ -463,24 +498,19 @@ void MainWindow::onLogoutClicked() {
 }
 
 void MainWindow::handleLogout() {
-    // Xóa dữ liệu cả 2 bảng
     fileTable->setRowCount(0);
     sharedFileTable->setRowCount(0);
     
-    // Chuyển về tab đầu tiên
     tabWidget->setCurrentIndex(0);
     
-    // Chuyển về trang Login
     stackedWidget->setCurrentIndex(0);
     
-    // Xóa mật khẩu (tùy chọn bảo mật)
     passInput->clear();
     
     QMessageBox::information(this, "Logout", "You have been logged out successfully.");
 }
 
 void MainWindow::showContextMenu(const QPoint &pos) {
-    // Determine which table triggered this event
     QTableWidget* sourceTable = qobject_cast<QTableWidget*>(sender());
     if (!sourceTable) return;
     
@@ -490,12 +520,10 @@ void MainWindow::showContextMenu(const QPoint &pos) {
     
     menu.addSeparator();
     
-    // If a row is selected, show file/folder specific actions
     if (row >= 0) {
         QAction *downloadAction = menu.addAction("Download");
         connect(downloadAction, &QAction::triggered, this, &MainWindow::onDownloadClicked);
         
-        // Only show Share and Delete for "My Files" tab
         if (sourceTable == fileTable) {
             menu.addSeparator();
             QAction *shareAction = menu.addAction("Share");
@@ -512,87 +540,99 @@ void MainWindow::showContextMenu(const QPoint &pos) {
 void MainWindow::onFolderDoubleClicked(int row, int column) {
     Q_UNUSED(column);
     
-    // Determine which table triggered this event
     QTableWidget* sourceTable = qobject_cast<QTableWidget*>(sender());
     if (!sourceTable) return;
     
-    // Check if it's a folder
-    QTableWidgetItem *typeItem = sourceTable->item(row, 5); // Hidden Type column
-    QTableWidgetItem *idItem = sourceTable->item(row, 4);   // Hidden ID column
-    QTableWidgetItem *nameItem = sourceTable->item(row, 0); // Name column
+    QTableWidgetItem *typeItem = sourceTable->item(row, 5);
+    QTableWidgetItem *idItem = sourceTable->item(row, 4);
+    QTableWidgetItem *nameItem = sourceTable->item(row, 0);
     
     if (!typeItem || !idItem || !nameItem) return;
     
     QString itemType = typeItem->text();
     if (itemType != "Folder") {
-        return; // Not a folder, do nothing
+        return;
     }
     
     long long folderId = idItem->text().toLongLong();
     QString folderName = nameItem->text();
     
-    // Navigate into folder
+    // Push current folder to history before navigating
+    folderHistory.push(currentFolderId);
+    
     currentFolderId = folderId;
     
-    // Update path
     if (currentFolderPath == "/") {
         currentFolderPath = "/" + folderName;
     } else {
         currentFolderPath += "/" + folderName;
     }
     
-    pathLabel->setText("Current Path: " + currentFolderPath);
+    // Update path display based on current tab
+    QString prefix = (sourceTable == fileTable) ? "Home/" : "Shared/";
+    QString displayPath = prefix + currentFolderPath.mid(1);
+    pathLabel->setText(displayPath);
+    pathLabel->show();
+    
     backButton->setEnabled(true);
     
-    // Request folder contents based on current tab
     if (sourceTable == fileTable) {
-        // My Files tab
         qDebug() << "[MainWindow] Navigating into My Files folder:" << folderId;
         netManager->requestFileList(folderId);
     } else if (sourceTable == sharedFileTable) {
-        // Shared Files tab
         qDebug() << "[MainWindow] Navigating into Shared folder:" << folderId;
         netManager->requestSharedFileList(folderId);
     }
 }
 
 void MainWindow::onBackButtonClicked() {
-    // Parse current path to determine parent
     QStringList pathParts = currentFolderPath.split('/', Qt::SkipEmptyParts);
     
     if (pathParts.isEmpty()) {
-        // Already at root
         return;
     }
     
-    // Remove last folder from path
     pathParts.removeLast();
     
+    // Determine prefix based on current tab
+    QString prefix = (tabWidget->currentIndex() == 0) ? "Home/" : "Shared/";
+    
     if (pathParts.isEmpty()) {
-        // Going back to root
-        currentFolderId = 0; // Root for My Files
         currentFolderPath = "/";
         backButton->setEnabled(false);
+        pathLabel->setText(prefix);
+        
+        // Pop from history to get parent folder ID
+        if (!folderHistory.isEmpty()) {
+            currentFolderId = folderHistory.pop();
+        } else {
+            currentFolderId = 0;
+        }
     } else {
-        // Going back to parent folder
-        // NOTE: We need to track folder IDs in a stack for proper navigation
-        // For now, we'll go back to root
-        currentFolderId = 0;
-        currentFolderPath = "/";
-        backButton->setEnabled(false);
+        currentFolderPath = "/" + pathParts.join("/");
+        QString displayPath = prefix + currentFolderPath.mid(1);
+        pathLabel->setText(displayPath);
+        backButton->setEnabled(true);
+        
+        // Pop from history to get parent folder ID
+        if (!folderHistory.isEmpty()) {
+            currentFolderId = folderHistory.pop();
+        } else {
+            currentFolderId = 0;
+        }
     }
+    pathLabel->show();
     
-    pathLabel->setText("Current Path: " + currentFolderPath);
-    
-    // Request parent folder contents based on current tab
     if (tabWidget->currentIndex() == 0) {
-        // My Files tab
         qDebug() << "[MainWindow] Going back in My Files to:" << currentFolderId;
         netManager->requestFileList(currentFolderId);
     } else {
-        // Shared Files tab
         qDebug() << "[MainWindow] Going back in Shared Files to root";
-        currentFolderId = -1; // Reset to root for shared
+        currentFolderId = -1;
         netManager->requestSharedFileList(-1);
     }
+}
+
+void MainWindow::onBreadcrumbClicked() {
+    // Not used anymore
 }

@@ -6,7 +6,6 @@
 #include <thread>
 #include <csignal>
 
-// Global acceptor pointer để có thể stop từ signal handler
 AcceptorThread* globalAcceptor = nullptr;
 
 void signalHandler(int signum) {
@@ -19,18 +18,14 @@ void signalHandler(int signum) {
 }
 
 int main() {
-    // Setup signal handlers
     signal(SIGINT, signalHandler);
     signal(SIGTERM, signalHandler);
     
-    // 0. Khởi động Thread Monitor
     ThreadMonitor::getInstance().start();
     std::cout << "[Main] ThreadMonitor started" << std::endl;
     
-    // 1. Kết nối Database
     if (!DBManager::getInstance().connect()) return -1;
 
-    // 2. Khởi tạo Acceptor Thread với Worker Pool
     AcceptorThread acceptor(ServerConfig::SERVER_PORT);
     globalAcceptor = &acceptor;
     

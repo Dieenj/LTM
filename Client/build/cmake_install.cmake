@@ -1,4 +1,4 @@
-# Install script for directory: /mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Client
+# Install script for directory: /mnt/c/Users/Admin/Documents/LTM/Client
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -50,5 +50,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/mnt/c/Users/Admin/Documents/THLTM/Project_thuc_hanh_lap_trinh_mang/Client/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/mnt/c/Users/Admin/Documents/LTM/Client/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

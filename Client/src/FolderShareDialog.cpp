@@ -22,7 +22,6 @@ FolderShareDialog::FolderShareDialog(long long folderId,
 {
     setupUI();
     
-    // Connect signals
     connect(m_netManager, &NetworkManager::folderStructureReceived,
             this, &FolderShareDialog::onFolderStructureReceived);
     connect(m_netManager, &NetworkManager::folderShareInitiated,
@@ -36,7 +35,6 @@ FolderShareDialog::FolderShareDialog(long long folderId,
     connect(m_netManager, &NetworkManager::folderShareProgress,
             this, &FolderShareDialog::onProgressUpdated);
     
-    // Load folder structure
     loadFolderPreview();
 }
 
@@ -52,13 +50,11 @@ void FolderShareDialog::setupUI() {
     
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
     
-    // Title
     m_titleLabel = new QLabel(QString("Share folder '%1' with user '%2'")
                               .arg(m_folderName, m_targetUser));
     m_titleLabel->setStyleSheet("font-size: 14px; font-weight: bold; padding: 10px;");
     mainLayout->addWidget(m_titleLabel);
     
-    // Tree view for folder structure
     m_previewTree = new QTreeWidget();
     m_previewTree->setHeaderLabels({"Name", "Type", "Size"});
     m_previewTree->setColumnWidth(0, 300);
@@ -67,24 +63,20 @@ void FolderShareDialog::setupUI() {
     m_previewTree->setSelectionMode(QAbstractItemView::NoSelection);
     mainLayout->addWidget(m_previewTree);
     
-    // Stats label
     m_statsLabel = new QLabel("Loading folder structure...");
     m_statsLabel->setStyleSheet("color: #666; padding: 10px;");
     mainLayout->addWidget(m_statsLabel);
     
-    // Progress bar
     m_progressBar = new QProgressBar();
     m_progressBar->setVisible(false);
     m_progressBar->setTextVisible(true);
     mainLayout->addWidget(m_progressBar);
     
-    // Status label
     m_statusLabel = new QLabel();
     m_statusLabel->setVisible(false);
     m_statusLabel->setStyleSheet("color: #0066cc; padding: 5px;");
     mainLayout->addWidget(m_statusLabel);
     
-    // Buttons
     QHBoxLayout *buttonLayout = new QHBoxLayout();
     buttonLayout->addStretch();
     
@@ -118,10 +110,8 @@ void FolderShareDialog::onFolderStructureReceived(long long folder_id, QList<Fil
     
     m_previewTree->clear();
     
-    // Build tree structure
     QMap<long long, QTreeWidgetItem*> itemMap;
     
-    // Root item
     QTreeWidgetItem *rootItem = new QTreeWidgetItem();
     rootItem->setText(0, m_folderName);
     rootItem->setText(1, "Folder");
@@ -129,12 +119,10 @@ void FolderShareDialog::onFolderStructureReceived(long long folder_id, QList<Fil
     m_previewTree->addTopLevelItem(rootItem);
     itemMap[m_folderId] = rootItem;
     
-    // Count stats
     int fileCount = 0;
     int folderCount = 0;
     m_totalSize = 0;
     
-    // Build tree
     for (const FileNodeInfo &item : structure) {
         QTreeWidgetItem *treeItem = new QTreeWidgetItem();
         treeItem->setText(0, item.name);
@@ -150,7 +138,6 @@ void FolderShareDialog::onFolderStructureReceived(long long folder_id, QList<Fil
             m_totalSize += item.size;
         }
         
-        // Find parent and add
         if (itemMap.contains(item.parent_id)) {
             itemMap[item.parent_id]->addChild(treeItem);
         } else {
@@ -160,7 +147,6 @@ void FolderShareDialog::onFolderStructureReceived(long long folder_id, QList<Fil
         itemMap[item.file_id] = treeItem;
     }
     
-    // Update stats
     m_statsLabel->setText(QString("📁 %1 folders  |  📄 %2 files  |  💾 %3")
                           .arg(folderCount)
                           .arg(fileCount)
@@ -183,7 +169,6 @@ void FolderShareDialog::startUpload() {
     
     m_uploadInProgress = true;
     
-    // Request share from server
     m_netManager->shareFolderRequest(m_folderId, m_targetUser);
 }
 
@@ -197,22 +182,13 @@ void FolderShareDialog::onShareInitiated(const QString &session_id,
     
     m_statusLabel->setText(QString("Session created. Uploading %1 files...").arg(total_files));
     
-    // NOTE: Bạn cần lưu local folder path
-    // Có thể hỏi user chọn folder trước khi share
-    // Hoặc assume folder đã được download về máy client
-    
-    // Giả sử folder nằm ở ~/Downloads/<folder_name>
     m_localFolderBasePath = QDir::homePath() + "/Downloads/" + m_folderName;
     
-    // TODO: Implement folder selection dialog nếu cần
-    
-    // Start uploading first file
     uploadNextFile();
 }
 
 void FolderShareDialog::uploadNextFile() {
     if (m_currentFileIndex >= m_filesToUpload.size()) {
-        // All files uploaded!
         return;
     }
     
@@ -223,7 +199,6 @@ void FolderShareDialog::uploadNextFile() {
                           .arg(m_currentFileIndex + 1)
                           .arg(m_filesToUpload.size()));
     
-    // Upload file
     m_netManager->uploadFolderFile(m_sessionId, fileInfo, m_localFolderBasePath);
     
     m_currentFileIndex++;
@@ -240,7 +215,6 @@ void FolderShareDialog::onFileUploaded(int completed, int total) {
                           .arg(total)
                           .arg(percentage));
     
-    // Upload next file
     if (completed < total) {
         uploadNextFile();
     }
@@ -289,7 +263,6 @@ void FolderShareDialog::onCancelClicked() {
             return;
         }
         
-        // Cancel share on server
         if (!m_sessionId.isEmpty()) {
             m_netManager->cancelFolderShare(m_sessionId);
         }

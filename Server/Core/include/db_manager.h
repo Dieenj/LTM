@@ -36,6 +36,7 @@ public:
     bool connect();
     void disconnect();
     bool checkUser(std::string user, std::string pass);
+    bool registerUser(std::string username, std::string password);
     std::vector<FileRecord> getFiles(std::string username, long long parent_id = 0);
     std::vector<FileRecord> getSharedFiles(std::string username);
     std::vector<FileRecord> getSharedFiles(std::string username, long long parent_id); // Overload for navigation
@@ -64,6 +65,12 @@ public:
     
     // Share folder với user khác
     bool shareFolderWithUser(long long folder_id, std::string targetUsername);
+    
+    // Kiểm tra file có được share với user không
+    bool isFileSharedWithUser(std::string filename, std::string username);
+    
+    // Lấy owner của file
+    std::string getFileOwner(std::string filename);
 
 private:
     DBManager() : conn(nullptr) {} 

@@ -11,15 +11,13 @@
 namespace fs = std::filesystem;
 const std::string STORAGE_DIR = "storage";
 
-// ===== HELPER FUNCTIONS =====
-
 std::string FolderShareHandler::generateSessionId() {
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_int_distribution<> dis(0, 15);
     
     std::stringstream ss;
-    ss << "FS_"; // Folder Share prefix
+    ss << "FS_";
     for (int i = 0; i < 32; i++) {
         ss << std::hex << dis(gen);
     }
@@ -32,23 +30,19 @@ std::string FolderShareHandler::buildRelativePath(long long file_id,
     std::vector<std::string> path_parts;
     long long current_id = file_id;
     
-    // Map for quick lookup
     std::map<long long, FileRecordEx> file_map;
     for (const auto& f : all_files) {
         file_map[f.file_id] = f;
     }
     
-    // Build path from file to root
     while (current_id != -1 && file_map.find(current_id) != file_map.end()) {
         const auto& file = file_map[current_id];
         path_parts.insert(path_parts.begin(), file.name);
         current_id = file.parent_id;
         
-        // Stop at root folder (parent_id = 1)
         if (current_id == 1) break;
     }
     
-    // Join with "/"
     std::string result;
     for (size_t i = 0; i < path_parts.size(); i++) {
         result += path_parts[i];
@@ -62,7 +56,6 @@ std::string FolderShareHandler::buildRelativePath(long long file_id,
 
 void FolderShareHandler::createFolderStructure(FolderShareSession& session,
                                               const std::vector<FileRecordEx>& structure) {
-    // Sort folders by parent_id (BFS order)
     std::vector<FileRecordEx> folders;
     for (const auto& item : structure) {
         if (item.is_folder && item.file_id != session.source_folder_id) {
@@ -74,12 +67,9 @@ void FolderShareHandler::createFolderStructure(FolderShareSession& session,
         return a.parent_id < b.parent_id;
     });
     
-    // Create folders
     for (const auto& folder : folders) {
-        // Find new parent ID
         long long new_parent_id = session.old_to_new_id_map[folder.parent_id];
         
-        // Create folder in database
         long long new_folder_id = DBManager::getInstance().createFolder(
             folder.name,
             new_parent_id,
@@ -94,8 +84,6 @@ void FolderShareHandler::createFolderStructure(FolderShareSession& session,
     }
 }
 
-// ===== PUBLIC METHODS =====
-
 std::string FolderShareHandler::initiateFolderShare(const std::string& owner_username,
                                                     long long folder_id,
                                                     const std::string& recipient_username) {
@@ -103,7 +91,6 @@ std::string FolderShareHandler::initiateFolderShare(const std::string& owner_use
               << ", owner=" << owner_username 
               << ", recipient=" << recipient_username << std::endl;
     
-    // 1. Verify folder exists and belongs to owner
     FileRecordEx folder_info = DBManager::getInstance().getFileInfo(folder_id);
     if (folder_info.file_id == -1 || !folder_info.is_folder) {
         std::cerr << "[FolderShare] Invalid folder_id: " << folder_id << std::endl;
@@ -115,7 +102,6 @@ std::string FolderShareHandler::initiateFolderShare(const std::string& owner_use
         return "";
     }
     
-    // 2. Get folder structure
     std::vector<FileRecordEx> structure = DBManager::getInstance().getFolderStructure(folder_id, owner_username);
     
     if (structure.empty()) {
@@ -123,7 +109,6 @@ std::string FolderShareHandler::initiateFolderShare(const std::string& owner_use
         return "";
     }
     
-    // 3. Create session
     FolderShareSession session;
     session.session_id = generateSessionId();
     session.owner_username = owner_username;
@@ -133,10 +118,9 @@ std::string FolderShareHandler::initiateFolderShare(const std::string& owner_use
     session.completed_files = 0;
     session.status = "pending";
     
-    // 4. Create root folder for recipient
     session.new_root_folder_id = DBManager::getInstance().createFolder(
         folder_info.name,
-        -1, // Root level (sẽ tạo với parent_id=1 trong DB)
+        -1,
         recipient_username
     );
     
@@ -145,18 +129,15 @@ std::string FolderShareHandler::initiateFolderShare(const std::string& owner_use
         return "";
     }
     
-    // Map old root -> new root
     session.old_to_new_id_map[folder_id] = session.new_root_folder_id;
     
-    // 5. Create folder structure (only folders, no files yet)
     createFolderStructure(session, structure);
     
-    // 6. Prepare file transfer list
     for (const auto& item : structure) {
-        if (!item.is_folder) { // Only files need to be uploaded
+        if (!item.is_folder) {
             FileTransferInfo info;
             info.old_file_id = item.file_id;
-            info.new_file_id = -1; // Will be created after upload
+            info.new_file_id = -1;
             info.name = item.name;
             info.relative_path = buildRelativePath(item.file_id, structure);
             info.size_bytes = item.size;
@@ -167,7 +148,6 @@ std::string FolderShareHandler::initiateFolderShare(const std::string& owner_use
         }
     }
     
-    // 7. Save session
     active_sessions[session.session_id] = session;
     
     std::cout << "[FolderShare] Session created: " << session.session_id 
@@ -194,7 +174,6 @@ bool FolderShareHandler::receiveFile(const std::string& session_id,
         return false;
     }
     
-    // Find file in transfer list
     FileTransferInfo* file_info = nullptr;
     for (auto& f : session->files_to_transfer) {
         if (f.old_file_id == old_file_id) {
@@ -213,17 +192,14 @@ bool FolderShareHandler::receiveFile(const std::string& session_id,
         return false;
     }
     
-    // Get old file info
     FileRecordEx old_file = DBManager::getInstance().getFileInfo(old_file_id);
     if (old_file.file_id == -1) {
         std::cerr << "[FolderShare] Old file not found: " << old_file_id << std::endl;
         return false;
     }
     
-    // Find new parent ID
     long long new_parent_id = session->old_to_new_id_map[old_file.parent_id];
     
-    // Create file record in database
     long long new_file_id = DBManager::getInstance().createFileInFolder(
         old_file.name,
         new_parent_id,
@@ -236,10 +212,8 @@ bool FolderShareHandler::receiveFile(const std::string& session_id,
         return false;
     }
     
-    // Save file to disk: storage/recipient_username/new_file_id
     std::string user_dir = STORAGE_DIR + "/" + session->recipient_username;
     
-    // Create user directory if not exists
     try {
         fs::create_directories(user_dir);
     } catch (const std::exception& e) {
@@ -257,7 +231,6 @@ bool FolderShareHandler::receiveFile(const std::string& session_id,
     out.write(file_data, file_size);
     out.close();
     
-    // Update session
     file_info->new_file_id = new_file_id;
     file_info->uploaded = true;
     session->completed_files++;
@@ -281,11 +254,9 @@ bool FolderShareHandler::finalize(const std::string& session_id) {
     auto session = getSession(session_id);
     if (!session) return false;
     
-    // Share all folders and files with recipient
     for (const auto& pair : session->old_to_new_id_map) {
         long long new_file_id = pair.second;
         
-        // Grant VIEW permission (permission_id = 1)
         DBManager::getInstance().shareFolderWithUser(new_file_id, session->recipient_username);
     }
     

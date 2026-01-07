@@ -20,7 +20,6 @@ public:
                               QWidget *parent = nullptr);
     ~FolderShareDialog();
     
-    // Set local folder base path
     void setLocalFolderPath(const QString &basePath);
 
 private slots:
@@ -43,11 +42,10 @@ private:
     QString m_folderName;
     QString m_targetUser;
     QString m_sessionId;
-    QString m_localFolderBasePath; // Base path containing the folder
+    QString m_localFolderBasePath;
     
     NetworkManager *m_netManager;
     
-    // UI Components
     QLabel *m_titleLabel;
     QTreeWidget *m_previewTree;
     QLabel *m_statsLabel;
@@ -56,7 +54,6 @@ private:
     QProgressBar *m_progressBar;
     QLabel *m_statusLabel;
     
-    // Data
     QList<FileNodeInfo> m_filesToUpload;
     int m_currentFileIndex;
     int m_totalFiles;
@@ -65,4 +62,4 @@ private:
     bool m_uploadInProgress;
 };
 
-#endif // FOLDERSHAREDIALOG_H
+#endif

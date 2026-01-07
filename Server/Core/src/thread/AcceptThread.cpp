@@ -12,7 +12,6 @@
 AcceptorThread::AcceptorThread(int p) : port(p) {
     server_fd = socket(AF_INET, SOCK_STREAM, 0);
     
-    // Cấu hình để tái sử dụng cổng ngay khi tắt server
     int opt = 1;
     setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
 
@@ -55,7 +54,6 @@ WorkerThread* AcceptorThread::selectLeastLoadedWorker() {
     
     if (workerPool.empty()) return nullptr;
     
-    // Tìm worker có ít connections nhất
     WorkerThread* leastLoaded = workerPool[0].get();
     int minConnections = leastLoaded->getConnectionCount();
     int selectedIndex = 0;
@@ -82,7 +80,6 @@ void AcceptorThread::run() {
     int addrlen = sizeof(address);
 
     while (running) {
-        // Chấp nhận kết nối từ Client
         int new_socket = accept(server_fd, (struct sockaddr *)&address, (socklen_t*)&addrlen);
         if (new_socket < 0) {
             if (running) {
@@ -91,7 +88,6 @@ void AcceptorThread::run() {
             continue;
         }
 
-        // Lấy địa chỉ IP của client
         char client_ip[INET_ADDRSTRLEN];
         inet_ntop(AF_INET, &address.sin_addr, client_ip, INET_ADDRSTRLEN);
         int client_port = ntohs(address.sin_port);
@@ -99,7 +95,6 @@ void AcceptorThread::run() {
         std::cout << "[Acceptor] New connection from " << client_ip 
                   << ":" << client_port << " (FD: " << new_socket << ")" << std::endl;
         
-        // Chọn WorkerThread ít kết nối nhất
         WorkerThread* worker = selectLeastLoadedWorker();
         if (worker) {
             worker->addClient(new_socket);
@@ -113,17 +108,14 @@ void AcceptorThread::run() {
 void AcceptorThread::stop() {
     running = false;
     
-    // Đóng server socket để thoát khỏi accept()
     if (server_fd >= 0) {
         close(server_fd);
     }
     
-    // Dừng tất cả workers
     for (auto& worker : workerPool) {
         worker->stop();
     }
     
-    // Join tất cả worker threads
     for (auto& t : workerThreads) {
         if (t.joinable()) {
             t.join();

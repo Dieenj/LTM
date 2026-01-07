@@ -2,203 +2,302 @@
 
 Ứng dụng quản lý file Client-Server đa luồng với giao diện Qt6 và cơ sở dữ liệu MySQL.
 
-## Kiến trúc hệ thống
+## Tổng Quan
 
+### Kiến trúc
 - **Server:** C++ với MySQL, epoll-based I/O multiplexing
 - **Client:** Qt6 GUI application
 - **Protocol:** FTP-inspired custom protocol
 - **Thread Model:** Fixed Worker Pool (4 threads) + Dedicated I/O Threads
 
-## Tính năng
+### Công nghệ
+- C++17, Qt6, MySQL 8.0+, OpenSSL, CMake 3.10+
 
-- ✅ Upload/Download file
-- ✅ Chia sẻ file giữa các user
-- ✅ Xóa file (soft delete)
-- ✅ Quản lý quota người dùng
-- ✅ GUI 2 tab: "My Files" và "Shared with Me"
-- ✅ Load balancing với least-connections algorithm
+---
 
-## Yêu cầu hệ thống
+## Tính Năng
 
-### Server
-- **CMake** >= 3.10
-- **GCC** 8+ (hỗ trợ C++17)
-- **MySQL** 8.0+
-- **OpenSSL** development libraries
+- ✅ Upload/Download file với chunk-based ACK (64KB chunks, ACK mỗi 1MB)
+- ✅ Chia sẻ file với permission system (VIEW/EDIT/DELETE/SHARE)
+- ✅ Quản lý thư mục với breadcrumb navigation
+- ✅ Đăng ký tài khoản và quản lý quota
+- ✅ GUI 2 tab: "My Files" (Home/) và "Shared with Me" (Shared/)
+- ✅ Load balancing và thread monitoring
 
-```bash
-# Ubuntu/Debian
-sudo apt install cmake g++ libmysqlclient-dev libssl-dev mysql-server
+---
 
-# Fedora/RHEL
-sudo dnf install cmake gcc-c++ mysql-devel openssl-devel
-```
-
-### Client
-- **Qt6** (Widgets, Network)
+## Yêu Cầu Hệ Thống
 
 ```bash
 # Ubuntu/Debian
-sudo apt install qt6-base-dev
+sudo apt install cmake g++ libmysqlclient-dev libssl-dev mysql-server qt6-base-dev
 
 # Fedora/RHEL
-sudo dnf install qt6-qtbase-devel
+sudo dnf install cmake gcc-c++ mysql-devel openssl-devel qt6-qtbase-devel
 ```
 
-## Hướng dẫn cài đặt
+---
 
-### 1. Clone repository
+## Hướng Dẫn Cài Đặt
 
-```bash
-git clone <your-repo-url>
-cd File_Management_App
-```
-
-### 2. Thiết lập cơ sở dữ liệu
-
+### 1. Setup Database
 ```bash
 cd database
 chmod +x setup_database.sh
 ./setup_database.sh
 ```
 
-Script này sẽ:
-- Tạo database MySQL và user
-- Import schema (tables: USERS, FILES, SHAREDFILES, etc.)
-- Tạo file `Server/Core/include/db_config.h` với thông tin đăng nhập của bạn
+Nhập MySQL root password khi được hỏi. Script tự động tạo:
+- Database `file_management`
+- Tables: USERS, FILES, SHAREDFILES, PERMISSIONS, STARS
+- Demo users: admin/123456 (2GB), guest/guest (1GB), dien/123456 (10GB)
+- File `Server/Core/include/db_config.h` với thông tin kết nối MySQL
 
-**⚠️ Lưu ý:** File `db_config.h` đã được thêm vào `.gitignore` - không được commit file này!
+**⚠️ Lưu ý:** File `db_config.h` đã được thêm vào `.gitignore` - không commit file này!
 
-Nếu cần tùy chỉnh thủ công, xem file template tại `Server/Core/include/db_config.h.template`
+### 2. Cấu hình Storage Path (Optional)
+Mặc định file upload lưu tại `Server/storage/`. Để đổi path:
 
-### 3. Build và chạy
+```bash
+# Sửa file Server/Core/include/server_config.h
+nano Server/Core/include/server_config.h
 
-#### Server
+# Thay đổi dòng:
+#define STORAGE_PATH "Server/storage/"
+# Thành path mong muốn, ví dụ:
+#define STORAGE_PATH "/home/user/fileserver_storage/"
+```
 
+Tạo thư mục storage mới:
+```bash
+mkdir -p /home/user/fileserver_storage/
+chmod 755 /home/user/fileserver_storage/
+```
+
+### 3. Chạy Server
 ```bash
 ./run_server.sh
 ```
 
-#### Client
-
+### 4. Chạy Client (terminal mới)
 ```bash
 ./run_client.sh
 ```
 
-Script tự động build trước khi chạy.
+---
 
-## Sử dụng ứng dụng
+## Hướng Dẫn Sử Dụng
 
-1. **Khởi động Server** (cổng 8080)
-2. **Mở Client** và kết nối:
-   - Host: `localhost` hoặc `127.0.0.1`
-   - Port: `8080`
-3. **Đăng nhập** với tài khoản mặc định:
-   - **admin** / 123456 (quota: 1GB)
-   - **guest** / guest (quota: 100MB)
+### Kết nối và Đăng nhập
+1. **Connect**: Server IP `127.0.0.1` → Click "Connect Server"
+2. **Login**: Dùng tài khoản `admin/123456`
+3. **Register** (optional): Click "Register New Account"
 
-## Cấu hình
+### Quản lý File
+- **Upload**: Click "Upload" → chọn file
+- **Download**: Chọn file → Click "Download"
+- **Navigate**: Double-click vào folder, dùng Back button
+- **Share**: Right-click file → "Share" → nhập username
+- **Delete**: Right-click → "Delete"
 
-### Server
+### Navigation
+- **My Files tab**: Hiển thị "Home/" và subfolder
+- **Shared tab**: Hiển thị "Shared/" và file được share
+- **Breadcrumb**: Hiển thị path với folder history
 
-Chỉnh sửa `Server/Core/include/server_config.h`:
+---
+
+## Kiến Trúc Hệ Thống
+
+### Thread Model
+- **AcceptorThread**: Lắng nghe port 8080, load balancing
+- **WorkerThread Pool** (4): Xử lý kết nối với epoll
+- **DedicatedThread**: On-demand cho file I/O (max 100)
+- **ThreadMonitor**: Giám sát và thống kê
+
+### Protocol Commands
+| Command | Description | Response |
+|---------|-------------|----------|
+| REGISTER \<user\> \<pass\> | Đăng ký | 200/550 |
+| USER \<user\> | Đăng nhập | 331 |
+| PASS \<pass\> | Xác thực | 230/530 |
+| LIST [\<folder\>] | Liệt kê files | 150+data |
+| STOR \<name\> \<size\> | Upload | 150/550 |
+| RETR \<name\> | Download | 150/550 |
+| SHARE \<file\> \<user\> \<perm\> | Share | 200/550 |
+| DELE \<id\> | Xóa | 250/550 |
+| MKDIR \<name\> | Tạo folder | 257/550 |
+
+### Chunk ACK
+- Upload/Download: 64KB chunks, ACK mỗi 1MB
+- Timeout: 3s
+- Benefits: Phát hiện lỗi sớm, tối ưu performance
+
+---
+
+## Cấu Hình Database
+
+Sau khi chạy `setup_database.sh`, file `Server/Core/include/db_config.h` được tạo tự động:
 
 ```cpp
-FIXED_WORKER_THREADS = 4        // Số worker threads (fixed pool)
-MAX_DEDICATED_THREADS = 100     // Số thread xử lý file I/O đồng thời
-SERVER_PORT = 8080              // Cổng server
-STORAGE_PATH = "Server/storage/"// Thư mục lưu file
-```
+#ifndef DB_CONFIG_H
+#define DB_CONFIG_H
 
-### Database
-
-File cấu hình: `Server/Core/include/db_config.h` (được tạo bởi `setup_database.sh`)
-
-```cpp
 #define DB_HOST "localhost"
-#define DB_USER "your_username"
+#define DB_USER "root"
 #define DB_PASS "your_password"
 #define DB_NAME "file_management"
 #define DB_PORT 3306
+
+#endif
 ```
 
-## Protocol Commands
+**Mặc định:**
+- **Database name:** `file_management`
+- **MySQL user:** `root` (hoặc user bạn chỉ định khi chạy setup)
+- **Host:** `localhost`
+- **Port:** `3306`
 
-| Lệnh | Mô tả |
-|------|-------|
-| USER \<username\> | Đăng nhập username |
-| PASS \<password\> | Xác thực mật khẩu |
-| LIST | Liệt kê file của tôi |
-| LISTSHARED | Liệt kê file được chia sẻ |
-| STOR \<filename\> | Upload file |
-| RETR \<filename\> | Download file |
-| SHARE \<file\> \<user\> | Chia sẻ file |
-| DELETE \<filename\> | Xóa file (soft delete) |
-| SITE QUOTA_CHECK \<size\> | Kiểm tra quota |
+**Demo accounts trong database:**
+| Username | Password | Storage Quota |
+|----------|----------|---------------|
+| admin    | 123456   | 2GB           |
+| guest    | guest    | 1GB           |
+| dien     | 123456   | 10GB          |
 
-## Cấu trúc dự án
+**Để đổi thông tin kết nối:**
+1. Sửa file `Server/Core/include/db_config.h`
+2. Hoặc chạy lại `./database/setup_database.sh`
+
+**⚠️ Bảo mật:**
+- File này chứa password MySQL
+- Đã được thêm vào `.gitignore`
+- **KHÔNG ĐƯỢC commit** file này lên git
+
+---
+
+## Cấu Hình Storage Path
+
+File upload mặc định lưu tại `Server/storage/`. Để đổi:
+
+**File:** `Server/Core/include/server_config.h`
+```cpp
+#define STORAGE_PATH "Server/storage/"  // Đổi path này
+```
+
+**Lưu ý:**
+- Path phải kết thúc bằng `/`
+- Đảm bảo thư mục tồn tại và có quyền write
+- Rebuild server sau khi đổi: `./run_server.sh`
+
+**Ví dụ:**
+```cpp
+// Path tuyệt đối
+#define STORAGE_PATH "/home/user/my_storage/"
+
+// Path tương đối
+#define STORAGE_PATH "../shared_storage/"
+```
+
+---
+
+## Cấu Trúc Dự Án
 
 ```
 .
-├── build/              # Build directory cho Server
-├── Client/             # Mã nguồn Client (Qt6)
-│   ├── include/        # Header files
-│   ├── src/            # Source files và modules
-│   ├── UI/             # Qt resource files
-│   └── CMakeLists.txt
-├── Server/             # Mã nguồn Server
+├── Client/          # Qt6 GUI source
+├── Server/          # C++ server source
 │   ├── Core/
-│   │   ├── include/    # Headers (server_config.h, db_config.h, ...)
-│   │   └── src/        # Implementation (db/, handler/, thread/)
-│   ├── storage/        # Uploaded files (gitignored)
-│   └── CMakeLists.txt
-├── Common/             # Protocol definitions
-│   └── Protocol.h
-├── database/           # Database setup
-│   ├── schema.sql      # MySQL schema
-│   └── setup_database.sh  # Auto-setup script
-├── run_server.sh       # Build & run server
-└── run_client.sh       # Build & run client
+│   │   ├── include/
+│   │   │   └── server_config.h  # Đổi STORAGE_PATH ở đây
+│   │   └── src/
+│   └── storage/     # Uploaded files (default)
+├── Common/          # Protocol.h
+├── database/
+│   ├── schema.sql
+│   └── setup_database.sh
+├── run_server.sh
+├── run_client.sh
+└── README.md
 ```
+
+---
 
 ## Troubleshooting
 
-### "Cannot connect to database"
-- Kiểm tra MySQL đang chạy: `sudo systemctl status mysql`
-- Xác minh credentials trong `db_config.h`
-- Chạy lại script: `./database/setup_database.sh`
+### Cannot connect to database
+```bash
+sudo systemctl start mysql
+cd database && ./setup_database.sh
+```
 
-### "Permission denied"
-- Cấp quyền thực thi: `chmod +x run_server.sh run_client.sh`
-- Kiểm tra quyền thư mục `Server/storage/`
+### Permission denied
+```bash
+chmod +x run_server.sh run_client.sh database/setup_database.sh
+```
+
+### Script cannot execute / CRLF line endings
+Nếu gặp lỗi "cannot execute: required file not found" khi chạy script:
+```bash
+# Fix line endings (CRLF → LF)
+sed -i 's/\r$//' run_server.sh run_client.sh test_db.sh
+sed -i 's/\r$//' database/setup_database.sh
+chmod +x run_server.sh run_client.sh test_db.sh database/setup_database.sh
+
+# Hoặc dùng dos2unix nếu có
+dos2unix *.sh database/*.sh
+```
 
 ### Build fails
-- Kiểm tra CMake version: `cmake --version` (cần >= 3.10)
-- Cài đặt đầy đủ dependencies (xem phần Yêu cầu hệ thống)
-- Xóa build cache: `rm -rf build Client/build`
+```bash
+rm -rf build build_client Client/build
+./run_server.sh
+```
 
 ### Server không nhận kết nối
-- Kiểm tra firewall: `sudo ufw status`
-- Kiểm tra port 8080 đã mở: `sudo netstat -tuln | grep 8080`
+```bash
+sudo netstat -tuln | grep 8080
+sudo ufw allow 8080/tcp
+```
 
-## Kiến trúc Thread
+---
 
-### AcceptorThread
-- Lắng nghe kết nối trên port 8080
-- Quản lý fixed pool 4 WorkerThreads
-- Load balancing: chọn worker có ít kết nối nhất
+## Database Schema
 
-### WorkerThread Pool (4 threads)
-- Xử lý các kết nối client bằng epoll
-- Mỗi worker có thể xử lý nhiều kết nối đồng thời
-- Không tự động scale (fixed pool)
+- **USERS**: user_id, username, password_hash, storage_limit_bytes
+- **FILES**: file_id, owner_id, parent_id, name, is_folder, size_bytes, is_deleted
+- **SHAREDFILES**: file_id, user_id, permission_id
+- **PERMISSIONS**: VIEW, EDIT, DELETE, SHARE
+- **STARS**: user_id, file_id (starred files)
 
-### DedicatedThread (on-demand)
-- Tạo khi cần upload/download file lớn
-- Giới hạn tối đa 100 threads đồng thời
-- Tự động cleanup sau khi hoàn thành
+---
 
-### ThreadMonitor
-- Giám sát và in thống kê mỗi 30 giây
-- Cleanup các dedicated threads đã kết thúc
-- Không can thiệp vào worker pool (passive monitoring)
+## Testing
+
+```bash
+# Test database
+./test_db.sh
+
+# Load test (multiple clients)
+for i in {1..10}; do ./run_client.sh & done
+```
+
+---
+
+## Changelog
+
+### v1.0 (Current)
+- ✅ File operations (upload/download/delete/share)
+- ✅ User registration with SHA256 password hashing
+- ✅ Chunk-based ACK mechanism
+- ✅ Breadcrumb navigation (Home/ and Shared/)
+- ✅ Folder history with back button
+- ✅ Thread monitoring
+- ✅ Database auto-setup
+
+### Planned
+- [ ] File encryption
+- [ ] Resume transfers
+- [ ] Search functionality
+- [ ] File versioning
+- [ ] Trash bin

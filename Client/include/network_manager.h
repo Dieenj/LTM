@@ -8,9 +8,9 @@
 #include <QJsonArray>
 #include <QRegularExpression>
 
-// Protocol Commands
 #define CMD_USER "USER"
 #define CMD_PASS "PASS"
+#define CMD_REGISTER "REGISTER"
 #define CMD_LIST "LIST"
 #define CMD_LISTSHARED "LISTSHARED"
 #define CMD_UPLOAD_CHECK "SITE QUOTA_CHECK"
@@ -19,22 +19,20 @@
 #define CMD_SHARE "SHARE"
 #define CMD_DELETE "DELETE"
 
-// Folder share commands
 #define CMD_GET_FOLDER_STRUCTURE "GET_FOLDER_STRUCTURE"
 #define CMD_SHARE_FOLDER "SHARE_FOLDER"
 #define CMD_UPLOAD_FOLDER_FILE "UPLOAD_FOLDER_FILE"
 #define CMD_CHECK_SHARE_PROGRESS "CHECK_SHARE_PROGRESS"
 #define CMD_CANCEL_FOLDER_SHARE "CANCEL_FOLDER_SHARE"
 
-// Response Codes
 #define CODE_OK "200"
 #define CODE_FAIL "500"
 #define CODE_LOGIN_SUCCESS "230"
 #define CODE_LOGIN_FAIL "530"
 #define CODE_DATA_OPEN "150"
+#define CODE_CHUNK_ACK "151"
 #define CODE_TRANSFER_COMPLETE "226"
 
-// Folder share structures
 struct FileNodeInfo {
     long long file_id;
     QString name;
@@ -60,6 +58,7 @@ public:
     
     void connectToServer(const QString &host, quint16 port);
     void login(const QString &user, const QString &pass);
+    void registerAccount(const QString &user, const QString &pass);
     void requestFileList(long long parent_id = 0);
     void requestSharedFileList(long long parent_id = -1); // -1 = root, >= 0 = specific folder
     void uploadFile(const QString &filePath, long long parent_id = 0);
@@ -78,8 +77,12 @@ signals:
     void connectionStatus(bool success, QString msg);
     void loginSuccess();
     void loginFailed(QString msg);
+    void registerSuccess(QString msg);
+    void registerFailed(QString msg);
     void fileListReceived(QString data);
+    void uploadStarted(QString filename);
     void uploadProgress(QString msg);
+    void downloadStarted(QString filename);
     void downloadComplete(QString filename);
     void shareResult(bool success, QString msg);
     void deleteResult(bool success, QString msg);
@@ -102,6 +105,7 @@ private:
     quint16 currentPort;
     QString currentUsername;
     QString currentPassword;
+    long long currentParentId = 0;
     
     FolderShareSessionInfo currentFolderShare;
     bool isFolderShareActive = false;

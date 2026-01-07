@@ -1,7 +1,6 @@
 #ifndef PROTOCOL_H
 #define PROTOCOL_H
 
-// --- Lệnh (Commands) ---
 #define CMD_USER "USER"
 #define CMD_PASS "PASS"
 #define CMD_REGISTER "REGISTER"
@@ -19,10 +18,10 @@
 #define CMD_CHECK_SHARE_PROGRESS "CHECK_SHARE_PROGRESS"
 #define CMD_CANCEL_FOLDER_SHARE "CANCEL_FOLDER_SHARE"
 
-// --- Mã Trạng Thái (Status Codes) ---
 #define CODE_OK "200"
 #define CODE_LOGIN_SUCCESS "230"
 #define CODE_DATA_OPEN "150"
+#define CODE_CHUNK_ACK "151"
 #define CODE_TRANSFER_COMPLETE "226"
 #define CODE_LOGIN_FAIL "530"
 #define CODE_FAIL "550"

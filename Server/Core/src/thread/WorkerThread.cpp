@@ -1,7 +1,7 @@
 #include "../../include/thread_manager.h"
-#include "../../include/request_handler.h"  // Gọi các Handler
-#include "../../include/thread_monitor.h"   // Báo cáo cho Monitor
-#include "../../../../Common/Protocol.h"    // Gọi lệnh CMD_*, CODE_*
+#include "../../include/request_handler.h"
+#include "../../include/thread_monitor.h"
+#include "../../../../Common/Protocol.h"
 #include <sys/epoll.h>
 #include <sys/socket.h>
 #include <unistd.h>
@@ -12,7 +12,6 @@
 #include <thread>
 
 WorkerThread::WorkerThread() : running(true), epoll_fd(-1) {
-    // Tạo epoll instance
     epoll_fd = epoll_create1(0);
     if (epoll_fd == -1) {
         std::cerr << "[Worker] Failed to create epoll instance" << std::endl;
@@ -26,9 +25,8 @@ void WorkerThread::stop() {
 void WorkerThread::addClient(int socketFd) {
     std::lock_guard<std::mutex> lock(mtx);
     
-    // Thêm vào epoll
     struct epoll_event ev;
-    ev.events = EPOLLIN;  // Quan tâm sự kiện đọc
+    ev.events = EPOLLIN;
     ev.data.fd = socketFd;
     if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, socketFd, &ev) == -1) {
         std::cerr << "[Worker] Failed to add FD to epoll: " << socketFd << std::endl;
@@ -39,18 +37,15 @@ void WorkerThread::addClient(int socketFd) {
     sessions[socketFd] = ClientSession(); 
     sessions[socketFd].socketFd = socketFd;
     
-    // Báo cáo cho Monitor
     ThreadMonitor::getInstance().reportConnectionCount(myThreadId, client_sockets.size());
     
     std::cout << "[Worker] Client added. FD: " << socketFd 
               << " (Total: " << client_sockets.size() << ")" << std::endl;
 }
 
-// Overload: addClient với session khôi phục
 void WorkerThread::addClient(int socketFd, const ClientSession& session) {
     std::lock_guard<std::mutex> lock(mtx);
     
-    // Thêm vào epoll
     struct epoll_event ev;
     ev.events = EPOLLIN;
     ev.data.fd = socketFd;
@@ -60,9 +55,8 @@ void WorkerThread::addClient(int socketFd, const ClientSession& session) {
     }
     
     client_sockets.push_back(socketFd);
-    sessions[socketFd] = session;  // Khôi phục session cũ
+    sessions[socketFd] = session;
     
-    // Báo cáo cho Monitor
     ThreadMonitor::getInstance().reportConnectionCount(myThreadId, client_sockets.size());
     
     std::cout << "[Worker] Client restored. FD: " << socketFd 
@@ -73,22 +67,17 @@ void WorkerThread::addClient(int socketFd, const ClientSession& session) {
 void WorkerThread::removeClient(int fd, bool closeSocket) {
     std::lock_guard<std::mutex> lock(mtx);
     
-    // 1. Xóa khỏi epoll
     epoll_ctl(epoll_fd, EPOLL_CTL_DEL, fd, nullptr);
     
-    // 2. Xóa khỏi danh sách theo dõi
     auto it = std::find(client_sockets.begin(), client_sockets.end(), fd);
     if (it != client_sockets.end()) {
         client_sockets.erase(it);
     }
 
-    // 3. Xóa session
     sessions.erase(fd);
     
-    // 4. Báo cáo cho Monitor
     ThreadMonitor::getInstance().reportConnectionCount(myThreadId, client_sockets.size());
 
-    // 5. Xử lý socket
     if (closeSocket) {
         close(fd); 
         std::cout << "[Worker] Client " << fd << " disconnected. "
@@ -99,7 +88,6 @@ void WorkerThread::removeClient(int fd, bool closeSocket) {
 }
 
 void WorkerThread::run() {
-    // Đăng ký thread ID thực tế
     myThreadId = std::this_thread::get_id();
     ThreadMonitor::getInstance().registerWorkerThread(this, myThreadId);
     
@@ -117,7 +105,7 @@ void WorkerThread::run() {
             continue;
         }
         
-        if (nfds == 0) continue; // Timeout
+        if (nfds == 0) continue;
         
         for (int i = 0; i < nfds; i++) {
             int fd = events[i].data.fd;
@@ -146,18 +134,16 @@ void WorkerThread::handleClientMessage(int fd) {
     }
 
     std::string msg(buffer);
-    // Xóa ký tự xuống dòng
     while (!msg.empty() && (msg.back() == '\n' || msg.back() == '\r')) {
         msg.pop_back();
     }
     
     std::cout << "[Recv FD:" << fd << "]: " << msg << std::endl;
 
-    // Parse lệnh
     std::string command, arg;
     if (msg.find("SITE QUOTA_CHECK") == 0) {
         command = "SITE QUOTA_CHECK";
-        arg = msg.substr(17);  // Skip "SITE QUOTA_CHECK "
+        arg = msg.substr(17);
         std::cout << "[Worker] Detected SITE QUOTA_CHECK, arg: '" << arg << "'" << std::endl;
     } else {
         std::stringstream ss(msg);
@@ -170,7 +156,6 @@ void WorkerThread::handleClientMessage(int fd) {
     
     std::string response;
 
-    // --- XỬ LÝ LỆNH ---
 
     if (command == CMD_USER) {
         std::lock_guard<std::mutex> lock(mtx);
@@ -190,7 +175,6 @@ void WorkerThread::handleClientMessage(int fd) {
     }
     else if (command == CMD_LIST) {
         std::lock_guard<std::mutex> lock(mtx);
-        // Parse parent_id if provided
         long long parent_id = 0;
         if (!arg.empty()) {
             try {
@@ -202,8 +186,7 @@ void WorkerThread::handleClientMessage(int fd) {
         response = CmdHandler::handleList(sessions[fd], parent_id);
     }
     else if (command == CMD_LISTSHARED) {
-        // Parse parent_id từ argument (optional)
-        long long parent_id = -1; // Default: root shared items
+        long long parent_id = -1;
         if (!arg.empty()) {
             try {
                 parent_id = std::stoll(arg);
@@ -230,9 +213,7 @@ void WorkerThread::handleClientMessage(int fd) {
         response = CmdHandler::handleDelete(sessions[fd], arg);
     }
     
-    // --- ĐOẠN FIX LỖI TIMEOUT ---
     else if (command == CMD_UPLOAD_CHECK) {
-        // Parse: filename filesize
         std::stringstream ss_quota(arg);
         std::string fname;
         long fsize = 0;
@@ -241,12 +222,10 @@ void WorkerThread::handleClientMessage(int fd) {
         std::cout << "[Worker] Checking quota for: " << fname << ", Size: " << fsize << std::endl;
         
         std::lock_guard<std::mutex> lock(mtx);
-        // Gọi hàm xử lý và nhận phản hồi ngay lập tức
         response = FileIOHandler::handleQuotaCheck(sessions[fd], fsize);
     }
-    // -----------------------------
 
-    else if (command == CMD_UPLOAD) { // STOR
+    else if (command == CMD_UPLOAD) {
         std::string fname;
         long fsize = 0;
         long long parent_id = 0;
@@ -258,9 +237,8 @@ void WorkerThread::handleClientMessage(int fd) {
         } else if (!ThreadMonitor::getInstance().canCreateDedicatedThread()) {
             response = "503 System overloaded\n";
         } else {
-            // Chuyển sang Dedicated Thread
             std::string username = sessions[fd].username;
-            removeClient(fd, false); // false = không đóng socket
+            removeClient(fd, false);
             
             std::thread t([fd, fname, fsize, username, parent_id, this]() {
                 DedicatedThread dt;
@@ -268,13 +246,12 @@ void WorkerThread::handleClientMessage(int fd) {
             });
             
             std::thread::id tid = t.get_id();
-            t.detach(); // Detach để thread chạy ngầm
-            // ThreadMonitor::getInstance().registerDedicatedThread(tid, std::move(t)); // Nếu dùng joinable thread
+            t.detach();
             
-            return; // Không gửi response ở đây, DedicatedThread sẽ lo
+            return;
         }
     }
-    else if (command == CMD_DOWNLOAD) { // RETR
+    else if (command == CMD_DOWNLOAD) {
         std::string fname = arg;
         bool hasPerm = false;
         {
@@ -300,7 +277,6 @@ void WorkerThread::handleClientMessage(int fd) {
         }
     }
     else if (command == "GET_FOLDER_STRUCTURE") {
-        // Format: GET_FOLDER_STRUCTURE <folder_id>
         long long folder_id = 0;
         std::stringstream ss_folder(arg);
         ss_folder >> folder_id;
@@ -311,9 +287,7 @@ void WorkerThread::handleClientMessage(int fd) {
         response = CmdHandler::handleGetFolderStructure(sessions[fd], folder_id);
     }
     
-    // ===== FOLDER SHARE COMMAND 2: SHARE_FOLDER =====
     else if (command == "SHARE_FOLDER") {
-        // Format: SHARE_FOLDER <folder_id> <target_username>
         long long folder_id = 0;
         std::string target_user;
         std::stringstream ss_share_folder(arg);
@@ -326,9 +300,7 @@ void WorkerThread::handleClientMessage(int fd) {
         response = CmdHandler::handleShareFolder(sessions[fd], folder_id, target_user);
     }
     
-    // ===== FOLDER SHARE COMMAND 3: UPLOAD_FOLDER_FILE =====
     else if (command == "UPLOAD_FOLDER_FILE") {
-        // Format: UPLOAD_FOLDER_FILE <session_id> <old_file_id> <file_size>
         std::string session_id;
         long long old_file_id = 0;
         long file_size = 0;
@@ -345,11 +317,9 @@ void WorkerThread::handleClientMessage(int fd) {
         } else if (!ThreadMonitor::getInstance().canCreateDedicatedThread()) {
             response = "503 System overloaded\n";
         } else {
-            // Gửi ACK để client biết server sẵn sàng nhận
             std::string ack = std::string(CODE_DATA_OPEN) + " Ready to receive\n";
             send(fd, ack.c_str(), ack.length(), 0);
             
-            // Nhận binary data
             char* file_buffer = new char[file_size];
             long total_received = 0;
             
@@ -367,7 +337,6 @@ void WorkerThread::handleClientMessage(int fd) {
             
             std::cout << "[Worker] Received " << total_received << " bytes for folder file" << std::endl;
             
-            // Lưu file qua FolderShareHandler
             bool success = FolderShareHandler::getInstance().receiveFile(
                 session_id,
                 old_file_id,
@@ -380,19 +349,15 @@ void WorkerThread::handleClientMessage(int fd) {
             if (!success) {
                 response = std::string(CODE_FAIL) + " Failed to save folder file\n";
             } else {
-                // Kiểm tra xem đã hoàn thành chưa
                 if (FolderShareHandler::getInstance().isComplete(session_id)) {
-                    // Hoàn thành - finalize share
                     FolderShareHandler::getInstance().finalize(session_id);
                     
                     response = std::string(CODE_TRANSFER_COMPLETE) + " Folder share completed\n";
                     
-                    // Cleanup session
                     FolderShareHandler::getInstance().cleanup(session_id);
                     
                     std::cout << "[Worker] Folder share completed: " << session_id << std::endl;
                 } else {
-                    // Chưa hoàn thành - gửi progress
                     std::string progress = FolderShareHandler::getInstance().getProgress(session_id);
                     response = "202 " + progress + "\n";
                 }
@@ -400,9 +365,7 @@ void WorkerThread::handleClientMessage(int fd) {
         }
     }
     
-    // ===== FOLDER SHARE COMMAND 4: CHECK_SHARE_PROGRESS (Optional) =====
     else if (command == "CHECK_SHARE_PROGRESS") {
-        // Format: CHECK_SHARE_PROGRESS <session_id>
         std::string session_id = arg;
         
         std::cout << "[Worker] CHECK_SHARE_PROGRESS: " << session_id << std::endl;
@@ -417,9 +380,7 @@ void WorkerThread::handleClientMessage(int fd) {
         }
     }
     
-    // ===== FOLDER SHARE COMMAND 5: CANCEL_FOLDER_SHARE (Optional) =====
     else if (command == "CANCEL_FOLDER_SHARE") {
-        // Format: CANCEL_FOLDER_SHARE <session_id>
         std::string session_id = arg;
         
         std::cout << "[Worker] CANCEL_FOLDER_SHARE: " << session_id << std::endl;

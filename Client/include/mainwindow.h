@@ -8,6 +8,9 @@
 #include <QTableWidget>
 #include <QTabWidget>
 #include <QLabel>
+#include <QProgressDialog>
+#include <QHBoxLayout>
+#include <QStack>
 #include "network_manager.h"
 
 class MainWindow : public QMainWindow {
@@ -18,12 +21,13 @@ public:
     ~MainWindow();
 
 private slots:
-    // Login page
     void onConnectBtnClicked();
     void onLoginBtnClicked();
+    void onRegisterBtnClicked();
     void handleLoginSuccess();
+    void handleRegisterSuccess(QString msg);
+    void handleRegisterFailed(QString msg);
 
-    // Dashboard page
     void onRefreshClicked();
     void onUploadClicked();
     void onDownloadClicked();
@@ -32,14 +36,15 @@ private slots:
     void onLogoutClicked();
     void onTabChanged(int index);
     
-    // Folder navigation
     void showContextMenu(const QPoint &pos);
     void onFolderDoubleClicked(int row, int column);
     void onBackButtonClicked();
+    void onBreadcrumbClicked();
 
-    // Network responses
     void handleFileList(QString data);
+    void handleUploadStarted(QString filename);
     void handleUploadProgress(QString msg);
+    void handleDownloadStarted(QString filename);
     void handleDownloadComplete(QString filename);
     void handleShareResult(bool success, QString msg);
     void handleDeleteResult(bool success, QString msg);
@@ -50,27 +55,29 @@ private:
     QWidget* createLoginPage();
     QWidget* createDashboardPage();
 
-    // UI Components
     QStackedWidget *stackedWidget;
     
-    // Login page
     QLineEdit *hostInput;
     QLineEdit *userInput;
     QLineEdit *passInput;
     
-    // Dashboard page
     QTabWidget *tabWidget;
     QTableWidget *fileTable;
     QTableWidget *sharedFileTable;
     QPushButton *backButton;
     QLabel *pathLabel;
+    QHBoxLayout *breadcrumbLayout;
     
-    // Current navigation state
     long long currentFolderId;
     QString currentFolderPath;
+    QString currentUsername;
     
-    // Network manager
+    QStack<long long> folderHistory;
+    
     NetworkManager *netManager;
+    
+    QProgressDialog *uploadProgressDialog;
+    QProgressDialog *downloadProgressDialog;
 };
 
-#endif // MAINWINDOW_H
+#endif

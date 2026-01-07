@@ -21,7 +21,21 @@ std::string AuthHandler::handlePass(int fd, ClientSession& session, const std::s
 }
 
 std::string AuthHandler::handleRegister(const std::string& username, const std::string& password) {
-    // TODO: Gọi hàm DBManager::registerUser(username, password)
-    // Giả lập luôn thành công cho demo
-    return std::string(CODE_OK) + " Registration successful\n";
+    if (username.empty() || password.empty()) {
+        return std::string(CODE_FAIL) + " Username and password cannot be empty\n";
+    }
+    
+    if (username.length() < 3) {
+        return std::string(CODE_FAIL) + " Username must be at least 3 characters\n";
+    }
+    
+    if (password.length() < 4) {
+        return std::string(CODE_FAIL) + " Password must be at least 4 characters\n";
+    }
+    
+    if (DBManager::getInstance().registerUser(username, password)) {
+        return std::string(CODE_OK) + " Registration successful\n";
+    } else {
+        return std::string(CODE_FAIL) + " Username already exists\n";
+    }
 }
