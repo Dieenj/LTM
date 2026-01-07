@@ -13,9 +13,9 @@
 #define STORAGE_PATH ServerConfig::STORAGE_PATH
 
 // --- XỞ LÝ UPLOAD (Client gửi lên Server) ---
-void DedicatedThread::handleUpload(int socketFd, std::string filename, long filesize, std::string username, WorkerThread* workerRef) {
+void DedicatedThread::handleUpload(int socketFd, std::string filename, long filesize, std::string username, long long parent_id, WorkerThread* workerRef) {
     ThreadMonitor::getInstance().reportDedicatedThreadStart();
-    std::cout << "[Dedicated] Starting Upload: " << filename << " (" << filesize << " bytes) by " << username << std::endl;
+    std::cout << "[Dedicated] Starting Upload: " << filename << " (" << filesize << " bytes) by " << username << " to folder " << parent_id << std::endl;
 
     // 1. Tạo file trong thư mục 'storage'
     std::string path = std::string(STORAGE_PATH) + filename;
@@ -47,8 +47,8 @@ void DedicatedThread::handleUpload(int socketFd, std::string filename, long file
     outfile.close();
     std::cout << "[Dedicated] Upload Finished: " << filename << std::endl;
 
-    // Lưu vào database
-    bool saved = DBManager::getInstance().addFile(filename, totalReceived, username);
+    // Lưu vào database với parent_id
+    bool saved = DBManager::getInstance().addFile(filename, totalReceived, username, parent_id);
     if (saved) {
         std::cout << "[Dedicated] File metadata saved to database" << std::endl;
     } else {

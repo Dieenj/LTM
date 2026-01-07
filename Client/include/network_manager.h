@@ -18,7 +18,6 @@
 #define CMD_DOWNLOAD "RETR"
 #define CMD_SHARE "SHARE"
 #define CMD_DELETE "DELETE"
-#define CMD_CREATE_FOLDER "MKDIR"  // NEW
 
 // Folder share commands
 #define CMD_GET_FOLDER_STRUCTURE "GET_FOLDER_STRUCTURE"
@@ -59,21 +58,16 @@ class NetworkManager : public QObject {
 public:
     explicit NetworkManager(QObject *parent = nullptr);
     
-    // Existing functions
     void connectToServer(const QString &host, quint16 port);
     void login(const QString &user, const QString &pass);
-    void requestFileList();
-    void requestSharedFileList();
-    void uploadFile(const QString &filePath);
+    void requestFileList(long long parent_id = 0);
+    void requestSharedFileList(long long parent_id = -1); // -1 = root, >= 0 = specific folder
+    void uploadFile(const QString &filePath, long long parent_id = 0);
     void downloadFile(const QString &filename, const QString &savePath);
     void shareFile(const QString &filename, const QString &targetUser);
     void deleteFile(const QString &filename);
     void logout();
 
-    // NEW: Create folder
-    void createFolder(const QString &folderName, long long parent_id = 1);
-
-    // Folder share functions
     void getFolderStructure(long long folder_id);
     void shareFolderRequest(long long folder_id, const QString &targetUser);
     void uploadFolderFile(const QString &session_id, const FileNodeInfo &fileInfo, const QString &localBasePath);
@@ -81,7 +75,6 @@ public:
     void cancelFolderShare(const QString &session_id);
 
 signals:
-    // Existing signals
     void connectionStatus(bool success, QString msg);
     void loginSuccess();
     void loginFailed(QString msg);
@@ -93,10 +86,6 @@ signals:
     void logoutSuccess();
     void transferProgress(qint64 current, qint64 total);
 
-    // NEW: Folder creation
-    void folderCreated(bool success, QString message, long long folder_id);
-
-    // Folder share signals
     void folderStructureReceived(long long folder_id, QList<FileNodeInfo> structure);
     void folderShareInitiated(const QString &session_id, int total_files, const QList<FileNodeInfo> &files);
     void folderFileUploaded(int completed, int total);
@@ -114,9 +103,8 @@ private:
     QString currentUsername;
     QString currentPassword;
     
-    // Folder share state
     FolderShareSessionInfo currentFolderShare;
     bool isFolderShareActive = false;
 };
 
-#endif // NETWORK_MANAGER_H
+#endif

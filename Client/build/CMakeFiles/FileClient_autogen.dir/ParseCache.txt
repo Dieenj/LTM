@@ -803,6 +803,7 @@
  mdp:/usr/include/x86_64-linux-gnu/qt6/QtGui/qpaintdevice.h
  mdp:/usr/include/x86_64-linux-gnu/qt6/QtGui/qpalette.h
  mdp:/usr/include/x86_64-linux-gnu/qt6/QtGui/qpen.h
+ mdp:/usr/include/x86_64-linux-gnu/qt6/QtGui/qpicture.h
  mdp:/usr/include/x86_64-linux-gnu/qt6/QtGui/qpixelformat.h
  mdp:/usr/include/x86_64-linux-gnu/qt6/QtGui/qpixmap.h
  mdp:/usr/include/x86_64-linux-gnu/qt6/QtGui/qpolygon.h
@@ -826,6 +827,7 @@
  mdp:/usr/include/x86_64-linux-gnu/qt6/QtNetwork/qtnetwork-config.h
  mdp:/usr/include/x86_64-linux-gnu/qt6/QtNetwork/qtnetworkexports.h
  mdp:/usr/include/x86_64-linux-gnu/qt6/QtNetwork/qtnetworkglobal.h
+ mdp:/usr/include/x86_64-linux-gnu/qt6/QtWidgets/QLabel
  mdp:/usr/include/x86_64-linux-gnu/qt6/QtWidgets/QLineEdit
  mdp:/usr/include/x86_64-linux-gnu/qt6/QtWidgets/QMainWindow
  mdp:/usr/include/x86_64-linux-gnu/qt6/QtWidgets/QPushButton
@@ -839,6 +841,7 @@
  mdp:/usr/include/x86_64-linux-gnu/qt6/QtWidgets/qabstractslider.h
  mdp:/usr/include/x86_64-linux-gnu/qt6/QtWidgets/qabstractspinbox.h
  mdp:/usr/include/x86_64-linux-gnu/qt6/QtWidgets/qframe.h
+ mdp:/usr/include/x86_64-linux-gnu/qt6/QtWidgets/qlabel.h
  mdp:/usr/include/x86_64-linux-gnu/qt6/QtWidgets/qlineedit.h
  mdp:/usr/include/x86_64-linux-gnu/qt6/QtWidgets/qmainwindow.h
  mdp:/usr/include/x86_64-linux-gnu/qt6/QtWidgets/qpushbutton.h

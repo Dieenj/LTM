@@ -155,15 +155,18 @@ void WorkerThread::handleClientMessage(int fd) {
 
     // Parse lệnh
     std::string command, arg;
-    if (msg.substr(0, 17) == "SITE QUOTA_CHECK ") {
+    if (msg.find("SITE QUOTA_CHECK") == 0) {
         command = "SITE QUOTA_CHECK";
-        arg = msg.substr(17);
+        arg = msg.substr(17);  // Skip "SITE QUOTA_CHECK "
+        std::cout << "[Worker] Detected SITE QUOTA_CHECK, arg: '" << arg << "'" << std::endl;
     } else {
         std::stringstream ss(msg);
         ss >> command;
         std::getline(ss, arg);
         if (!arg.empty() && arg[0] == ' ') arg.erase(0, 1);
     }
+    
+    std::cout << "[Worker] Parsed - Command: '" << command << "', Arg: '" << arg << "'" << std::endl;
     
     std::string response;
 
@@ -187,11 +190,29 @@ void WorkerThread::handleClientMessage(int fd) {
     }
     else if (command == CMD_LIST) {
         std::lock_guard<std::mutex> lock(mtx);
-        response = CmdHandler::handleList(sessions[fd]);
+        // Parse parent_id if provided
+        long long parent_id = 0;
+        if (!arg.empty()) {
+            try {
+                parent_id = std::stoll(arg);
+            } catch (...) {
+                parent_id = 0;
+            }
+        }
+        response = CmdHandler::handleList(sessions[fd], parent_id);
     }
     else if (command == CMD_LISTSHARED) {
+        // Parse parent_id từ argument (optional)
+        long long parent_id = -1; // Default: root shared items
+        if (!arg.empty()) {
+            try {
+                parent_id = std::stoll(arg);
+            } catch (...) {
+                parent_id = -1;
+            }
+        }
         std::lock_guard<std::mutex> lock(mtx);
-        response = CmdHandler::handleListShared(sessions[fd]);
+        response = CmdHandler::handleListShared(sessions[fd], parent_id);
     }
     else if (command == CMD_SEARCH) {
         std::lock_guard<std::mutex> lock(mtx);
@@ -228,8 +249,9 @@ void WorkerThread::handleClientMessage(int fd) {
     else if (command == CMD_UPLOAD) { // STOR
         std::string fname;
         long fsize = 0;
+        long long parent_id = 0;
         std::stringstream ss_up(arg);
-        ss_up >> fname >> fsize;
+        ss_up >> fname >> fsize >> parent_id;
 
         if (fsize <= 0) {
             response = std::string(CODE_FAIL) + " Invalid file size\n";
@@ -240,9 +262,9 @@ void WorkerThread::handleClientMessage(int fd) {
             std::string username = sessions[fd].username;
             removeClient(fd, false); // false = không đóng socket
             
-            std::thread t([fd, fname, fsize, username, this]() {
+            std::thread t([fd, fname, fsize, username, parent_id, this]() {
                 DedicatedThread dt;
-                dt.handleUpload(fd, fname, fsize, username, this);
+                dt.handleUpload(fd, fname, fsize, username, parent_id, this);
             });
             
             std::thread::id tid = t.get_id();
@@ -406,23 +428,8 @@ void WorkerThread::handleClientMessage(int fd) {
         
         response = "200 Share cancelled\n";
     }
-    else if (command == "MKDIR" || command == "CREATE_FOLDER") {
-        std::stringstream ss_mkdir(arg);
-        std::string folder_name;
-        long long parent_id = 1;
-        
-        ss_mkdir >> folder_name;
-        
-        if (ss_mkdir >> parent_id) {
-        }
-        
-        std::cout << "[Worker] CREATE_FOLDER: name=" << folder_name 
-                << ", parent_id=" << parent_id << std::endl;
-        
-        std::lock_guard<std::mutex> lock(mtx);
-        response = CmdHandler::handleCreateFolder(sessions[fd], folder_name, parent_id);
-    }
     else {
+        std::cout << "[Worker] UNKNOWN COMMAND: '" << command << "'" << std::endl;
         response = "500 Unknown command\n";
     }
 

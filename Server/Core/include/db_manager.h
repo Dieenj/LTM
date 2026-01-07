@@ -10,6 +10,8 @@ struct FileRecord {
     std::string name;
     long size;
     std::string owner;
+    long long file_id;
+    bool is_folder;
 };
 
 // ===== NEW STRUCT FOR FOLDER SHARE =====
@@ -34,9 +36,11 @@ public:
     bool connect();
     void disconnect();
     bool checkUser(std::string user, std::string pass);
-    std::vector<FileRecord> getFiles(std::string username);
+    std::vector<FileRecord> getFiles(std::string username, long long parent_id = 0);
     std::vector<FileRecord> getSharedFiles(std::string username);
-    bool addFile(std::string filename, long filesize, std::string owner);
+    std::vector<FileRecord> getSharedFiles(std::string username, long long parent_id); // Overload for navigation
+    bool hasSharedAccess(long long file_id, std::string username); // Check if user has access to file/folder
+    bool addFile(std::string filename, long filesize, std::string owner, long long parent_id = 0);
     long getStorageUsed(std::string username);
     bool shareFile(std::string filename, std::string ownerUsername, std::string targetUsername);
     bool deleteFile(std::string filename, std::string username);
@@ -49,7 +53,7 @@ public:
     // Lấy toàn bộ cấu trúc folder (đệ quy)
     std::vector<FileRecordEx> getFolderStructure(long long folder_id, std::string username);
     
-    // Tạo folder mới
+    // Tạo folder mới (sử dụng nội bộ bởi folder share)
     long long createFolder(std::string foldername, long long parent_id, std::string owner);
     
     // Tạo file trong folder

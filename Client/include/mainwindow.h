@@ -7,6 +7,7 @@
 #include <QPushButton>
 #include <QTableWidget>
 #include <QTabWidget>
+#include <QLabel>
 #include "network_manager.h"
 
 class MainWindow : public QMainWindow {
@@ -24,7 +25,6 @@ private slots:
 
     // Dashboard page
     void onRefreshClicked();
-    void onCreateFolderClicked();      // NEW
     void onUploadClicked();
     void onDownloadClicked();
     void onShareClicked();
@@ -32,9 +32,10 @@ private slots:
     void onLogoutClicked();
     void onTabChanged(int index);
     
-    // Folder share
-    void onShareFolderClicked();
+    // Folder navigation
     void showContextMenu(const QPoint &pos);
+    void onFolderDoubleClicked(int row, int column);
+    void onBackButtonClicked();
 
     // Network responses
     void handleFileList(QString data);
@@ -42,7 +43,6 @@ private slots:
     void handleDownloadComplete(QString filename);
     void handleShareResult(bool success, QString msg);
     void handleDeleteResult(bool success, QString msg);
-    void handleFolderCreated(bool success, QString message, long long folder_id);  // NEW
     void handleLogout();
 
 private:
@@ -62,6 +62,12 @@ private:
     QTabWidget *tabWidget;
     QTableWidget *fileTable;
     QTableWidget *sharedFileTable;
+    QPushButton *backButton;
+    QLabel *pathLabel;
+    
+    // Current navigation state
+    long long currentFolderId;
+    QString currentFolderPath;
     
     // Network manager
     NetworkManager *netManager;

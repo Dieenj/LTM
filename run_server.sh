@@ -2,7 +2,7 @@
 # Script để chạy Server
 
 echo "[Script] Building server..."
-cd "$(dirname "$0")"
+cd "$(dirname "$0")/Server"
 mkdir -p build
 cd build
 cmake .. > /dev/null 2>&1

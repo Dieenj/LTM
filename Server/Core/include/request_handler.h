@@ -5,6 +5,7 @@
 #include <vector>
 #include <map>
 #include "server.h"
+#include "db_manager.h"
 
 // Xử lý xác thực (Login, Register)
 class AuthHandler {
@@ -17,16 +18,12 @@ public:
 // Xử lý lệnh quản lý file (List, Search, Share)
 class CmdHandler {
 public:
-    static std::string handleList(const ClientSession& session);
-    static std::string handleListShared(const ClientSession& session);
+    static std::string handleList(const ClientSession& session, long long parent_id = 0);
+    static std::string handleListShared(const ClientSession& session, long long parent_id = -1);
     static std::string handleSearch(const ClientSession& session, const std::string& keyword);
     static std::string handleShare(const ClientSession& session, const std::string& filename, const std::string& targetUser);
     static std::string handleDelete(const ClientSession& session, const std::string& filename);
 
-    static std::string handleCreateFolder(const ClientSession& session, 
-                                         const std::string& folderName,
-                                         long long parent_id);
-    
     static std::string handleShareFolder(const ClientSession& session, long long folder_id, const std::string& targetUser);
     static std::string handleGetFolderStructure(const ClientSession& session, long long folder_id);
 };

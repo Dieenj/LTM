@@ -81,18 +81,52 @@ INSERT INTO USERS (username, password_hash, storage_limit_bytes) VALUES
     ('admin', SHA2('123456', 256), 2147483648), -- 2GB
     ('guest', SHA2('guest', 256), 1073741824);   -- 1GB
 
--- Tạo một số file mẫu
+-- Tạo các folder và file mẫu
 INSERT INTO FILES (owner_id, parent_id, name, is_folder, size_bytes) VALUES
+    -- Root folders cho admin
     (1, NULL, 'Documents', TRUE, 0),
     (1, NULL, 'Images', TRUE, 0),
-    (1, 1, 'Bao_cao_Do_an.pdf', FALSE, 2048576),
+    (1, NULL, 'Videos', TRUE, 0),
+    (1, NULL, 'Projects', TRUE, 0),
+    (1, NULL, 'Downloads', TRUE, 0),
+    
+    -- Sub-folders trong Documents
+    (1, 1, 'Reports', TRUE, 0),
+    (1, 1, 'Presentations', TRUE, 0),
+    (1, 1, 'Research', TRUE, 0),
+    
+    -- Sub-folders trong Projects
+    (1, 4, 'WebApps', TRUE, 0),
+    (1, 4, 'MobileApps', TRUE, 0),
+    (1, 4, 'Scripts', TRUE, 0),
+    
+    -- Files trong Documents/Reports
+    (1, 6, 'Bao_cao_Do_an.pdf', FALSE, 2048576),
+    (1, 6, 'Monthly_Report.docx', FALSE, 1024000),
+    
+    -- Files trong Images
     (1, 2, 'Hinh_anh_demo.png', FALSE, 512000),
-    (2, NULL, 'Source_Code.zip', FALSE, 102400);
+    (1, 2, 'Screenshot_2025.jpg', FALSE, 780000),
+    
+    -- Files trong Projects/WebApps
+    (1, 9, 'portfolio-website.zip', FALSE, 5242880),
+    (1, 9, 'ecommerce-app.tar.gz', FALSE, 8388608),
+    
+    -- Root folders cho guest
+    (2, NULL, 'MyFiles', TRUE, 0),
+    (2, NULL, 'Shared', TRUE, 0),
+    
+    -- Files cho guest
+    (2, 19, 'Source_Code.zip', FALSE, 102400),
+    (2, 19, 'notes.txt', FALSE, 4096);
 
 -- Chia sẻ file từ admin cho guest
 INSERT INTO SHAREDFILES (file_id, user_id, permission_id) VALUES
-    (3, 2, 1); -- Share "Bao_cao_Do_an.pdf" với guest (VIEW permission)
+    (13, 2, 1), -- Share "Bao_cao_Do_an.pdf" với guest (VIEW permission)
+    (15, 2, 1), -- Share "Hinh_anh_demo.png" với guest (VIEW permission)
+    (17, 2, 1); -- Share "portfolio-website.zip" với guest (VIEW permission)
 
 -- Đánh dấu star
 INSERT INTO STARS (user_id, file_id) VALUES
-    (1, 3);
+    (1, 13), -- admin star Bao_cao_Do_an.pdf
+    (1, 17); -- admin star portfolio-website.zip

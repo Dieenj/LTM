@@ -37,7 +37,7 @@ private:
 // Class xử lý riêng (Dedicated)
 class DedicatedThread {
 public:
-    void handleUpload(int socketFd, std::string filename, long filesize, std::string username, WorkerThread* workerRef);
+    void handleUpload(int socketFd, std::string filename, long filesize, std::string username, long long parent_id, WorkerThread* workerRef);
     void handleDownload(int socketFd, std::string filename, std::string username, WorkerThread* workerRef);
 };
 

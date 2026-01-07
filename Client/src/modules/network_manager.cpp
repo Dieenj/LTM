@@ -103,21 +103,28 @@ void NetworkManager::login(const QString &user, const QString &pass) {
     }
 }
 
-void NetworkManager::requestFileList() {
-    qDebug() << "[Network] Requesting file list...";
-    QString cmd = QString("%1\n").arg(CMD_LIST);
+void NetworkManager::requestFileList(long long parent_id) {
+    qDebug() << "[Network] Requesting file list for parent_id:" << parent_id;
+    QString cmd = QString("%1 %2\n").arg(CMD_LIST).arg(parent_id);
     socket->write(cmd.toUtf8());
     socket->flush();
 }
 
-void NetworkManager::requestSharedFileList() {
-    qDebug() << "[Network] Requesting shared file list...";
-    QString cmd = QString("%1\n").arg(CMD_LISTSHARED);
+void NetworkManager::requestSharedFileList(long long parent_id) {
+    qDebug() << "[Network] Requesting shared file list for parent_id:" << parent_id;
+    QString cmd;
+    if (parent_id < 0) {
+        // Root shared items
+        cmd = QString("%1\n").arg(CMD_LISTSHARED);
+    } else {
+        // Shared items in specific folder
+        cmd = QString("%1 %2\n").arg(CMD_LISTSHARED).arg(parent_id);
+    }
     socket->write(cmd.toUtf8());
     socket->flush();
 }
 
-void NetworkManager::uploadFile(const QString &filePath) {
+void NetworkManager::uploadFile(const QString &filePath, long long parent_id) {
     QFile file(filePath);
     if (!file.open(QIODevice::ReadOnly)) {
         emit uploadProgress("Failed to open file!");
@@ -128,7 +135,7 @@ void NetworkManager::uploadFile(const QString &filePath) {
     QString filename = fileInfo.fileName();
     qint64 filesize = fileInfo.size();
 
-    qDebug() << "[Upload] Starting upload:" << filename << "Size:" << filesize;
+    qDebug() << "[Upload] Starting upload:" << filename << "Size:" << filesize << "Parent ID:" << parent_id;
 
     // 1. Tạm thời ngắt kết nối signal readyRead để xử lý đồng bộ
     disconnect(socket, &QTcpSocket::readyRead, this, &NetworkManager::onReadyRead);
@@ -141,7 +148,7 @@ void NetworkManager::uploadFile(const QString &filePath) {
     };
 
     // 2. Kiểm tra Quota (CMD_UPLOAD_CHECK)
-    QString checkCmd = QString("%1 %2 %3\n").arg(CMD_UPLOAD_CHECK, filename).arg(filesize);
+    QString checkCmd = QString("%1 %2 %3\n").arg(CMD_UPLOAD_CHECK).arg(filename).arg(filesize);
     socket->write(checkCmd.toUtf8());
     socket->flush();
     
@@ -151,13 +158,14 @@ void NetworkManager::uploadFile(const QString &filePath) {
     }
     
     QString response = QString::fromUtf8(socket->readAll()).trimmed();
+    qDebug() << "[Upload] Quota check response:" << response;
     if (!response.startsWith(CODE_OK)) {
         handleError("Upload rejected: " + response);
         return;
     }
 
-    // 3. Gửi lệnh bắt đầu upload (STOR)
-    QString storCmd = QString("%1 %2 %3\n").arg(CMD_UPLOAD, filename).arg(filesize);
+    // 3. Gửi lệnh bắt đầu upload (STOR) với parent_id
+    QString storCmd = QString("%1 %2 %3 %4\n").arg(CMD_UPLOAD).arg(filename).arg(filesize).arg(parent_id);
     socket->write(storCmd.toUtf8());
     socket->flush();
     
@@ -775,7 +783,9 @@ void NetworkManager::uploadFolderFile(const QString &session_id,
         currentFolderShare = FolderShareSessionInfo();
         
         // Refresh file list
-        QTimer::singleShot(500, this, &NetworkManager::requestFileList);
+        QTimer::singleShot(500, this, [this]() {
+            requestFileList(0);  // Refresh root folder
+        });
         
     } else {
         emit folderShareFailed("Upload failed: " + response);
@@ -839,54 +849,4 @@ void NetworkManager::cancelFolderShare(const QString &session_id) {
     currentFolderShare = FolderShareSessionInfo();
     
     qDebug() << "[Network] Cancelled folder share:" << session_id;
-}
-
-void NetworkManager::createFolder(const QString &folderName, long long parent_id) {
-    if (socket->state() != QAbstractSocket::ConnectedState) {
-        emit folderCreated(false, "Not connected to server!", -1);
-        return;
-    }
-    
-    qDebug() << "[Network] Creating folder:" << folderName << "in parent:" << parent_id;
-    
-    disconnect(socket, &QTcpSocket::readyRead, this, &NetworkManager::onReadyRead);
-    
-    // Send command: MKDIR <folder_name> <parent_id>
-    QString cmd = QString("%1 %2 %3\n")
-                    .arg(CMD_CREATE_FOLDER)
-                    .arg(folderName)
-                    .arg(parent_id);
-    
-    socket->write(cmd.toUtf8());
-    socket->flush();
-    
-    // Wait for response
-    if (!socket->waitForReadyRead(5000)) {
-        connect(socket, &QTcpSocket::readyRead, this, &NetworkManager::onReadyRead);
-        emit folderCreated(false, "Timeout waiting for server response", -1);
-        return;
-    }
-    
-    QString response = QString::fromUtf8(socket->readAll()).trimmed();
-    connect(socket, &QTcpSocket::readyRead, this, &NetworkManager::onReadyRead);
-    
-    qDebug() << "[Network] Create folder response:" << response;
-    
-    // Parse response: "200 Folder created successfully (ID: 123)"
-    if (response.startsWith(CODE_OK)) {
-        // Extract folder_id from response
-        long long folder_id = -1;
-        QRegularExpression regex("ID: (\\d+)");
-        QRegularExpressionMatch match = regex.match(response);
-        if (match.hasMatch()) {
-            folder_id = match.captured(1).toLongLong();
-        }
-        
-        emit folderCreated(true, folderName, folder_id);
-        
-        // Refresh file list after 200ms
-        QTimer::singleShot(200, this, &NetworkManager::requestFileList);
-    } else {
-        emit folderCreated(false, response, -1);
-    }
 }

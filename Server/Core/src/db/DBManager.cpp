@@ -65,7 +65,7 @@ bool DBManager::checkUser(std::string user, std::string pass) {
     return found;
 }
 
-std::vector<FileRecord> DBManager::getFiles(std::string username) {
+std::vector<FileRecord> DBManager::getFiles(std::string username, long long parent_id) {
     std::vector<FileRecord> list;
     if (!conn) return list;
 
@@ -84,14 +84,28 @@ std::vector<FileRecord> DBManager::getFiles(std::string username) {
     std::string user_id = row[0];
     mysql_free_result(result);
 
-    // Lấy CHỈ files do user sở hữu (không bao gồm shared)
-    query = "SELECT f.name, f.size_bytes, u.username, f.created_at "
-            "FROM FILES f "
-            "JOIN USERS u ON f.owner_id = u.user_id "
-            "WHERE f.file_id != 1 "
-            "AND f.owner_id = " + user_id + " "
-            "AND f.is_deleted = FALSE AND f.is_folder = FALSE "
-            "ORDER BY f.created_at DESC";
+    // Lấy CHỈ files/folders do user sở hữu trong folder cụ thể
+    // parent_id = 0: lấy root files (parent_id IS NULL)
+    // parent_id > 0: lấy files trong folder đó
+    if (parent_id == 0) {
+        query = "SELECT f.name, f.size_bytes, u.username, f.created_at, f.file_id, f.is_folder "
+                "FROM FILES f "
+                "JOIN USERS u ON f.owner_id = u.user_id "
+                "WHERE f.file_id != 1 "
+                "AND f.owner_id = " + user_id + " "
+                "AND f.parent_id IS NULL "
+                "AND f.is_deleted = FALSE "
+                "ORDER BY f.is_folder DESC, f.created_at DESC";
+    } else {
+        query = "SELECT f.name, f.size_bytes, u.username, f.created_at, f.file_id, f.is_folder "
+                "FROM FILES f "
+                "JOIN USERS u ON f.owner_id = u.user_id "
+                "WHERE f.file_id != 1 "
+                "AND f.owner_id = " + user_id + " "
+                "AND f.parent_id = " + std::to_string(parent_id) + " "
+                "AND f.is_deleted = FALSE "
+                "ORDER BY f.is_folder DESC, f.created_at DESC";
+    }
 
     if (mysql_query(conn, query.c_str())) {
         std::cerr << "[DB] Query failed: " << mysql_error(conn) << std::endl;
@@ -106,6 +120,28 @@ std::vector<FileRecord> DBManager::getFiles(std::string username) {
         rec.name = row[0] ? row[0] : "";
         rec.size = row[1] ? std::stol(row[1]) : 0;
         rec.owner = row[2] ? row[2] : "";
+        rec.file_id = row[4] ? std::stoll(row[4]) : 0;
+        rec.is_folder = row[5] && std::string(row[5]) == "1";
+        
+        // If it's a folder, calculate total size of files inside
+        if (rec.is_folder) {
+            std::string size_query = 
+                "SELECT COALESCE(SUM(size_bytes), 0) FROM FILES "
+                "WHERE parent_id = " + std::to_string(rec.file_id) + " "
+                "AND is_folder = FALSE AND is_deleted = FALSE";
+            
+            if (mysql_query(conn, size_query.c_str()) == 0) {
+                MYSQL_RES* size_result = mysql_store_result(conn);
+                if (size_result) {
+                    MYSQL_ROW size_row = mysql_fetch_row(size_result);
+                    if (size_row && size_row[0]) {
+                        rec.size = std::stol(size_row[0]);
+                    }
+                    mysql_free_result(size_result);
+                }
+            }
+        }
+        
         list.push_back(rec);
     }
 
@@ -133,15 +169,15 @@ std::vector<FileRecord> DBManager::getSharedFiles(std::string username) {
     std::string user_id = row[0];
     mysql_free_result(result);
 
-    // Lấy CHỈ file được share (không bao gồm file của mình)
-    query = "SELECT f.name, f.size_bytes, u.username "
+    // Lấy CHỈ file/folder được share (không bao gồm của mình)
+    query = "SELECT f.name, f.size_bytes, u.username, f.file_id, f.is_folder "
             "FROM FILES f "
             "JOIN USERS u ON f.owner_id = u.user_id "
             "JOIN SHAREDFILES sf ON f.file_id = sf.file_id "
             "WHERE sf.user_id = " + user_id + " "
             "AND f.owner_id != " + user_id + " "
-            "AND f.is_deleted = FALSE AND f.is_folder = FALSE "
-            "ORDER BY sf.shared_at DESC";
+            "AND f.is_deleted = FALSE "
+            "ORDER BY f.is_folder DESC, sf.shared_at DESC";
 
     if (mysql_query(conn, query.c_str())) {
         std::cerr << "[DB] Query failed: " << mysql_error(conn) << std::endl;
@@ -156,6 +192,28 @@ std::vector<FileRecord> DBManager::getSharedFiles(std::string username) {
         rec.name = row[0] ? row[0] : "";
         rec.size = row[1] ? std::stol(row[1]) : 0;
         rec.owner = row[2] ? row[2] : "";
+        rec.file_id = row[3] ? std::stoll(row[3]) : 0;
+        rec.is_folder = row[4] && std::string(row[4]) == "1";
+        
+        // If it's a folder, calculate total size
+        if (rec.is_folder) {
+            std::string size_query = 
+                "SELECT COALESCE(SUM(size_bytes), 0) FROM FILES "
+                "WHERE parent_id = " + std::to_string(rec.file_id) + " "
+                "AND is_folder = FALSE AND is_deleted = FALSE";
+            
+            if (mysql_query(conn, size_query.c_str()) == 0) {
+                MYSQL_RES* size_result = mysql_store_result(conn);
+                if (size_result) {
+                    MYSQL_ROW size_row = mysql_fetch_row(size_result);
+                    if (size_row && size_row[0]) {
+                        rec.size = std::stol(size_row[0]);
+                    }
+                    mysql_free_result(size_result);
+                }
+            }
+        }
+        
         list.push_back(rec);
     }
 
@@ -164,7 +222,163 @@ std::vector<FileRecord> DBManager::getSharedFiles(std::string username) {
     return list;
 }
 
-bool DBManager::addFile(std::string filename, long filesize, std::string owner) {
+// Overloaded getSharedFiles với parent_id để navigate vào folder được share
+std::vector<FileRecord> DBManager::getSharedFiles(std::string username, long long parent_id) {
+    std::vector<FileRecord> list;
+    if (!conn) return list;
+
+    // Lấy user_id
+    std::string query = "SELECT user_id FROM USERS WHERE username = '" + username + "'";
+    if (mysql_query(conn, query.c_str())) return list;
+    
+    MYSQL_RES* result = mysql_store_result(conn);
+    if (!result) return list;
+    
+    MYSQL_ROW row = mysql_fetch_row(result);
+    if (!row) {
+        mysql_free_result(result);
+        return list;
+    }
+    std::string user_id = row[0];
+    mysql_free_result(result);
+
+    // Kiểm tra quyền truy cập vào parent folder
+    if (parent_id > 0) {
+        if (!hasSharedAccess(parent_id, username)) {
+            std::cerr << "[DB] User '" << username << "' has no access to folder " << parent_id << std::endl;
+            return list;
+        }
+    }
+
+    // Lấy files/folders trong parent folder được share
+    query = "SELECT f.name, f.size_bytes, u.username, f.file_id, f.is_folder "
+            "FROM FILES f "
+            "JOIN USERS u ON f.owner_id = u.user_id "
+            "WHERE f.parent_id = " + std::to_string(parent_id) + " "
+            "AND f.is_deleted = FALSE "
+            "ORDER BY f.is_folder DESC, f.created_at DESC";
+
+    if (mysql_query(conn, query.c_str())) {
+        std::cerr << "[DB] Query failed: " << mysql_error(conn) << std::endl;
+        return list;
+    }
+
+    result = mysql_store_result(conn);
+    if (!result) return list;
+
+    while ((row = mysql_fetch_row(result))) {
+        FileRecord rec;
+        rec.name = row[0] ? row[0] : "";
+        rec.size = row[1] ? std::stol(row[1]) : 0;
+        rec.owner = row[2] ? row[2] : "";
+        rec.file_id = row[3] ? std::stoll(row[3]) : 0;
+        rec.is_folder = row[4] && std::string(row[4]) == "1";
+        
+        // If it's a folder, calculate total size
+        if (rec.is_folder) {
+            std::string size_query = 
+                "SELECT COALESCE(SUM(size_bytes), 0) FROM FILES "
+                "WHERE parent_id = " + std::to_string(rec.file_id) + " "
+                "AND is_folder = FALSE AND is_deleted = FALSE";
+            
+            if (mysql_query(conn, size_query.c_str()) == 0) {
+                MYSQL_RES* size_result = mysql_store_result(conn);
+                if (size_result) {
+                    MYSQL_ROW size_row = mysql_fetch_row(size_result);
+                    if (size_row && size_row[0]) {
+                        rec.size = std::stol(size_row[0]);
+                    }
+                    mysql_free_result(size_result);
+                }
+            }
+        }
+        
+        list.push_back(rec);
+    }
+
+    mysql_free_result(result);
+    std::cout << "[DB] Retrieved " << list.size() << " items in shared folder " << parent_id 
+              << " for user '" << username << "'" << std::endl;
+    return list;
+}
+
+// Kiểm tra xem user có quyền truy cập file/folder được share không
+bool DBManager::hasSharedAccess(long long file_id, std::string username) {
+    if (!conn) return false;
+
+    // Lấy user_id
+    std::string query = "SELECT user_id FROM USERS WHERE username = '" + username + "'";
+    if (mysql_query(conn, query.c_str())) return false;
+    
+    MYSQL_RES* result = mysql_store_result(conn);
+    if (!result) return false;
+    
+    MYSQL_ROW row = mysql_fetch_row(result);
+    if (!row) {
+        mysql_free_result(result);
+        return false;
+    }
+    std::string user_id = row[0];
+    mysql_free_result(result);
+
+    // Kiểm tra xem file/folder này hoặc parent của nó có được share không
+    // Strategy: Duyệt lên parent cho đến khi tìm thấy folder được share
+    long long current_id = file_id;
+    
+    while (current_id > 0) {
+        // Kiểm tra xem current_id có trong SHAREDFILES không
+        query = "SELECT COUNT(*) FROM SHAREDFILES "
+                "WHERE file_id = " + std::to_string(current_id) + " "
+                "AND user_id = " + user_id;
+        
+        if (mysql_query(conn, query.c_str())) return false;
+        
+        result = mysql_store_result(conn);
+        if (!result) return false;
+        
+        row = mysql_fetch_row(result);
+        if (row && row[0] && std::stoi(row[0]) > 0) {
+            mysql_free_result(result);
+            return true; // Found shared access
+        }
+        mysql_free_result(result);
+        
+        // Lấy parent_id để tiếp tục duyệt lên
+        query = "SELECT parent_id FROM FILES WHERE file_id = " + std::to_string(current_id);
+        if (mysql_query(conn, query.c_str())) return false;
+        
+        result = mysql_store_result(conn);
+        if (!result) return false;
+        
+        row = mysql_fetch_row(result);
+        if (!row || !row[0]) {
+            mysql_free_result(result);
+            break; // Đã đến root
+        }
+        
+        current_id = std::stoll(row[0]);
+        mysql_free_result(result);
+    }
+    
+    // Kiểm tra xem user có phải owner không
+    query = "SELECT COUNT(*) FROM FILES f "
+            "JOIN USERS u ON f.owner_id = u.user_id "
+            "WHERE f.file_id = " + std::to_string(file_id) + " "
+            "AND u.username = '" + username + "'";
+    
+    if (mysql_query(conn, query.c_str())) return false;
+    
+    result = mysql_store_result(conn);
+    if (!result) return false;
+    
+    row = mysql_fetch_row(result);
+    bool is_owner = (row && row[0] && std::stoi(row[0]) > 0);
+    mysql_free_result(result);
+    
+    return is_owner;
+}
+
+bool DBManager::addFile(std::string filename, long filesize, std::string owner, long long parent_id) {
     if (!conn) return false;
 
     // Lấy owner_id
@@ -182,19 +396,26 @@ bool DBManager::addFile(std::string filename, long filesize, std::string owner) 
     std::string owner_id = row[0];
     mysql_free_result(result);
 
-    // Insert file vào thư mục root (parent_id=1)
+    // Insert file vào folder được chỉ định (parent_id=0 means root, NULL in DB)
     std::stringstream ss;
-    ss << "INSERT INTO FILES (owner_id, parent_id, name, is_folder, size_bytes) VALUES ("
-       << owner_id << ", 1, '" << filename << "', FALSE, " << filesize << ") "
-       << "ON DUPLICATE KEY UPDATE size_bytes = " << filesize 
-       << ", is_deleted = FALSE, updated_at = NOW()";
+    if (parent_id == 0) {
+        ss << "INSERT INTO FILES (owner_id, parent_id, name, is_folder, size_bytes) VALUES ("
+           << owner_id << ", NULL, '" << filename << "', FALSE, " << filesize << ") "
+           << "ON DUPLICATE KEY UPDATE size_bytes = " << filesize 
+           << ", is_deleted = FALSE, updated_at = NOW()";
+    } else {
+        ss << "INSERT INTO FILES (owner_id, parent_id, name, is_folder, size_bytes) VALUES ("
+           << owner_id << ", " << parent_id << ", '" << filename << "', FALSE, " << filesize << ") "
+           << "ON DUPLICATE KEY UPDATE size_bytes = " << filesize 
+           << ", is_deleted = FALSE, updated_at = NOW()";
+    }
     
     if (mysql_query(conn, ss.str().c_str())) {
         std::cerr << "[DB] Insert failed: " << mysql_error(conn) << std::endl;
         return false;
     }
 
-    std::cout << "[DB] File '" << filename << "' saved to database" << std::endl;
+    std::cout << "[DB] File '" << filename << "' saved to database (parent_id: " << parent_id << ")" << std::endl;
     return true;
 }
 
@@ -558,6 +779,8 @@ bool DBManager::shareFolderWithUser(long long folder_id, std::string targetUsern
     mysql_free_result(result);
 
     // Share folder (permission_id = 1 cho VIEW)
+    // NOTE: Không cần share đệ quy tất cả items con
+    // hasSharedAccess() sẽ tự động kiểm tra quyền bằng cách traverse lên parent
     query = "INSERT INTO SHAREDFILES (file_id, user_id, permission_id) VALUES (" 
             + std::to_string(folder_id) + ", " + target_user_id + ", 1) "
             "ON DUPLICATE KEY UPDATE shared_at = CURRENT_TIMESTAMP";
@@ -567,6 +790,7 @@ bool DBManager::shareFolderWithUser(long long folder_id, std::string targetUsern
         return false;
     }
 
-    std::cout << "[DB] Folder (ID=" << folder_id << ") shared with " << targetUsername << std::endl;
+    std::cout << "[DB] Folder (ID=" << folder_id << ") shared with " << targetUsername 
+              << " (recursive access via hasSharedAccess)" << std::endl;
     return true;
 }
