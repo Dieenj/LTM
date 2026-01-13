@@ -44,6 +44,28 @@ private slots:
     void onFolderDoubleClicked(int row, int column);
     void onBackButtonClicked();
     void onBreadcrumbClicked();
+    
+    // Share code slots
+    void onGenerateShareCodeClicked();
+    void onRedeemShareCodeClicked();
+    void onRevokeShareClicked();
+    void onDeleteShareCodeClicked();
+    void onRefreshMySharesClicked();
+    void handleShareCodeGenerated(bool success, const QString &code, const QString &msg);
+    void handleShareCodeRedeemed(bool success, long long file_id, const QString &filename, bool is_folder, const QString &owner);
+    void handleMySharesReceived(const QList<ShareInfoClient> &shares);
+    void handleShareRevoked(bool success, const QString &msg);
+    void handleMyShareCodesReceived(const QList<ShareCodeInfoClient> &codes);
+    void handleShareCodeDeleted(bool success, const QString &msg);
+    
+    // Guest mode slots
+    void onGuestAccessClicked();
+    void onGuestRedeemCode();
+    void onGuestDownloadClicked();
+    void onGuestFileDoubleClicked(int row, int column);
+    void handleGuestRedeemResult(bool success, long long file_id, const QString &filename, 
+                                 bool is_folder, const QString &owner, long long size);
+    void handleGuestFolderList(const QList<GuestFileInfo> &files);
 
     void handleFileList(QString data);
     void handleUploadStarted(QString filename);
@@ -59,6 +81,8 @@ private:
     void setupUI();
     QWidget* createLoginPage();
     QWidget* createDashboardPage();
+    QWidget* createGuestPage();
+    QString formatFileSize(long long bytes);
 
     QStackedWidget *stackedWidget;
     
@@ -69,9 +93,20 @@ private:
     QTabWidget *tabWidget;
     QTableWidget *fileTable;
     QTableWidget *sharedFileTable;
+    QTableWidget *mySharesTable;      // Tab quản lý file đã share
+    QTableWidget *shareCodesTable;    // Tab quản lý mã share
     QPushButton *backButton;
     QLabel *pathLabel;
     QHBoxLayout *breadcrumbLayout;
+    
+    // Guest mode widgets
+    QTableWidget *guestFileTable;
+    QLineEdit *guestShareCodeInput;
+    QLabel *guestInfoLabel;
+    bool isGuestMode;
+    long long guestCurrentFileId;
+    QString guestCurrentFileName;
+    bool guestCurrentIsFolder;
     
     long long currentFolderId;
     QString currentFolderPath;

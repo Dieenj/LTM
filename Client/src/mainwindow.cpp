@@ -10,6 +10,8 @@
 #include <QMenu>
 #include <QCoreApplication>
 #include <QTimer>
+#include <QClipboard>
+#include <QApplication>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     netManager = new NetworkManager(this);
@@ -61,16 +63,30 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     connect(netManager, &NetworkManager::deleteResult, this, &MainWindow::handleDeleteResult);
     connect(netManager, &NetworkManager::renameResult, this, &MainWindow::handleRenameResult);
     connect(netManager, &NetworkManager::logoutSuccess, this, &MainWindow::handleLogout);
+    
+    // Share code connections
+    connect(netManager, &NetworkManager::shareCodeGenerated, this, &MainWindow::handleShareCodeGenerated);
+    connect(netManager, &NetworkManager::shareCodeRedeemed, this, &MainWindow::handleShareCodeRedeemed);
+    connect(netManager, &NetworkManager::mySharesReceived, this, &MainWindow::handleMySharesReceived);
+    connect(netManager, &NetworkManager::shareRevoked, this, &MainWindow::handleShareRevoked);
+    connect(netManager, &NetworkManager::myShareCodesReceived, this, &MainWindow::handleMyShareCodesReceived);
+    connect(netManager, &NetworkManager::shareCodeDeleted, this, &MainWindow::handleShareCodeDeleted);
+    
+    // Guest mode connections
+    connect(netManager, &NetworkManager::guestRedeemResult, this, &MainWindow::handleGuestRedeemResult);
+    connect(netManager, &NetworkManager::guestFolderList, this, &MainWindow::handleGuestFolderList);
 }
 
 MainWindow::~MainWindow() {}
 
 void MainWindow::setupUI() {
     stackedWidget = new QStackedWidget(this);
-    stackedWidget->addWidget(createLoginPage());
-    stackedWidget->addWidget(createDashboardPage());
+    stackedWidget->addWidget(createLoginPage());      // index 0
+    stackedWidget->addWidget(createDashboardPage());  // index 1
+    stackedWidget->addWidget(createGuestPage());      // index 2
     setCentralWidget(stackedWidget);
     resize(800, 500);
+    isGuestMode = false;
 }
 
 QWidget* MainWindow::createLoginPage() {
@@ -85,6 +101,7 @@ QWidget* MainWindow::createLoginPage() {
     QPushButton *btnConnect = new QPushButton("Connect Server");
     QPushButton *btnLogin = new QPushButton("Login");
     QPushButton *btnRegister = new QPushButton("Register New Account");
+    QPushButton *btnGuest = new QPushButton("Guest Access (Use Share Code)");
 
     l->addWidget(new QLabel("Server IP:"));
     l->addWidget(hostInput);
@@ -95,11 +112,15 @@ QWidget* MainWindow::createLoginPage() {
     l->addWidget(passInput);
     l->addWidget(btnLogin);
     l->addWidget(btnRegister);
+    l->addSpacing(10);
+    l->addWidget(new QLabel("<b>Or access as Guest:</b>"));
+    l->addWidget(btnGuest);
     l->addStretch();
 
     connect(btnConnect, &QPushButton::clicked, this, &MainWindow::onConnectBtnClicked);
     connect(btnLogin, &QPushButton::clicked, this, &MainWindow::onLoginBtnClicked);
     connect(btnRegister, &QPushButton::clicked, this, &MainWindow::onRegisterBtnClicked);
+    connect(btnGuest, &QPushButton::clicked, this, &MainWindow::onGuestAccessClicked);
     return p;
 }
 
@@ -171,8 +192,87 @@ QWidget* MainWindow::createDashboardPage() {
     connect(sharedFileTable, &QTableWidget::customContextMenuRequested, 
             this, &MainWindow::showContextMenu);
     
+    // ===== TAB MY SHARES =====
+    QWidget *mySharesWidget = new QWidget;
+    QVBoxLayout *mySharesLayout = new QVBoxLayout(mySharesWidget);
+    
+    // Buttons for My Shares tab
+    QHBoxLayout *mySharesBtnLayout = new QHBoxLayout;
+    QPushButton *btnRefreshMyShares = new QPushButton("Refresh");
+    QPushButton *btnRedeemCode = new QPushButton("Redeem Share Code");
+    QPushButton *btnRevokeShare = new QPushButton("Revoke Selected");
+    mySharesBtnLayout->addWidget(btnRefreshMyShares);
+    mySharesBtnLayout->addWidget(btnRedeemCode);
+    mySharesBtnLayout->addWidget(btnRevokeShare);
+    mySharesBtnLayout->addStretch();
+    
+    mySharesTable = new QTableWidget;
+    mySharesTable->setColumnCount(6);
+    mySharesTable->setHorizontalHeaderLabels({"File/Folder", "Type", "Shared With", "Permission", "Shared At", "File ID"});
+    mySharesTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    mySharesTable->setSelectionBehavior(QTableWidget::SelectRows);
+    mySharesTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    mySharesTable->setColumnHidden(5, true);
+    
+    mySharesLayout->addLayout(mySharesBtnLayout);
+    mySharesLayout->addWidget(mySharesTable);
+    
+    connect(btnRefreshMyShares, &QPushButton::clicked, this, &MainWindow::onRefreshMySharesClicked);
+    connect(btnRedeemCode, &QPushButton::clicked, this, &MainWindow::onRedeemShareCodeClicked);
+    connect(btnRevokeShare, &QPushButton::clicked, this, &MainWindow::onRevokeShareClicked);
+    
+    // ===== TAB SHARE CODES =====
+    QWidget *shareCodesWidget = new QWidget;
+    QVBoxLayout *shareCodesLayout = new QVBoxLayout(shareCodesWidget);
+    
+    QHBoxLayout *shareCodesBtnLayout = new QHBoxLayout;
+    QPushButton *btnRefreshCodes = new QPushButton("Refresh Codes");
+    QPushButton *btnDeleteCode = new QPushButton("Delete Selected Code");
+    shareCodesBtnLayout->addWidget(btnRefreshCodes);
+    shareCodesBtnLayout->addWidget(btnDeleteCode);
+    shareCodesBtnLayout->addStretch();
+    
+    shareCodesTable = new QTableWidget;
+    shareCodesTable->setColumnCount(7);
+    shareCodesTable->setHorizontalHeaderLabels({"Share Code", "File/Folder", "Type", "Max Uses", "Used", "Created At", "File ID"});
+    shareCodesTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    shareCodesTable->setSelectionBehavior(QTableWidget::SelectRows);
+    shareCodesTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    shareCodesTable->setColumnHidden(6, true);
+    
+    shareCodesLayout->addLayout(shareCodesBtnLayout);
+    shareCodesLayout->addWidget(shareCodesTable);
+    
+    // Context menu for share codes table - right click to copy code
+    shareCodesTable->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(shareCodesTable, &QTableWidget::customContextMenuRequested, this, [this](const QPoint &pos) {
+        QTableWidgetItem *item = shareCodesTable->itemAt(pos);
+        if (!item) return;
+        
+        int row = item->row();
+        QTableWidgetItem *codeItem = shareCodesTable->item(row, 0);
+        if (!codeItem) return;
+        
+        QMenu menu(this);
+        QAction *copyAction = menu.addAction("Copy Share Code");
+        QAction *deleteAction = menu.addAction("Delete Code");
+        
+        QAction *selected = menu.exec(shareCodesTable->viewport()->mapToGlobal(pos));
+        if (selected == copyAction) {
+            QApplication::clipboard()->setText(codeItem->text());
+            QMessageBox::information(this, "Copied", "Share code copied to clipboard:\n" + codeItem->text());
+        } else if (selected == deleteAction) {
+            onDeleteShareCodeClicked();
+        }
+    });
+    
+    connect(btnRefreshCodes, &QPushButton::clicked, [this]() { netManager->getMyShareCodes(); });
+    connect(btnDeleteCode, &QPushButton::clicked, this, &MainWindow::onDeleteShareCodeClicked);
+    
     tabWidget->addTab(fileTable, "My Files");
     tabWidget->addTab(sharedFileTable, "Shared with Me");
+    tabWidget->addTab(mySharesWidget, "My Shares");
+    tabWidget->addTab(shareCodesWidget, "Share Codes");
 
     l->addLayout(topBar);
     l->addLayout(btnLayout);
@@ -253,8 +353,12 @@ void MainWindow::onTabChanged(int index) {
     
     if (index == 0) {
         pathLabel->setText("Home/");
-    } else {
+    } else if (index == 1) {
         pathLabel->setText("Shared/");
+    } else if (index == 2) {
+        pathLabel->setText("My Shares/");
+    } else if (index == 3) {
+        pathLabel->setText("Share Codes/");
     }
     
     backButton->setEnabled(false);
@@ -263,6 +367,10 @@ void MainWindow::onTabChanged(int index) {
         netManager->requestFileList(0);
     } else if (index == 1) {
         netManager->requestSharedFileList(-1);
+    } else if (index == 2) {
+        netManager->getMyShares();
+    } else if (index == 3) {
+        netManager->getMyShareCodes();
     }
 }
 
@@ -682,11 +790,13 @@ void MainWindow::showContextMenu(const QPoint &pos) {
         
         if (sourceTable == fileTable) {
             menu.addSeparator();
-            QAction *shareAction = menu.addAction("Share");
+            QAction *shareAction = menu.addAction("Share with User");
+            QAction *generateCodeAction = menu.addAction("Generate Share Code");
             QAction *renameAction = menu.addAction("Rename");
             QAction *deleteAction = menu.addAction("Delete");
             
             connect(shareAction, &QAction::triggered, this, &MainWindow::onShareClicked);
+            connect(generateCodeAction, &QAction::triggered, this, &MainWindow::onGenerateShareCodeClicked);
             connect(renameAction, &QAction::triggered, this, &MainWindow::onRenameClicked);
             connect(deleteAction, &QAction::triggered, this, &MainWindow::onDeleteClicked);
         }
@@ -793,4 +903,348 @@ void MainWindow::onBackButtonClicked() {
 
 void MainWindow::onBreadcrumbClicked() {
     // Not used anymore
+}
+
+// ===== SHARE CODE HANDLERS =====
+
+void MainWindow::onGenerateShareCodeClicked() {
+    if (tabWidget->currentIndex() != 0) {
+        QMessageBox::warning(this, "Share Code", "You can only generate share codes from 'My Files' tab!");
+        return;
+    }
+    
+    int row = fileTable->currentRow();
+    if (row < 0) {
+        QMessageBox::warning(this, "Share Code", "Please select a file or folder first!");
+        return;
+    }
+    
+    QTableWidgetItem *idItem = fileTable->item(row, 4);
+    QTableWidgetItem *nameItem = fileTable->item(row, 0);
+    
+    if (!idItem || !nameItem) {
+        QMessageBox::warning(this, "Share Code", "Invalid selection!");
+        return;
+    }
+    
+    long long fileId = idItem->text().toLongLong();
+    QString fileName = nameItem->text();
+    
+    bool ok;
+    int maxUses = QInputDialog::getInt(this, "Generate Share Code",
+        QString("Generate share code for: %1\n\nMax uses (0 = unlimited):").arg(fileName),
+        0, 0, 1000, 1, &ok);
+    
+    if (ok) {
+        netManager->generateShareCode(fileId, maxUses);
+    }
+}
+
+void MainWindow::onRedeemShareCodeClicked() {
+    bool ok;
+    QString code = QInputDialog::getText(this, "Redeem Share Code",
+        "Enter share code to receive file/folder:", QLineEdit::Normal, "", &ok);
+    
+    if (ok && !code.isEmpty()) {
+        netManager->redeemShareCode(code.trimmed().toUpper());
+    }
+}
+
+void MainWindow::onRevokeShareClicked() {
+    int row = mySharesTable->currentRow();
+    if (row < 0) {
+        QMessageBox::warning(this, "Revoke Share", "Please select a share to revoke!");
+        return;
+    }
+    
+    long long fileId = mySharesTable->item(row, 5)->text().toLongLong();
+    QString sharedWith = mySharesTable->item(row, 2)->text();
+    QString fileName = mySharesTable->item(row, 0)->text();
+    
+    int ret = QMessageBox::question(this, "Revoke Share",
+        QString("Are you sure you want to revoke access to '%1' from user '%2'?").arg(fileName).arg(sharedWith),
+        QMessageBox::Yes | QMessageBox::No);
+    
+    if (ret == QMessageBox::Yes) {
+        netManager->revokeShare(fileId, sharedWith);
+    }
+}
+
+void MainWindow::onDeleteShareCodeClicked() {
+    int row = shareCodesTable->currentRow();
+    if (row < 0) {
+        QMessageBox::warning(this, "Delete Share Code", "Please select a share code to delete!");
+        return;
+    }
+    
+    QString code = shareCodesTable->item(row, 0)->text();
+    QString fileName = shareCodesTable->item(row, 1)->text();
+    
+    int ret = QMessageBox::question(this, "Delete Share Code",
+        QString("Are you sure you want to delete share code '%1' for '%2'?").arg(code).arg(fileName),
+        QMessageBox::Yes | QMessageBox::No);
+    
+    if (ret == QMessageBox::Yes) {
+        netManager->deleteShareCode(code);
+    }
+}
+
+void MainWindow::onRefreshMySharesClicked() {
+    netManager->getMyShares();
+    netManager->getMyShareCodes();
+}
+
+void MainWindow::handleShareCodeGenerated(bool success, const QString &code, const QString &msg) {
+    if (success) {
+        QMessageBox::information(this, "Share Code Generated",
+            QString("Share code generated successfully!\n\nCode: %1\n\nShare this code with others to give them access.").arg(code));
+        netManager->getMyShareCodes();
+    } else {
+        QMessageBox::warning(this, "Share Code Failed", msg);
+    }
+}
+
+void MainWindow::handleShareCodeRedeemed(bool success, long long file_id, const QString &filename, bool is_folder, const QString &owner) {
+    if (success) {
+        QString type = is_folder ? "folder" : "file";
+        QMessageBox::information(this, "Share Code Redeemed",
+            QString("Successfully received %1 '%2' from user '%3'!\n\nCheck 'Shared with Me' tab.").arg(type).arg(filename).arg(owner));
+        netManager->requestSharedFileList(-1);
+    } else {
+        QMessageBox::warning(this, "Redeem Failed", "Invalid or expired share code!");
+    }
+}
+
+void MainWindow::handleMySharesReceived(const QList<ShareInfoClient> &shares) {
+    mySharesTable->setRowCount(0);
+    
+    for (const auto &share : shares) {
+        int row = mySharesTable->rowCount();
+        mySharesTable->insertRow(row);
+        
+        mySharesTable->setItem(row, 0, new QTableWidgetItem(share.filename));
+        mySharesTable->setItem(row, 1, new QTableWidgetItem(share.is_folder ? "Folder" : "File"));
+        mySharesTable->setItem(row, 2, new QTableWidgetItem(share.shared_with_username));
+        mySharesTable->setItem(row, 3, new QTableWidgetItem(share.permission));
+        mySharesTable->setItem(row, 4, new QTableWidgetItem(share.shared_at));
+        mySharesTable->setItem(row, 5, new QTableWidgetItem(QString::number(share.file_id)));
+    }
+}
+
+void MainWindow::handleShareRevoked(bool success, const QString &msg) {
+    if (success) {
+        QMessageBox::information(this, "Revoke Share", msg);
+        netManager->getMyShares();
+    } else {
+        QMessageBox::warning(this, "Revoke Failed", msg);
+    }
+}
+
+void MainWindow::handleMyShareCodesReceived(const QList<ShareCodeInfoClient> &codes) {
+    shareCodesTable->setRowCount(0);
+    
+    for (const auto &code : codes) {
+        int row = shareCodesTable->rowCount();
+        shareCodesTable->insertRow(row);
+        
+        shareCodesTable->setItem(row, 0, new QTableWidgetItem(code.share_code));
+        shareCodesTable->setItem(row, 1, new QTableWidgetItem(code.filename));
+        shareCodesTable->setItem(row, 2, new QTableWidgetItem(code.is_folder ? "Folder" : "File"));
+        shareCodesTable->setItem(row, 3, new QTableWidgetItem(code.max_uses == 0 ? "Unlimited" : QString::number(code.max_uses)));
+        shareCodesTable->setItem(row, 4, new QTableWidgetItem(QString::number(code.current_uses)));
+        shareCodesTable->setItem(row, 5, new QTableWidgetItem(code.created_at));
+        shareCodesTable->setItem(row, 6, new QTableWidgetItem(QString::number(code.file_id)));
+    }
+}
+
+void MainWindow::handleShareCodeDeleted(bool success, const QString &msg) {
+    if (success) {
+        QMessageBox::information(this, "Delete Share Code", msg);
+        netManager->getMyShareCodes();
+    } else {
+        QMessageBox::warning(this, "Delete Failed", msg);
+    }
+}
+
+// ===== GUEST MODE =====
+
+QWidget* MainWindow::createGuestPage() {
+    QWidget *p = new QWidget;
+    QVBoxLayout *l = new QVBoxLayout(p);
+    
+    QHBoxLayout *topBar = new QHBoxLayout;
+    QLabel *titleLabel = new QLabel("<h2>Guest Mode</h2>");
+    QPushButton *btnBackToLogin = new QPushButton("Back to Login");
+    btnBackToLogin->setMaximumWidth(120);
+    topBar->addWidget(titleLabel);
+    topBar->addStretch();
+    topBar->addWidget(btnBackToLogin);
+    
+    guestInfoLabel = new QLabel("Enter a share code to access shared files:");
+    guestShareCodeInput = new QLineEdit;
+    guestShareCodeInput->setPlaceholderText("Enter Share Code (e.g., A3X7K9MN2P4Q8W1Y)");
+    guestShareCodeInput->setMaximumWidth(400);
+    
+    QPushButton *btnAccessCode = new QPushButton("Access Shared Content");
+    btnAccessCode->setMaximumWidth(200);
+    
+    // Table for guest file view (read-only)
+    guestFileTable = new QTableWidget;
+    guestFileTable->setColumnCount(5);
+    guestFileTable->setHorizontalHeaderLabels({"Name", "Type", "Size", "Owner", "File ID"});
+    guestFileTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    guestFileTable->setSelectionBehavior(QTableWidget::SelectRows);
+    guestFileTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    guestFileTable->setColumnHidden(4, true);
+    guestFileTable->setVisible(false);
+    
+    // Download button for guest
+    QHBoxLayout *guestBtnLayout = new QHBoxLayout;
+    QPushButton *btnGuestDownload = new QPushButton("Download Selected");
+    QPushButton *btnEnterAnotherCode = new QPushButton("Enter Another Code");
+    guestBtnLayout->addWidget(btnGuestDownload);
+    guestBtnLayout->addWidget(btnEnterAnotherCode);
+    guestBtnLayout->addStretch();
+    
+    l->addLayout(topBar);
+    l->addSpacing(20);
+    l->addWidget(guestInfoLabel);
+    l->addWidget(guestShareCodeInput);
+    l->addWidget(btnAccessCode);
+    l->addSpacing(20);
+    l->addWidget(guestFileTable);
+    l->addLayout(guestBtnLayout);
+    l->addStretch();
+    
+    connect(btnBackToLogin, &QPushButton::clicked, [this]() {
+        isGuestMode = false;
+        guestFileTable->setVisible(false);
+        guestFileTable->setRowCount(0);
+        guestShareCodeInput->clear();
+        stackedWidget->setCurrentIndex(0);
+    });
+    
+    connect(btnAccessCode, &QPushButton::clicked, this, &MainWindow::onGuestRedeemCode);
+    connect(btnGuestDownload, &QPushButton::clicked, this, &MainWindow::onGuestDownloadClicked);
+    connect(btnEnterAnotherCode, &QPushButton::clicked, [this]() {
+        guestFileTable->setVisible(false);
+        guestFileTable->setRowCount(0);
+        guestShareCodeInput->clear();
+        guestShareCodeInput->setFocus();
+    });
+    
+    // Double click to enter folder or download file
+    connect(guestFileTable, &QTableWidget::cellDoubleClicked, this, &MainWindow::onGuestFileDoubleClicked);
+    
+    return p;
+}
+
+void MainWindow::onGuestAccessClicked() {
+    if (!netManager->isConnected()) {
+        QMessageBox::warning(this, "Not Connected", "Please connect to server first!");
+        return;
+    }
+    isGuestMode = true;
+    stackedWidget->setCurrentIndex(2);
+}
+
+void MainWindow::onGuestRedeemCode() {
+    QString code = guestShareCodeInput->text().trimmed();
+    if (code.isEmpty()) {
+        QMessageBox::warning(this, "Error", "Please enter a share code!");
+        return;
+    }
+    
+    // Use special guest redeem - different from normal redeem
+    netManager->guestRedeemShareCode(code);
+}
+
+void MainWindow::handleGuestRedeemResult(bool success, long long file_id, const QString &filename, 
+                                         bool is_folder, const QString &owner, long long size) {
+    if (!success) {
+        QMessageBox::warning(this, "Invalid Code", "The share code is invalid, expired, or has reached maximum uses.");
+        return;
+    }
+    
+    guestInfoLabel->setText(QString("Accessing: <b>%1</b> (shared by %2)").arg(filename).arg(owner));
+    guestFileTable->setVisible(true);
+    guestFileTable->setRowCount(0);
+    
+    // Add the shared item to table
+    int row = 0;
+    guestFileTable->insertRow(row);
+    guestFileTable->setItem(row, 0, new QTableWidgetItem(filename));
+    guestFileTable->setItem(row, 1, new QTableWidgetItem(is_folder ? "Folder" : "File"));
+    guestFileTable->setItem(row, 2, new QTableWidgetItem(is_folder ? "-" : formatFileSize(size)));
+    guestFileTable->setItem(row, 3, new QTableWidgetItem(owner));
+    guestFileTable->setItem(row, 4, new QTableWidgetItem(QString::number(file_id)));
+    
+    // Store for download
+    guestCurrentFileId = file_id;
+    guestCurrentFileName = filename;
+    guestCurrentIsFolder = is_folder;
+}
+
+void MainWindow::onGuestDownloadClicked() {
+    if (guestFileTable->rowCount() == 0) {
+        QMessageBox::warning(this, "No File", "No file to download!");
+        return;
+    }
+    
+    QList<QTableWidgetItem*> selected = guestFileTable->selectedItems();
+    if (selected.isEmpty()) {
+        QMessageBox::warning(this, "No Selection", "Please select a file to download!");
+        return;
+    }
+    
+    int row = selected.first()->row();
+    QString fileName = guestFileTable->item(row, 0)->text();
+    QString type = guestFileTable->item(row, 1)->text();
+    
+    QString savePath = QFileDialog::getSaveFileName(this, "Save File", 
+                                                    QDir::homePath() + "/Downloads/" + fileName);
+    if (savePath.isEmpty()) return;
+    
+    // Download using filename (existing API uses filename, not file_id)
+    if (type == "Folder") {
+        netManager->downloadFolder(fileName, savePath);
+    } else {
+        netManager->downloadFile(fileName, savePath);
+    }
+}
+
+void MainWindow::onGuestFileDoubleClicked(int row, int column) {
+    Q_UNUSED(column);
+    
+    QString type = guestFileTable->item(row, 1)->text();
+    if (type == "Folder") {
+        // For folders, guest can browse into it - need to load folder contents
+        long long folderId = guestFileTable->item(row, 4)->text().toLongLong();
+        netManager->guestListFolder(folderId);
+    } else {
+        // For files, trigger download
+        onGuestDownloadClicked();
+    }
+}
+
+void MainWindow::handleGuestFolderList(const QList<GuestFileInfo> &files) {
+    guestFileTable->setRowCount(0);
+    
+    for (const auto &file : files) {
+        int row = guestFileTable->rowCount();
+        guestFileTable->insertRow(row);
+        
+        guestFileTable->setItem(row, 0, new QTableWidgetItem(file.filename));
+        guestFileTable->setItem(row, 1, new QTableWidgetItem(file.is_folder ? "Folder" : "File"));
+        guestFileTable->setItem(row, 2, new QTableWidgetItem(file.is_folder ? "-" : formatFileSize(file.size)));
+        guestFileTable->setItem(row, 3, new QTableWidgetItem(file.owner));
+        guestFileTable->setItem(row, 4, new QTableWidgetItem(QString::number(file.file_id)));
+    }
+}
+
+QString MainWindow::formatFileSize(long long bytes) {
+    if (bytes < 1024) return QString::number(bytes) + " B";
+    if (bytes < 1024 * 1024) return QString::number(bytes / 1024.0, 'f', 1) + " KB";
+    if (bytes < 1024 * 1024 * 1024) return QString::number(bytes / (1024.0 * 1024.0), 'f', 1) + " MB";
+    return QString::number(bytes / (1024.0 * 1024.0 * 1024.0), 'f', 1) + " GB";
 }

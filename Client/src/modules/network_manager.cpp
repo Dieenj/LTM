@@ -613,7 +613,10 @@ void NetworkManager::downloadFile(const QString &filename, const QString &savePa
         
         retryCount = 0;
 
-        QByteArray chunk = socket->readAll();
+        // Only read the remaining bytes needed, not more
+        qint64 remainingBytes = filesize - totalReceived;
+        qint64 bytesToRead = qMin(socket->bytesAvailable(), remainingBytes);
+        QByteArray chunk = socket->read(bytesToRead);
         qint64 bytesWritten = file.write(chunk);
         
         if (bytesWritten == -1) {
@@ -1291,4 +1294,313 @@ void NetworkManager::cancelFolderShare(const QString &session_id) {
     
     isFolderShareActive = false;
     currentFolderShare = FolderShareSessionInfo();
+}
+
+// ===== SHARE CODE FUNCTIONS =====
+
+void NetworkManager::generateShareCode(long long file_id, int max_uses) {
+    if (socket->state() != QAbstractSocket::ConnectedState) {
+        emit shareCodeGenerated(false, "", "Not connected to server!");
+        return;
+    }
+    
+    disconnect(socket, &QTcpSocket::readyRead, this, &NetworkManager::onReadyRead);
+    
+    QString cmd = QString("%1 %2 %3\n").arg(CMD_GENERATE_SHARE_CODE).arg(file_id).arg(max_uses);
+    socket->write(cmd.toUtf8());
+    socket->flush();
+    
+    if (!socket->waitForReadyRead(5000)) {
+        connect(socket, &QTcpSocket::readyRead, this, &NetworkManager::onReadyRead);
+        emit shareCodeGenerated(false, "", "Timeout waiting for server response");
+        return;
+    }
+    
+    QString response = QString::fromUtf8(socket->readAll()).trimmed();
+    connect(socket, &QTcpSocket::readyRead, this, &NetworkManager::onReadyRead);
+    
+    if (response.startsWith(CODE_OK)) {
+        QStringList parts = response.split(' ');
+        if (parts.size() >= 2) {
+            emit shareCodeGenerated(true, parts[1], "Share code generated!");
+        } else {
+            emit shareCodeGenerated(false, "", "Invalid server response");
+        }
+    } else {
+        emit shareCodeGenerated(false, "", response);
+    }
+}
+
+void NetworkManager::redeemShareCode(const QString &share_code) {
+    if (socket->state() != QAbstractSocket::ConnectedState) {
+        emit shareCodeRedeemed(false, -1, "", false, "");
+        return;
+    }
+    
+    disconnect(socket, &QTcpSocket::readyRead, this, &NetworkManager::onReadyRead);
+    
+    QString cmd = QString("%1 %2\n").arg(CMD_REDEEM_SHARE_CODE).arg(share_code);
+    socket->write(cmd.toUtf8());
+    socket->flush();
+    
+    if (!socket->waitForReadyRead(5000)) {
+        connect(socket, &QTcpSocket::readyRead, this, &NetworkManager::onReadyRead);
+        emit shareCodeRedeemed(false, -1, "", false, "");
+        return;
+    }
+    
+    QString response = QString::fromUtf8(socket->readAll()).trimmed();
+    connect(socket, &QTcpSocket::readyRead, this, &NetworkManager::onReadyRead);
+    
+    if (response.startsWith(CODE_OK)) {
+        // Format: 200 file_id|filename|is_folder|owner
+        QStringList parts = response.mid(4).split('|');
+        if (parts.size() >= 4) {
+            long long file_id = parts[0].toLongLong();
+            QString filename = parts[1];
+            bool is_folder = (parts[2] == "1");
+            QString owner = parts[3];
+            emit shareCodeRedeemed(true, file_id, filename, is_folder, owner);
+        } else {
+            emit shareCodeRedeemed(false, -1, "", false, "");
+        }
+    } else {
+        emit shareCodeRedeemed(false, -1, "", false, "");
+    }
+}
+
+void NetworkManager::getMyShares() {
+    if (socket->state() != QAbstractSocket::ConnectedState) {
+        emit mySharesReceived(QList<ShareInfoClient>());
+        return;
+    }
+    
+    disconnect(socket, &QTcpSocket::readyRead, this, &NetworkManager::onReadyRead);
+    
+    QString cmd = QString("%1\n").arg(CMD_GET_MY_SHARES);
+    socket->write(cmd.toUtf8());
+    socket->flush();
+    
+    if (!socket->waitForReadyRead(5000)) {
+        connect(socket, &QTcpSocket::readyRead, this, &NetworkManager::onReadyRead);
+        emit mySharesReceived(QList<ShareInfoClient>());
+        return;
+    }
+    
+    QString response = QString::fromUtf8(socket->readAll()).trimmed();
+    connect(socket, &QTcpSocket::readyRead, this, &NetworkManager::onReadyRead);
+    
+    QList<ShareInfoClient> shares;
+    
+    if (response.startsWith(CODE_OK)) {
+        QStringList lines = response.split('\n');
+        for (int i = 1; i < lines.size(); ++i) {
+            QStringList parts = lines[i].split('|');
+            if (parts.size() >= 7) {
+                ShareInfoClient info;
+                info.shared_id = parts[0].toLongLong();
+                info.file_id = parts[1].toLongLong();
+                info.filename = parts[2];
+                info.is_folder = (parts[3] == "1");
+                info.shared_with_username = parts[4];
+                info.permission = parts[5];
+                info.shared_at = parts[6];
+                shares.append(info);
+            }
+        }
+    }
+    
+    emit mySharesReceived(shares);
+}
+
+void NetworkManager::revokeShare(long long file_id, const QString &target_username) {
+    if (socket->state() != QAbstractSocket::ConnectedState) {
+        emit shareRevoked(false, "Not connected to server!");
+        return;
+    }
+    
+    disconnect(socket, &QTcpSocket::readyRead, this, &NetworkManager::onReadyRead);
+    
+    QString cmd = QString("%1 %2 %3\n").arg(CMD_REVOKE_SHARE).arg(file_id).arg(target_username);
+    socket->write(cmd.toUtf8());
+    socket->flush();
+    
+    if (!socket->waitForReadyRead(5000)) {
+        connect(socket, &QTcpSocket::readyRead, this, &NetworkManager::onReadyRead);
+        emit shareRevoked(false, "Timeout waiting for server response");
+        return;
+    }
+    
+    QString response = QString::fromUtf8(socket->readAll()).trimmed();
+    connect(socket, &QTcpSocket::readyRead, this, &NetworkManager::onReadyRead);
+    
+    if (response.startsWith(CODE_OK)) {
+        emit shareRevoked(true, "Share revoked successfully!");
+    } else {
+        emit shareRevoked(false, response);
+    }
+}
+
+void NetworkManager::getMyShareCodes() {
+    if (socket->state() != QAbstractSocket::ConnectedState) {
+        emit myShareCodesReceived(QList<ShareCodeInfoClient>());
+        return;
+    }
+    
+    disconnect(socket, &QTcpSocket::readyRead, this, &NetworkManager::onReadyRead);
+    
+    QString cmd = QString("%1\n").arg(CMD_GET_MY_SHARE_CODES);
+    socket->write(cmd.toUtf8());
+    socket->flush();
+    
+    if (!socket->waitForReadyRead(5000)) {
+        connect(socket, &QTcpSocket::readyRead, this, &NetworkManager::onReadyRead);
+        emit myShareCodesReceived(QList<ShareCodeInfoClient>());
+        return;
+    }
+    
+    QString response = QString::fromUtf8(socket->readAll()).trimmed();
+    connect(socket, &QTcpSocket::readyRead, this, &NetworkManager::onReadyRead);
+    
+    QList<ShareCodeInfoClient> codes;
+    
+    if (response.startsWith(CODE_OK)) {
+        QStringList lines = response.split('\n');
+        for (int i = 1; i < lines.size(); ++i) {
+            QStringList parts = lines[i].split('|');
+            if (parts.size() >= 8) {
+                ShareCodeInfoClient info;
+                info.code_id = parts[0].toLongLong();
+                info.share_code = parts[1];
+                info.file_id = parts[2].toLongLong();
+                info.filename = parts[3];
+                info.is_folder = (parts[4] == "1");
+                info.max_uses = parts[5].toInt();
+                info.current_uses = parts[6].toInt();
+                info.created_at = parts[7];
+                codes.append(info);
+            }
+        }
+    }
+    
+    emit myShareCodesReceived(codes);
+}
+
+void NetworkManager::deleteShareCode(const QString &share_code) {
+    if (socket->state() != QAbstractSocket::ConnectedState) {
+        emit shareCodeDeleted(false, "Not connected to server!");
+        return;
+    }
+    
+    disconnect(socket, &QTcpSocket::readyRead, this, &NetworkManager::onReadyRead);
+    
+    QString cmd = QString("%1 %2\n").arg(CMD_DELETE_SHARE_CODE).arg(share_code);
+    socket->write(cmd.toUtf8());
+    socket->flush();
+    
+    if (!socket->waitForReadyRead(5000)) {
+        connect(socket, &QTcpSocket::readyRead, this, &NetworkManager::onReadyRead);
+        emit shareCodeDeleted(false, "Timeout waiting for server response");
+        return;
+    }
+    
+    QString response = QString::fromUtf8(socket->readAll()).trimmed();
+    connect(socket, &QTcpSocket::readyRead, this, &NetworkManager::onReadyRead);
+    
+    if (response.startsWith(CODE_OK)) {
+        emit shareCodeDeleted(true, "Share code deleted successfully!");
+    } else {
+        emit shareCodeDeleted(false, response);
+    }
+}
+
+// ===== GUEST MODE FUNCTIONS =====
+
+bool NetworkManager::isConnected() const {
+    return socket && socket->state() == QAbstractSocket::ConnectedState;
+}
+
+void NetworkManager::guestRedeemShareCode(const QString &share_code) {
+    if (socket->state() != QAbstractSocket::ConnectedState) {
+        emit guestRedeemResult(false, 0, "", false, "", 0);
+        return;
+    }
+    
+    disconnect(socket, &QTcpSocket::readyRead, this, &NetworkManager::onReadyRead);
+    
+    // Use a special guest redeem command that doesn't require login
+    QString cmd = QString("GUEST_REDEEM %1\n").arg(share_code);
+    socket->write(cmd.toUtf8());
+    socket->flush();
+    
+    if (!socket->waitForReadyRead(5000)) {
+        connect(socket, &QTcpSocket::readyRead, this, &NetworkManager::onReadyRead);
+        emit guestRedeemResult(false, 0, "", false, "", 0);
+        return;
+    }
+    
+    QString response = QString::fromUtf8(socket->readAll()).trimmed();
+    connect(socket, &QTcpSocket::readyRead, this, &NetworkManager::onReadyRead);
+    
+    // Expected response: 200 file_id|filename|is_folder|owner|size
+    if (response.startsWith(CODE_OK)) {
+        QString data = response.mid(4).trimmed();
+        QStringList parts = data.split('|');
+        if (parts.size() >= 5) {
+            long long file_id = parts[0].toLongLong();
+            QString filename = parts[1];
+            bool is_folder = (parts[2] == "1");
+            QString owner = parts[3];
+            long long size = parts[4].toLongLong();
+            emit guestRedeemResult(true, file_id, filename, is_folder, owner, size);
+            return;
+        }
+    }
+    
+    emit guestRedeemResult(false, 0, "", false, "", 0);
+}
+
+void NetworkManager::guestListFolder(long long folder_id) {
+    if (socket->state() != QAbstractSocket::ConnectedState) {
+        emit guestFolderList(QList<GuestFileInfo>());
+        return;
+    }
+    
+    disconnect(socket, &QTcpSocket::readyRead, this, &NetworkManager::onReadyRead);
+    
+    QString cmd = QString("GUEST_LIST %1\n").arg(folder_id);
+    socket->write(cmd.toUtf8());
+    socket->flush();
+    
+    if (!socket->waitForReadyRead(5000)) {
+        connect(socket, &QTcpSocket::readyRead, this, &NetworkManager::onReadyRead);
+        emit guestFolderList(QList<GuestFileInfo>());
+        return;
+    }
+    
+    QString response = QString::fromUtf8(socket->readAll()).trimmed();
+    connect(socket, &QTcpSocket::readyRead, this, &NetworkManager::onReadyRead);
+    
+    QList<GuestFileInfo> files;
+    
+    // Expected: 200 file_id|filename|is_folder|size|owner;file_id|...
+    if (response.startsWith(CODE_OK)) {
+        QString data = response.mid(4).trimmed();
+        QStringList items = data.split(';', Qt::SkipEmptyParts);
+        
+        for (const QString &item : items) {
+            QStringList parts = item.split('|');
+            if (parts.size() >= 5) {
+                GuestFileInfo info;
+                info.file_id = parts[0].toLongLong();
+                info.filename = parts[1];
+                info.is_folder = (parts[2] == "1");
+                info.size = parts[3].toLongLong();
+                info.owner = parts[4];
+                files.append(info);
+            }
+        }
+    }
+    
+    emit guestFolderList(files);
 }

@@ -1,15 +1,15 @@
 FileClient_autogen/timestamp: \
-	/mnt/c/Users/Admin/Documents/LTM/Client/CMakeLists.txt \
-	/mnt/c/Users/Admin/Documents/LTM/Client/build/CMakeFiles/3.28.3/CMakeCXXCompiler.cmake \
-	/mnt/c/Users/Admin/Documents/LTM/Client/build/CMakeFiles/3.28.3/CMakeSystem.cmake \
-	/mnt/c/Users/Admin/Documents/LTM/Client/build/FileClient_autogen/moc_predefs.h \
-	/mnt/c/Users/Admin/Documents/LTM/Client/include/FolderShareDialog.h \
-	/mnt/c/Users/Admin/Documents/LTM/Client/include/mainwindow.h \
-	/mnt/c/Users/Admin/Documents/LTM/Client/include/network_manager.h \
-	/mnt/c/Users/Admin/Documents/LTM/Client/src/FolderShareDialog.cpp \
-	/mnt/c/Users/Admin/Documents/LTM/Client/src/main.cpp \
-	/mnt/c/Users/Admin/Documents/LTM/Client/src/mainwindow.cpp \
-	/mnt/c/Users/Admin/Documents/LTM/Client/src/modules/network_manager.cpp \
+	/home/cuong/DuAnPMCSF/File_Management_App/Client/CMakeLists.txt \
+	/home/cuong/DuAnPMCSF/File_Management_App/Client/build/CMakeFiles/3.28.3/CMakeCXXCompiler.cmake \
+	/home/cuong/DuAnPMCSF/File_Management_App/Client/build/CMakeFiles/3.28.3/CMakeSystem.cmake \
+	/home/cuong/DuAnPMCSF/File_Management_App/Client/build/FileClient_autogen/moc_predefs.h \
+	/home/cuong/DuAnPMCSF/File_Management_App/Client/include/FolderShareDialog.h \
+	/home/cuong/DuAnPMCSF/File_Management_App/Client/include/mainwindow.h \
+	/home/cuong/DuAnPMCSF/File_Management_App/Client/include/network_manager.h \
+	/home/cuong/DuAnPMCSF/File_Management_App/Client/src/FolderShareDialog.cpp \
+	/home/cuong/DuAnPMCSF/File_Management_App/Client/src/main.cpp \
+	/home/cuong/DuAnPMCSF/File_Management_App/Client/src/mainwindow.cpp \
+	/home/cuong/DuAnPMCSF/File_Management_App/Client/src/modules/network_manager.cpp \
 	/usr/include/alloca.h \
 	/usr/include/asm-generic/errno-base.h \
 	/usr/include/asm-generic/errno.h \

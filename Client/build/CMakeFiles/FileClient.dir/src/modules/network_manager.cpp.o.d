@@ -1,7 +1,7 @@
 CMakeFiles/FileClient.dir/src/modules/network_manager.cpp.o: \
- /mnt/c/Users/Admin/Documents/LTM/Client/src/modules/network_manager.cpp \
+ /home/cuong/DuAnPMCSF/File_Management_App/Client/src/modules/network_manager.cpp \
  /usr/include/stdc-predef.h \
- /mnt/c/Users/Admin/Documents/LTM/Client/include/network_manager.h \
+ /home/cuong/DuAnPMCSF/File_Management_App/Client/include/network_manager.h \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/QObject \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/qobject.h \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/qobjectdefs.h \

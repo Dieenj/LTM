@@ -1,6 +1,6 @@
-/mnt/c/Users/Admin/Documents/LTM/Client/build/FileClient_autogen/6YEA5652QU/moc_mainwindow.cpp: /mnt/c/Users/Admin/Documents/LTM/Client/include/mainwindow.h \
-  /mnt/c/Users/Admin/Documents/LTM/Client/build/FileClient_autogen/moc_predefs.h \
-  /mnt/c/Users/Admin/Documents/LTM/Client/include/network_manager.h \
+/home/cuong/DuAnPMCSF/File_Management_App/Client/build/FileClient_autogen/6YEA5652QU/moc_mainwindow.cpp: /home/cuong/DuAnPMCSF/File_Management_App/Client/include/mainwindow.h \
+  /home/cuong/DuAnPMCSF/File_Management_App/Client/build/FileClient_autogen/moc_predefs.h \
+  /home/cuong/DuAnPMCSF/File_Management_App/Client/include/network_manager.h \
   /usr/include/alloca.h \
   /usr/include/asm-generic/errno-base.h \
   /usr/include/asm-generic/errno.h \

@@ -147,7 +147,7 @@ void FolderShareDialog::onFolderStructureReceived(long long folder_id, QList<Fil
         itemMap[item.file_id] = treeItem;
     }
     
-    m_statsLabel->setText(QString("📁 %1 folders  |  📄 %2 files  |  💾 %3")
+    m_statsLabel->setText(QString("Folders: %1  |  Files: %2  |  Size: %3")
                           .arg(folderCount)
                           .arg(fileCount)
                           .arg(formatSize(m_totalSize)));
@@ -224,7 +224,7 @@ void FolderShareDialog::onShareCompleted(const QString &session_id) {
     if (session_id != m_sessionId) return;
     
     m_progressBar->setValue(100);
-    m_statusLabel->setText("✅ Folder shared successfully!");
+    m_statusLabel->setText("Folder shared successfully!");
     m_statusLabel->setStyleSheet("color: #00aa00; padding: 5px; font-weight: bold;");
     
     m_cancelButton->setText("Close");
@@ -238,7 +238,7 @@ void FolderShareDialog::onShareCompleted(const QString &session_id) {
 
 void FolderShareDialog::onShareFailed(const QString &error) {
     m_progressBar->setVisible(false);
-    m_statusLabel->setText("❌ Share failed: " + error);
+    m_statusLabel->setText("Share failed: " + error);
     m_statusLabel->setStyleSheet("color: #cc0000; padding: 5px;");
     
     m_shareButton->setEnabled(true);

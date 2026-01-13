@@ -1,7 +1,7 @@
 CMakeFiles/FileClient.dir/src/main.cpp.o: \
- /mnt/c/Users/Admin/Documents/LTM/Client/src/main.cpp \
+ /home/cuong/DuAnPMCSF/File_Management_App/Client/src/main.cpp \
  /usr/include/stdc-predef.h \
- /mnt/c/Users/Admin/Documents/LTM/Client/include/mainwindow.h \
+ /home/cuong/DuAnPMCSF/File_Management_App/Client/include/mainwindow.h \
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QMainWindow \
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qmainwindow.h \
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qtwidgetsglobal.h \
@@ -386,7 +386,7 @@ CMakeFiles/FileClient.dir/src/main.cpp.o: \
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qgridlayout.h \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/QStack \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/qstack.h \
- /mnt/c/Users/Admin/Documents/LTM/Client/include/network_manager.h \
+ /home/cuong/DuAnPMCSF/File_Management_App/Client/include/network_manager.h \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/QObject \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/qobject.h \
  /usr/include/x86_64-linux-gnu/qt6/QtNetwork/QTcpSocket \

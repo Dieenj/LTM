@@ -25,6 +25,31 @@ struct FileRecordEx {
     std::string owner;
 };
 
+// ===== STRUCT FOR SHARE INFO =====
+struct ShareInfo {
+    long long shared_id;
+    long long file_id;
+    std::string filename;
+    bool is_folder;
+    std::string shared_with_username;
+    std::string permission;
+    std::string shared_at;
+};
+
+// ===== STRUCT FOR SHARE CODE =====
+struct ShareCodeInfo {
+    long long code_id;
+    std::string share_code;
+    long long file_id;
+    std::string filename;
+    bool is_folder;
+    int max_uses;
+    int current_uses;
+    std::string expires_at;
+    bool is_active;
+    std::string created_at;
+};
+
 class DBManager {
 public:
     static DBManager& getInstance() {
@@ -72,6 +97,40 @@ public:
     
     // Lấy owner của file
     std::string getFileOwner(std::string filename);
+    
+    // ===== SHARE CODE FUNCTIONS =====
+    
+    // Tạo mã share độc nhất cho file/folder
+    std::string generateShareCode(long long file_id, std::string owner_username, int max_uses = 0);
+    
+    // Redeem mã share - trả về file_id nếu thành công, -1 nếu thất bại
+    long long redeemShareCode(std::string share_code, std::string username);
+    
+    // Lấy danh sách file/folder đã share cho người khác
+    std::vector<ShareInfo> getMyShares(std::string username);
+    
+    // Thu hồi quyền share với một user cụ thể
+    bool revokeShare(long long file_id, std::string owner_username, std::string target_username);
+    
+    // Lấy danh sách mã share của user
+    std::vector<ShareCodeInfo> getMyShareCodes(std::string username);
+    
+    // Xóa mã share
+    bool deleteShareCode(std::string share_code, std::string owner_username);
+    
+    // Lấy thông tin file theo ID
+    FileRecordEx getFileById(long long file_id);
+    
+    // ===== GUEST MODE FUNCTIONS =====
+    
+    // Guest redeem - tăng current_uses và trả về thông tin file
+    // max_uses = 0 nghĩa là unlimited
+    bool guestRedeemShareCode(std::string share_code, long long &out_file_id, 
+                              std::string &out_filename, bool &out_is_folder, 
+                              std::string &out_owner, long long &out_size);
+    
+    // Lấy danh sách file trong folder cho guest (không cần đăng nhập)
+    std::vector<FileRecordEx> guestListFolder(long long folder_id);
 
 private:
     DBManager() : conn(nullptr) {} 

@@ -482,6 +482,189 @@ void WorkerThread::handleClientMessage(int fd) {
         
         response = "200 Share cancelled\n";
     }
+    
+    // ===== SHARE CODE COMMANDS =====
+    else if (command == CMD_GENERATE_SHARE_CODE) {
+        // Arg format: file_id [max_uses]
+        long long file_id = 0;
+        int max_uses = 0;
+        
+        std::stringstream ss_gen(arg);
+        ss_gen >> file_id >> max_uses;
+        
+        std::cout << "[Worker] GENERATE_SHARE_CODE: file_id=" << file_id << ", max_uses=" << max_uses << std::endl;
+        
+        if (!sessions[fd].isAuthenticated) {
+            response = std::string(CODE_FAIL) + " Not authenticated\n";
+        } else if (file_id <= 0) {
+            response = std::string(CODE_FAIL) + " Invalid file_id\n";
+        } else {
+            std::string code = DBManager::getInstance().generateShareCode(file_id, sessions[fd].username, max_uses);
+            if (code.empty()) {
+                response = std::string(CODE_FAIL) + " Failed to generate share code\n";
+            } else {
+                response = std::string(CODE_OK) + " " + code + "\n";
+            }
+        }
+    }
+    
+    else if (command == CMD_REDEEM_SHARE_CODE) {
+        std::string share_code = arg;
+        
+        std::cout << "[Worker] REDEEM_SHARE_CODE: code=" << share_code << std::endl;
+        
+        if (!sessions[fd].isAuthenticated) {
+            response = std::string(CODE_FAIL) + " Not authenticated\n";
+        } else if (share_code.empty()) {
+            response = std::string(CODE_FAIL) + " Invalid share code\n";
+        } else {
+            long long file_id = DBManager::getInstance().redeemShareCode(share_code, sessions[fd].username);
+            if (file_id < 0) {
+                response = std::string(CODE_FAIL) + " Invalid or expired share code\n";
+            } else {
+                FileRecordEx fileInfo = DBManager::getInstance().getFileById(file_id);
+                response = std::string(CODE_OK) + " " + std::to_string(file_id) + "|" + 
+                          fileInfo.name + "|" + (fileInfo.is_folder ? "1" : "0") + "|" + fileInfo.owner + "\n";
+            }
+        }
+    }
+    
+    else if (command == CMD_GET_MY_SHARES) {
+        std::cout << "[Worker] GET_MY_SHARES for user: " << sessions[fd].username << std::endl;
+        
+        if (!sessions[fd].isAuthenticated) {
+            response = std::string(CODE_FAIL) + " Not authenticated\n";
+        } else {
+            std::vector<ShareInfo> shares = DBManager::getInstance().getMyShares(sessions[fd].username);
+            std::stringstream ss_resp;
+            ss_resp << CODE_OK << " " << shares.size() << "\n";
+            for (const auto& share : shares) {
+                ss_resp << share.shared_id << "|" << share.file_id << "|" << share.filename << "|"
+                       << (share.is_folder ? "1" : "0") << "|" << share.shared_with_username << "|"
+                       << share.permission << "|" << share.shared_at << "\n";
+            }
+            response = ss_resp.str();
+        }
+    }
+    
+    else if (command == CMD_REVOKE_SHARE) {
+        // Arg format: file_id target_username
+        long long file_id = 0;
+        std::string target_username;
+        
+        std::stringstream ss_revoke(arg);
+        ss_revoke >> file_id >> target_username;
+        
+        std::cout << "[Worker] REVOKE_SHARE: file_id=" << file_id << ", target=" << target_username << std::endl;
+        
+        if (!sessions[fd].isAuthenticated) {
+            response = std::string(CODE_FAIL) + " Not authenticated\n";
+        } else if (file_id <= 0 || target_username.empty()) {
+            response = std::string(CODE_FAIL) + " Invalid arguments\n";
+        } else {
+            bool success = DBManager::getInstance().revokeShare(file_id, sessions[fd].username, target_username);
+            if (success) {
+                response = std::string(CODE_OK) + " Share revoked\n";
+            } else {
+                response = std::string(CODE_FAIL) + " Failed to revoke share\n";
+            }
+        }
+    }
+    
+    else if (command == CMD_GET_MY_SHARE_CODES) {
+        std::cout << "[Worker] GET_MY_SHARE_CODES for user: " << sessions[fd].username << std::endl;
+        
+        if (!sessions[fd].isAuthenticated) {
+            response = std::string(CODE_FAIL) + " Not authenticated\n";
+        } else {
+            std::vector<ShareCodeInfo> codes = DBManager::getInstance().getMyShareCodes(sessions[fd].username);
+            std::stringstream ss_resp;
+            ss_resp << CODE_OK << " " << codes.size() << "\n";
+            for (const auto& code : codes) {
+                ss_resp << code.code_id << "|" << code.share_code << "|" << code.file_id << "|"
+                       << code.filename << "|" << (code.is_folder ? "1" : "0") << "|"
+                       << code.max_uses << "|" << code.current_uses << "|" << code.created_at << "\n";
+            }
+            response = ss_resp.str();
+        }
+    }
+    
+    else if (command == CMD_DELETE_SHARE_CODE) {
+        std::string share_code = arg;
+        
+        std::cout << "[Worker] DELETE_SHARE_CODE: code=" << share_code << std::endl;
+        
+        if (!sessions[fd].isAuthenticated) {
+            response = std::string(CODE_FAIL) + " Not authenticated\n";
+        } else if (share_code.empty()) {
+            response = std::string(CODE_FAIL) + " Invalid share code\n";
+        } else {
+            bool success = DBManager::getInstance().deleteShareCode(share_code, sessions[fd].username);
+            if (success) {
+                response = std::string(CODE_OK) + " Share code deleted\n";
+            } else {
+                response = std::string(CODE_FAIL) + " Failed to delete share code\n";
+            }
+        }
+    }
+    
+    // ===== GUEST MODE COMMANDS =====
+    
+    else if (command == CMD_GUEST_REDEEM) {
+        std::string share_code = arg;
+        std::cout << "[Worker] GUEST_REDEEM: code=" << share_code << std::endl;
+        
+        if (share_code.empty()) {
+            response = std::string(CODE_FAIL) + " Invalid share code\n";
+        } else {
+            long long file_id;
+            std::string filename;
+            bool is_folder;
+            std::string owner;
+            long long size;
+            
+            bool success = DBManager::getInstance().guestRedeemShareCode(
+                share_code, file_id, filename, is_folder, owner, size);
+            
+            if (success) {
+                // Format: 200 file_id|filename|is_folder|owner|size
+                response = std::string(CODE_OK) + " " + 
+                          std::to_string(file_id) + "|" + 
+                          filename + "|" + 
+                          (is_folder ? "1" : "0") + "|" + 
+                          owner + "|" + 
+                          std::to_string(size) + "\n";
+            } else {
+                response = std::string(CODE_FAIL) + " Invalid or expired share code\n";
+            }
+        }
+    }
+    
+    else if (command == CMD_GUEST_LIST) {
+        long long folder_id = 0;
+        try {
+            folder_id = std::stoll(arg);
+        } catch (...) {
+            folder_id = 0;
+        }
+        
+        std::cout << "[Worker] GUEST_LIST: folder_id=" << folder_id << std::endl;
+        
+        std::vector<FileRecordEx> files = DBManager::getInstance().guestListFolder(folder_id);
+        
+        // Format: 200 file_id|filename|is_folder|size|owner;file_id|...
+        std::string data;
+        for (const auto& file : files) {
+            if (!data.empty()) data += ";";
+            data += std::to_string(file.file_id) + "|" + 
+                   file.name + "|" + 
+                   (file.is_folder ? "1" : "0") + "|" + 
+                   std::to_string(file.size) + "|" + 
+                   file.owner;
+        }
+        response = std::string(CODE_OK) + " " + data + "\n";
+    }
+    
     else {
         std::cout << "[Worker] UNKNOWN COMMAND: '" << command << "'" << std::endl;
         response = "500 Unknown command\n";

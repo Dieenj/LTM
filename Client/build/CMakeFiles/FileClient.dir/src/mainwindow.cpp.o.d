@@ -1,7 +1,7 @@
 CMakeFiles/FileClient.dir/src/mainwindow.cpp.o: \
- /mnt/c/Users/Admin/Documents/LTM/Client/src/mainwindow.cpp \
+ /home/cuong/DuAnPMCSF/File_Management_App/Client/src/mainwindow.cpp \
  /usr/include/stdc-predef.h \
- /mnt/c/Users/Admin/Documents/LTM/Client/include/mainwindow.h \
+ /home/cuong/DuAnPMCSF/File_Management_App/Client/include/mainwindow.h \
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QMainWindow \
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qmainwindow.h \
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qtwidgetsglobal.h \
@@ -386,7 +386,7 @@ CMakeFiles/FileClient.dir/src/mainwindow.cpp.o: \
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qgridlayout.h \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/QStack \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/qstack.h \
- /mnt/c/Users/Admin/Documents/LTM/Client/include/network_manager.h \
+ /home/cuong/DuAnPMCSF/File_Management_App/Client/include/network_manager.h \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/QObject \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/qobject.h \
  /usr/include/x86_64-linux-gnu/qt6/QtNetwork/QTcpSocket \
@@ -410,7 +410,7 @@ CMakeFiles/FileClient.dir/src/mainwindow.cpp.o: \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/qjsonarray.h \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/QRegularExpression \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/qregularexpression.h \
- /mnt/c/Users/Admin/Documents/LTM/Client/include/FolderShareDialog.h \
+ /home/cuong/DuAnPMCSF/File_Management_App/Client/include/FolderShareDialog.h \
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QDialog \
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qdialog.h \
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QTreeWidget \
@@ -465,4 +465,11 @@ CMakeFiles/FileClient.dir/src/mainwindow.cpp.o: \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/qcoreapplication.h \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/QTimer \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/qtimer.h \
- /usr/include/x86_64-linux-gnu/qt6/QtCore/qbasictimer.h
+ /usr/include/x86_64-linux-gnu/qt6/QtCore/qbasictimer.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtGui/QClipboard \
+ /usr/include/x86_64-linux-gnu/qt6/QtGui/qclipboard.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QApplication \
+ /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qapplication.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtGui/qguiapplication.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtGui/qinputmethod.h \
+ /usr/include/x86_64-linux-gnu/qt6/QtGui/qguiapplication_platform.h

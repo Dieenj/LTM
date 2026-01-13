@@ -1,7 +1,7 @@
 CMakeFiles/FileClient.dir/FileClient_autogen/mocs_compilation.cpp.o: \
- /mnt/c/Users/Admin/Documents/LTM/Client/build/FileClient_autogen/mocs_compilation.cpp \
+ /home/cuong/DuAnPMCSF/File_Management_App/Client/build/FileClient_autogen/mocs_compilation.cpp \
  /usr/include/stdc-predef.h \
- /mnt/c/Users/Admin/Documents/LTM/Client/build/FileClient_autogen/6YEA5652QU/moc_FolderShareDialog.cpp \
+ /home/cuong/DuAnPMCSF/File_Management_App/Client/build/FileClient_autogen/6YEA5652QU/moc_FolderShareDialog.cpp \
  /usr/include/c++/13/memory /usr/include/c++/13/bits/memoryfwd.h \
  /usr/include/x86_64-linux-gnu/c++/13/bits/c++config.h \
  /usr/include/x86_64-linux-gnu/c++/13/bits/os_defines.h \
@@ -116,7 +116,7 @@ CMakeFiles/FileClient.dir/FileClient_autogen/mocs_compilation.cpp.o: \
  /usr/include/c++/13/backward/auto_ptr.h \
  /usr/include/c++/13/pstl/glue_memory_defs.h \
  /usr/include/c++/13/pstl/execution_defs.h \
- /mnt/c/Users/Admin/Documents/LTM/Client/build/FileClient_autogen/6YEA5652QU/../../../include/FolderShareDialog.h \
+ /home/cuong/DuAnPMCSF/File_Management_App/Client/build/FileClient_autogen/6YEA5652QU/../../../include/FolderShareDialog.h \
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QDialog \
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qdialog.h \
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qtwidgetsglobal.h \
@@ -379,7 +379,7 @@ CMakeFiles/FileClient.dir/FileClient_autogen/mocs_compilation.cpp.o: \
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qlayoutitem.h \
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qboxlayout.h \
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qgridlayout.h \
- /mnt/c/Users/Admin/Documents/LTM/Client/build/FileClient_autogen/6YEA5652QU/../../../include/network_manager.h \
+ /home/cuong/DuAnPMCSF/File_Management_App/Client/build/FileClient_autogen/6YEA5652QU/../../../include/network_manager.h \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/QObject \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/qobject.h \
  /usr/include/x86_64-linux-gnu/qt6/QtNetwork/QTcpSocket \
@@ -409,8 +409,8 @@ CMakeFiles/FileClient.dir/FileClient_autogen/mocs_compilation.cpp.o: \
  /usr/include/x86_64-linux-gnu/qt6/QtGui/qtextoption.h \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/QList \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/qlist.h \
- /mnt/c/Users/Admin/Documents/LTM/Client/build/FileClient_autogen/6YEA5652QU/moc_mainwindow.cpp \
- /mnt/c/Users/Admin/Documents/LTM/Client/build/FileClient_autogen/6YEA5652QU/../../../include/mainwindow.h \
+ /home/cuong/DuAnPMCSF/File_Management_App/Client/build/FileClient_autogen/6YEA5652QU/moc_mainwindow.cpp \
+ /home/cuong/DuAnPMCSF/File_Management_App/Client/build/FileClient_autogen/6YEA5652QU/../../../include/mainwindow.h \
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QMainWindow \
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/qmainwindow.h \
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QStackedWidget \
@@ -428,5 +428,5 @@ CMakeFiles/FileClient.dir/FileClient_autogen/mocs_compilation.cpp.o: \
  /usr/include/x86_64-linux-gnu/qt6/QtWidgets/QHBoxLayout \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/QStack \
  /usr/include/x86_64-linux-gnu/qt6/QtCore/qstack.h \
- /mnt/c/Users/Admin/Documents/LTM/Client/build/FileClient_autogen/6YEA5652QU/moc_network_manager.cpp \
- /mnt/c/Users/Admin/Documents/LTM/Client/build/FileClient_autogen/6YEA5652QU/../../../include/network_manager.h
+ /home/cuong/DuAnPMCSF/File_Management_App/Client/build/FileClient_autogen/6YEA5652QU/moc_network_manager.cpp \
+ /home/cuong/DuAnPMCSF/File_Management_App/Client/build/FileClient_autogen/6YEA5652QU/../../../include/network_manager.h

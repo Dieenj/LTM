@@ -78,6 +78,26 @@ CREATE TABLE STARS (
     FOREIGN KEY (file_id) REFERENCES FILES(file_id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
+-- Bảng lưu mã share độc nhất
+CREATE TABLE SHARE_CODES (
+    code_id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    share_code VARCHAR(16) NOT NULL UNIQUE,
+    file_id BIGINT NOT NULL,
+    owner_id BIGINT NOT NULL,
+    max_uses INT DEFAULT 1,
+    current_uses INT DEFAULT 0,
+    expires_at TIMESTAMP NULL,
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (file_id) REFERENCES FILES(file_id) ON DELETE CASCADE,
+    FOREIGN KEY (owner_id) REFERENCES USERS(user_id) ON DELETE CASCADE,
+    
+    INDEX idx_code (share_code),
+    INDEX idx_owner (owner_id),
+    INDEX idx_file (file_id)
+) ENGINE=InnoDB;
+
 -- ====================================
 -- INITIAL DATA
 -- ====================================

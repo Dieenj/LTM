@@ -27,7 +27,7 @@ QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 namespace {
 struct qt_meta_stringdata_NetworkManager_t {
-    uint offsetsAndSizes[94];
+    uint offsetsAndSizes[130];
     char stringdata0[15];
     char stringdata1[17];
     char stringdata2[1];
@@ -74,7 +74,25 @@ struct qt_meta_stringdata_NetworkManager_t {
     char stringdata43[12];
     char stringdata44[16];
     char stringdata45[22];
-    char stringdata46[12];
+    char stringdata46[19];
+    char stringdata47[5];
+    char stringdata48[18];
+    char stringdata49[8];
+    char stringdata50[10];
+    char stringdata51[6];
+    char stringdata52[17];
+    char stringdata53[23];
+    char stringdata54[7];
+    char stringdata55[13];
+    char stringdata56[21];
+    char stringdata57[27];
+    char stringdata58[6];
+    char stringdata59[17];
+    char stringdata60[18];
+    char stringdata61[5];
+    char stringdata62[16];
+    char stringdata63[21];
+    char stringdata64[12];
 };
 #define QT_MOC_LITERAL(ofs, len) \
     uint(sizeof(qt_meta_stringdata_NetworkManager_t::offsetsAndSizes) + ofs), len 
@@ -126,7 +144,25 @@ Q_CONSTINIT static const qt_meta_stringdata_NetworkManager_t qt_meta_stringdata_
         QT_MOC_LITERAL(566, 11),  // "currentFile"
         QT_MOC_LITERAL(578, 15),  // "currentFileName"
         QT_MOC_LITERAL(594, 21),  // "folderUploadCompleted"
-        QT_MOC_LITERAL(616, 11)   // "onReadyRead"
+        QT_MOC_LITERAL(616, 18),  // "shareCodeGenerated"
+        QT_MOC_LITERAL(635, 4),  // "code"
+        QT_MOC_LITERAL(640, 17),  // "shareCodeRedeemed"
+        QT_MOC_LITERAL(658, 7),  // "file_id"
+        QT_MOC_LITERAL(666, 9),  // "is_folder"
+        QT_MOC_LITERAL(676, 5),  // "owner"
+        QT_MOC_LITERAL(682, 16),  // "mySharesReceived"
+        QT_MOC_LITERAL(699, 22),  // "QList<ShareInfoClient>"
+        QT_MOC_LITERAL(722, 6),  // "shares"
+        QT_MOC_LITERAL(729, 12),  // "shareRevoked"
+        QT_MOC_LITERAL(742, 20),  // "myShareCodesReceived"
+        QT_MOC_LITERAL(763, 26),  // "QList<ShareCodeInfoClient>"
+        QT_MOC_LITERAL(790, 5),  // "codes"
+        QT_MOC_LITERAL(796, 16),  // "shareCodeDeleted"
+        QT_MOC_LITERAL(813, 17),  // "guestRedeemResult"
+        QT_MOC_LITERAL(831, 4),  // "size"
+        QT_MOC_LITERAL(836, 15),  // "guestFolderList"
+        QT_MOC_LITERAL(852, 20),  // "QList<GuestFileInfo>"
+        QT_MOC_LITERAL(873, 11)   // "onReadyRead"
     },
     "NetworkManager",
     "connectionStatus",
@@ -174,6 +210,24 @@ Q_CONSTINIT static const qt_meta_stringdata_NetworkManager_t qt_meta_stringdata_
     "currentFile",
     "currentFileName",
     "folderUploadCompleted",
+    "shareCodeGenerated",
+    "code",
+    "shareCodeRedeemed",
+    "file_id",
+    "is_folder",
+    "owner",
+    "mySharesReceived",
+    "QList<ShareInfoClient>",
+    "shares",
+    "shareRevoked",
+    "myShareCodesReceived",
+    "QList<ShareCodeInfoClient>",
+    "codes",
+    "shareCodeDeleted",
+    "guestRedeemResult",
+    "size",
+    "guestFolderList",
+    "QList<GuestFileInfo>",
     "onReadyRead"
 };
 #undef QT_MOC_LITERAL
@@ -185,41 +239,49 @@ Q_CONSTINIT static const uint qt_meta_data_NetworkManager[] = {
       10,       // revision
        0,       // classname
        0,    0, // classinfo
-      25,   14, // methods
+      33,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
-      24,       // signalCount
+      32,       // signalCount
 
  // signals: name, argc, parameters, tag, flags, initial metatype offsets
-       1,    2,  164,    2, 0x06,    1 /* Public */,
-       5,    0,  169,    2, 0x06,    4 /* Public */,
-       6,    1,  170,    2, 0x06,    5 /* Public */,
-       7,    1,  173,    2, 0x06,    7 /* Public */,
-       8,    1,  176,    2, 0x06,    9 /* Public */,
-       9,    1,  179,    2, 0x06,   11 /* Public */,
-      11,    1,  182,    2, 0x06,   13 /* Public */,
-      13,    1,  185,    2, 0x06,   15 /* Public */,
-      14,    1,  188,    2, 0x06,   17 /* Public */,
-      15,    1,  191,    2, 0x06,   19 /* Public */,
-      16,    2,  194,    2, 0x06,   21 /* Public */,
-      17,    2,  199,    2, 0x06,   24 /* Public */,
-      18,    2,  204,    2, 0x06,   27 /* Public */,
-      19,    0,  209,    2, 0x06,   30 /* Public */,
-      20,    2,  210,    2, 0x06,   31 /* Public */,
-      23,    2,  215,    2, 0x06,   34 /* Public */,
-      27,    3,  220,    2, 0x06,   37 /* Public */,
-      31,    2,  227,    2, 0x06,   41 /* Public */,
-      33,    1,  232,    2, 0x06,   44 /* Public */,
-      34,    1,  235,    2, 0x06,   46 /* Public */,
-      36,    2,  238,    2, 0x06,   48 /* Public */,
-      39,    2,  243,    2, 0x06,   51 /* Public */,
-      42,    3,  248,    2, 0x06,   54 /* Public */,
-      45,    1,  255,    2, 0x06,   58 /* Public */,
+       1,    2,  212,    2, 0x06,    1 /* Public */,
+       5,    0,  217,    2, 0x06,    4 /* Public */,
+       6,    1,  218,    2, 0x06,    5 /* Public */,
+       7,    1,  221,    2, 0x06,    7 /* Public */,
+       8,    1,  224,    2, 0x06,    9 /* Public */,
+       9,    1,  227,    2, 0x06,   11 /* Public */,
+      11,    1,  230,    2, 0x06,   13 /* Public */,
+      13,    1,  233,    2, 0x06,   15 /* Public */,
+      14,    1,  236,    2, 0x06,   17 /* Public */,
+      15,    1,  239,    2, 0x06,   19 /* Public */,
+      16,    2,  242,    2, 0x06,   21 /* Public */,
+      17,    2,  247,    2, 0x06,   24 /* Public */,
+      18,    2,  252,    2, 0x06,   27 /* Public */,
+      19,    0,  257,    2, 0x06,   30 /* Public */,
+      20,    2,  258,    2, 0x06,   31 /* Public */,
+      23,    2,  263,    2, 0x06,   34 /* Public */,
+      27,    3,  268,    2, 0x06,   37 /* Public */,
+      31,    2,  275,    2, 0x06,   41 /* Public */,
+      33,    1,  280,    2, 0x06,   44 /* Public */,
+      34,    1,  283,    2, 0x06,   46 /* Public */,
+      36,    2,  286,    2, 0x06,   48 /* Public */,
+      39,    2,  291,    2, 0x06,   51 /* Public */,
+      42,    3,  296,    2, 0x06,   54 /* Public */,
+      45,    1,  303,    2, 0x06,   58 /* Public */,
+      46,    3,  306,    2, 0x06,   60 /* Public */,
+      48,    5,  313,    2, 0x06,   64 /* Public */,
+      52,    1,  324,    2, 0x06,   70 /* Public */,
+      55,    2,  327,    2, 0x06,   72 /* Public */,
+      56,    1,  332,    2, 0x06,   75 /* Public */,
+      59,    2,  335,    2, 0x06,   77 /* Public */,
+      60,    6,  340,    2, 0x06,   80 /* Public */,
+      62,    1,  353,    2, 0x06,   87 /* Public */,
 
  // slots: name, argc, parameters, tag, flags, initial metatype offsets
-      46,    0,  258,    2, 0x08,   60 /* Private */,
+      64,    0,  356,    2, 0x08,   89 /* Private */,
 
  // signals: parameters
     QMetaType::Void, QMetaType::Bool, QMetaType::QString,    3,    4,
@@ -246,6 +308,14 @@ Q_CONSTINIT static const uint qt_meta_data_NetworkManager[] = {
     QMetaType::Void, QMetaType::QString, QMetaType::Int,   40,   41,
     QMetaType::Void, QMetaType::Int, QMetaType::Int, QMetaType::QString,   43,   41,   44,
     QMetaType::Void, QMetaType::QString,   40,
+    QMetaType::Void, QMetaType::Bool, QMetaType::QString, QMetaType::QString,    3,   47,    4,
+    QMetaType::Void, QMetaType::Bool, QMetaType::LongLong, QMetaType::QString, QMetaType::Bool, QMetaType::QString,    3,   49,   12,   50,   51,
+    QMetaType::Void, 0x80000000 | 53,   54,
+    QMetaType::Void, QMetaType::Bool, QMetaType::QString,    3,    4,
+    QMetaType::Void, 0x80000000 | 57,   58,
+    QMetaType::Void, QMetaType::Bool, QMetaType::QString,    3,    4,
+    QMetaType::Void, QMetaType::Bool, QMetaType::LongLong, QMetaType::QString, QMetaType::Bool, QMetaType::QString, QMetaType::LongLong,    3,   49,   12,   50,   51,   61,
+    QMetaType::Void, 0x80000000 | 63,   30,
 
  // slots: parameters
     QMetaType::Void,
@@ -345,6 +415,43 @@ Q_CONSTINIT const QMetaObject NetworkManager::staticMetaObject = { {
         // method 'folderUploadCompleted'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
         QtPrivate::TypeAndForceComplete<const QString &, std::false_type>,
+        // method 'shareCodeGenerated'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        QtPrivate::TypeAndForceComplete<bool, std::false_type>,
+        QtPrivate::TypeAndForceComplete<const QString &, std::false_type>,
+        QtPrivate::TypeAndForceComplete<const QString &, std::false_type>,
+        // method 'shareCodeRedeemed'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        QtPrivate::TypeAndForceComplete<bool, std::false_type>,
+        QtPrivate::TypeAndForceComplete<long long, std::false_type>,
+        QtPrivate::TypeAndForceComplete<const QString &, std::false_type>,
+        QtPrivate::TypeAndForceComplete<bool, std::false_type>,
+        QtPrivate::TypeAndForceComplete<const QString &, std::false_type>,
+        // method 'mySharesReceived'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        QtPrivate::TypeAndForceComplete<const QList<ShareInfoClient> &, std::false_type>,
+        // method 'shareRevoked'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        QtPrivate::TypeAndForceComplete<bool, std::false_type>,
+        QtPrivate::TypeAndForceComplete<const QString &, std::false_type>,
+        // method 'myShareCodesReceived'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        QtPrivate::TypeAndForceComplete<const QList<ShareCodeInfoClient> &, std::false_type>,
+        // method 'shareCodeDeleted'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        QtPrivate::TypeAndForceComplete<bool, std::false_type>,
+        QtPrivate::TypeAndForceComplete<const QString &, std::false_type>,
+        // method 'guestRedeemResult'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        QtPrivate::TypeAndForceComplete<bool, std::false_type>,
+        QtPrivate::TypeAndForceComplete<long long, std::false_type>,
+        QtPrivate::TypeAndForceComplete<const QString &, std::false_type>,
+        QtPrivate::TypeAndForceComplete<bool, std::false_type>,
+        QtPrivate::TypeAndForceComplete<const QString &, std::false_type>,
+        QtPrivate::TypeAndForceComplete<long long, std::false_type>,
+        // method 'guestFolderList'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        QtPrivate::TypeAndForceComplete<const QList<GuestFileInfo> &, std::false_type>,
         // method 'onReadyRead'
         QtPrivate::TypeAndForceComplete<void, std::false_type>
     >,
@@ -381,7 +488,15 @@ void NetworkManager::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _
         case 21: _t->folderUploadStarted((*reinterpret_cast< std::add_pointer_t<QString>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<int>>(_a[2]))); break;
         case 22: _t->folderUploadProgress((*reinterpret_cast< std::add_pointer_t<int>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<int>>(_a[2])),(*reinterpret_cast< std::add_pointer_t<QString>>(_a[3]))); break;
         case 23: _t->folderUploadCompleted((*reinterpret_cast< std::add_pointer_t<QString>>(_a[1]))); break;
-        case 24: _t->onReadyRead(); break;
+        case 24: _t->shareCodeGenerated((*reinterpret_cast< std::add_pointer_t<bool>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<QString>>(_a[2])),(*reinterpret_cast< std::add_pointer_t<QString>>(_a[3]))); break;
+        case 25: _t->shareCodeRedeemed((*reinterpret_cast< std::add_pointer_t<bool>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<qlonglong>>(_a[2])),(*reinterpret_cast< std::add_pointer_t<QString>>(_a[3])),(*reinterpret_cast< std::add_pointer_t<bool>>(_a[4])),(*reinterpret_cast< std::add_pointer_t<QString>>(_a[5]))); break;
+        case 26: _t->mySharesReceived((*reinterpret_cast< std::add_pointer_t<QList<ShareInfoClient>>>(_a[1]))); break;
+        case 27: _t->shareRevoked((*reinterpret_cast< std::add_pointer_t<bool>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<QString>>(_a[2]))); break;
+        case 28: _t->myShareCodesReceived((*reinterpret_cast< std::add_pointer_t<QList<ShareCodeInfoClient>>>(_a[1]))); break;
+        case 29: _t->shareCodeDeleted((*reinterpret_cast< std::add_pointer_t<bool>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<QString>>(_a[2]))); break;
+        case 30: _t->guestRedeemResult((*reinterpret_cast< std::add_pointer_t<bool>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<qlonglong>>(_a[2])),(*reinterpret_cast< std::add_pointer_t<QString>>(_a[3])),(*reinterpret_cast< std::add_pointer_t<bool>>(_a[4])),(*reinterpret_cast< std::add_pointer_t<QString>>(_a[5])),(*reinterpret_cast< std::add_pointer_t<qlonglong>>(_a[6]))); break;
+        case 31: _t->guestFolderList((*reinterpret_cast< std::add_pointer_t<QList<GuestFileInfo>>>(_a[1]))); break;
+        case 32: _t->onReadyRead(); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
@@ -554,6 +669,62 @@ void NetworkManager::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _
                 return;
             }
         }
+        {
+            using _t = void (NetworkManager::*)(bool , const QString & , const QString & );
+            if (_t _q_method = &NetworkManager::shareCodeGenerated; *reinterpret_cast<_t *>(_a[1]) == _q_method) {
+                *result = 24;
+                return;
+            }
+        }
+        {
+            using _t = void (NetworkManager::*)(bool , long long , const QString & , bool , const QString & );
+            if (_t _q_method = &NetworkManager::shareCodeRedeemed; *reinterpret_cast<_t *>(_a[1]) == _q_method) {
+                *result = 25;
+                return;
+            }
+        }
+        {
+            using _t = void (NetworkManager::*)(const QList<ShareInfoClient> & );
+            if (_t _q_method = &NetworkManager::mySharesReceived; *reinterpret_cast<_t *>(_a[1]) == _q_method) {
+                *result = 26;
+                return;
+            }
+        }
+        {
+            using _t = void (NetworkManager::*)(bool , const QString & );
+            if (_t _q_method = &NetworkManager::shareRevoked; *reinterpret_cast<_t *>(_a[1]) == _q_method) {
+                *result = 27;
+                return;
+            }
+        }
+        {
+            using _t = void (NetworkManager::*)(const QList<ShareCodeInfoClient> & );
+            if (_t _q_method = &NetworkManager::myShareCodesReceived; *reinterpret_cast<_t *>(_a[1]) == _q_method) {
+                *result = 28;
+                return;
+            }
+        }
+        {
+            using _t = void (NetworkManager::*)(bool , const QString & );
+            if (_t _q_method = &NetworkManager::shareCodeDeleted; *reinterpret_cast<_t *>(_a[1]) == _q_method) {
+                *result = 29;
+                return;
+            }
+        }
+        {
+            using _t = void (NetworkManager::*)(bool , long long , const QString & , bool , const QString & , long long );
+            if (_t _q_method = &NetworkManager::guestRedeemResult; *reinterpret_cast<_t *>(_a[1]) == _q_method) {
+                *result = 30;
+                return;
+            }
+        }
+        {
+            using _t = void (NetworkManager::*)(const QList<GuestFileInfo> & );
+            if (_t _q_method = &NetworkManager::guestFolderList; *reinterpret_cast<_t *>(_a[1]) == _q_method) {
+                *result = 31;
+                return;
+            }
+        }
     }
 }
 
@@ -576,13 +747,13 @@ int NetworkManager::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 25)
+        if (_id < 33)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 25;
+        _id -= 33;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 25)
+        if (_id < 33)
             *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
-        _id -= 25;
+        _id -= 33;
     }
     return _id;
 }
@@ -751,6 +922,62 @@ void NetworkManager::folderUploadCompleted(const QString & _t1)
 {
     void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t1))) };
     QMetaObject::activate(this, &staticMetaObject, 23, _a);
+}
+
+// SIGNAL 24
+void NetworkManager::shareCodeGenerated(bool _t1, const QString & _t2, const QString & _t3)
+{
+    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t1))), const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t2))), const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t3))) };
+    QMetaObject::activate(this, &staticMetaObject, 24, _a);
+}
+
+// SIGNAL 25
+void NetworkManager::shareCodeRedeemed(bool _t1, long long _t2, const QString & _t3, bool _t4, const QString & _t5)
+{
+    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t1))), const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t2))), const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t3))), const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t4))), const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t5))) };
+    QMetaObject::activate(this, &staticMetaObject, 25, _a);
+}
+
+// SIGNAL 26
+void NetworkManager::mySharesReceived(const QList<ShareInfoClient> & _t1)
+{
+    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t1))) };
+    QMetaObject::activate(this, &staticMetaObject, 26, _a);
+}
+
+// SIGNAL 27
+void NetworkManager::shareRevoked(bool _t1, const QString & _t2)
+{
+    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t1))), const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t2))) };
+    QMetaObject::activate(this, &staticMetaObject, 27, _a);
+}
+
+// SIGNAL 28
+void NetworkManager::myShareCodesReceived(const QList<ShareCodeInfoClient> & _t1)
+{
+    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t1))) };
+    QMetaObject::activate(this, &staticMetaObject, 28, _a);
+}
+
+// SIGNAL 29
+void NetworkManager::shareCodeDeleted(bool _t1, const QString & _t2)
+{
+    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t1))), const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t2))) };
+    QMetaObject::activate(this, &staticMetaObject, 29, _a);
+}
+
+// SIGNAL 30
+void NetworkManager::guestRedeemResult(bool _t1, long long _t2, const QString & _t3, bool _t4, const QString & _t5, long long _t6)
+{
+    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t1))), const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t2))), const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t3))), const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t4))), const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t5))), const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t6))) };
+    QMetaObject::activate(this, &staticMetaObject, 30, _a);
+}
+
+// SIGNAL 31
+void NetworkManager::guestFolderList(const QList<GuestFileInfo> & _t1)
+{
+    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t1))) };
+    QMetaObject::activate(this, &staticMetaObject, 31, _a);
 }
 QT_WARNING_POP
 QT_END_MOC_NAMESPACE

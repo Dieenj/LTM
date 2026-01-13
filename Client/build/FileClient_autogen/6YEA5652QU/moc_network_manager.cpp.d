@@ -1,5 +1,5 @@
-/mnt/c/Users/Admin/Documents/LTM/Client/build/FileClient_autogen/6YEA5652QU/moc_network_manager.cpp: /mnt/c/Users/Admin/Documents/LTM/Client/include/network_manager.h \
-  /mnt/c/Users/Admin/Documents/LTM/Client/build/FileClient_autogen/moc_predefs.h \
+/home/cuong/DuAnPMCSF/File_Management_App/Client/build/FileClient_autogen/6YEA5652QU/moc_network_manager.cpp: /home/cuong/DuAnPMCSF/File_Management_App/Client/include/network_manager.h \
+  /home/cuong/DuAnPMCSF/File_Management_App/Client/build/FileClient_autogen/moc_predefs.h \
   /usr/include/alloca.h \
   /usr/include/asm-generic/errno-base.h \
   /usr/include/asm-generic/errno.h \
