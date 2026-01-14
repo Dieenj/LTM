@@ -39,10 +39,12 @@ class DedicatedThread {
 public:
     void handleUpload(int socketFd, std::string filename, long filesize, std::string username, long long parent_id, WorkerThread* workerRef);
     void handleDownload(int socketFd, std::string filename, std::string username, WorkerThread* workerRef);
-    void handleFolderDownload(int socketFd, const std::string& folderName, const std::string& username);
+    void handleFolderDownload(int socketFd, long long folder_id, const std::string& folderName, const std::string& username);
     
 private:
     void sendFile(int socketFd, const std::string& fullPath, const std::string& relativePath);
+    void sendFileFromDb(int socketFd, const std::string& filename, const std::string& relativePath);
+    void sendDirectoryFromDb(int socketFd, long long folder_id, const std::string& relativePath, const std::string& username);
     void sendDirectory(int socketFd, const std::string& basePath, const std::string& relativePath);
 };
 

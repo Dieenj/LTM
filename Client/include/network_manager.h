@@ -111,7 +111,7 @@ public:
     void uploadFile(const QString &filePath, long long parent_id = 0);
     void uploadFolder(const QString &folderPath, long long parent_id = 0);
     void downloadFile(const QString &filename, const QString &savePath);
-    void downloadFolder(const QString &foldername, const QString &savePath);
+    void downloadFolder(long long folder_id, const QString &folderName, const QString &savePath);
     void shareFile(const QString &filename, const QString &targetUser);
     void deleteFile(const QString &filename);
     void renameItem(const QString &fileId, const QString &newName, const QString &itemType);

@@ -757,17 +757,18 @@ void NetworkManager::renameItem(const QString &fileId, const QString &newName, c
     }
 }
 
-void NetworkManager::downloadFolder(const QString &foldername, const QString &savePath) {
+void NetworkManager::downloadFolder(long long folder_id, const QString &folderName, const QString &savePath) {
     if(socket->state() != QAbstractSocket::ConnectedState) {
         emit downloadComplete("Not connected to server!");
         return;
     }
     
-    emit downloadStarted(foldername);
+    emit downloadStarted(folderName);
     
     disconnect(socket, &QTcpSocket::readyRead, this, &NetworkManager::onReadyRead);
     
-    QString cmd = QString("%1 %2\n").arg(CMD_DOWNLOAD_FOLDER, foldername);
+    // Gửi folder_id thay vì folder_name để server có thể query database
+    QString cmd = QString("%1 %2\n").arg(CMD_DOWNLOAD_FOLDER).arg(folder_id);
     socket->write(cmd.toUtf8());
     socket->flush();
     
@@ -933,7 +934,7 @@ void NetworkManager::downloadFolder(const QString &foldername, const QString &sa
     }
     
     connect(socket, &QTcpSocket::readyRead, this, &NetworkManager::onReadyRead);
-    emit downloadComplete("Folder downloaded successfully: " + foldername);
+    emit downloadComplete("Folder downloaded successfully: " + folderName);
 }
 
 void NetworkManager::logout() {

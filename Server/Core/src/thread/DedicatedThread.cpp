@@ -195,33 +195,89 @@ void DedicatedThread::sendDirectory(int socketFd, const std::string& basePath, c
     closedir(dir);
 }
 
-void DedicatedThread::handleFolderDownload(int socketFd, const std::string& folderName, const std::string& username) {
-    std::string folderPath = std::string(STORAGE_PATH) + folderName;
+// Gửi file từ storage, dùng filename đã lưu trong DB
+void DedicatedThread::sendFileFromDb(int socketFd, const std::string& filename, const std::string& relativePath) {
+    std::string fullPath = std::string(STORAGE_PATH) + filename;
+    std::cout << "[DedicatedThread] Sending file from DB: " << relativePath << " (path: " << fullPath << ")" << std::endl;
     
-    std::cout << "[DedicatedThread] Attempting to download folder: " << folderPath << std::endl;
+    int fd = open(fullPath.c_str(), O_RDONLY);
+    if (fd < 0) {
+        std::cerr << "[DedicatedThread] Failed to open file: " << fullPath << " - " << strerror(errno) << std::endl;
+        return;
+    }
+
+    struct stat st;
+    fstat(fd, &st);
+    uint64_t fileSize = st.st_size;
+
+    // Send TYPE_FILE
+    uint8_t type = TYPE_FILE;
+    send(socketFd, &type, 1, 0);
+
+    // Send name length
+    uint32_t nameLen = htonl(relativePath.length());
+    send(socketFd, &nameLen, 4, 0);
+
+    // Send file size
+    uint64_t netSize = htobe64(fileSize);
+    send(socketFd, &netSize, 8, 0);
+
+    // Send name
+    send(socketFd, relativePath.c_str(), relativePath.length(), 0);
+
+    // Send file data
+    char buffer[65536];
+    ssize_t n;
+    uint64_t totalSent = 0;
+    while ((n = read(fd, buffer, sizeof(buffer))) > 0) {
+        send(socketFd, buffer, n, 0);
+        totalSent += n;
+    }
+
+    close(fd);
+    std::cout << "[DedicatedThread] File sent: " << relativePath << " (" << totalSent << " bytes)" << std::endl;
+}
+
+// Gửi directory đệ quy từ database
+void DedicatedThread::sendDirectoryFromDb(int socketFd, long long folder_id, const std::string& relativePath, const std::string& username) {
+    std::cout << "[DedicatedThread] Sending directory from DB: " << relativePath << " (id: " << folder_id << ")" << std::endl;
+    
+    // Send TYPE_DIR
+    uint8_t type = TYPE_DIR;
+    send(socketFd, &type, 1, 0);
+
+    // Send name length
+    uint32_t nameLen = htonl(relativePath.length());
+    send(socketFd, &nameLen, 4, 0);
+
+    // Send name
+    send(socketFd, relativePath.c_str(), relativePath.length(), 0);
+
+    // Lấy danh sách items trong folder từ database
+    auto items = DBManager::getInstance().getItemsInFolder(folder_id, username);
+    
+    for (const auto& item : items) {
+        std::string newRelPath = relativePath + "/" + item.name;
+        
+        if (item.is_folder) {
+            // Đệ quy cho subfolder
+            sendDirectoryFromDb(socketFd, item.file_id, newRelPath, username);
+        } else {
+            // Gửi file - tên file trong storage = item.name
+            sendFileFromDb(socketFd, item.name, newRelPath);
+        }
+    }
+}
+
+void DedicatedThread::handleFolderDownload(int socketFd, long long folder_id, const std::string& folderName, const std::string& username) {
+    std::cout << "[DedicatedThread] Downloading folder from DB: id=" << folder_id << ", name=" << folderName << std::endl;
     
     // Disable Nagle's algorithm for immediate sending
     int flag = 1;
     setsockopt(socketFd, IPPROTO_TCP, TCP_NODELAY, (char*)&flag, sizeof(int));
 
-    struct stat st;
-    if (stat(folderPath.c_str(), &st) != 0) {
-        std::cerr << "[DedicatedThread] Folder not found: " << folderPath << std::endl;
-        std::cerr << "[DedicatedThread] Error: " << strerror(errno) << std::endl;
-        close(socketFd);
-        return;
-    }
-    
-    if (!S_ISDIR(st.st_mode)) {
-        std::cerr << "[DedicatedThread] Path exists but is not a directory: " << folderPath << std::endl;
-        close(socketFd);
-        return;
-    }
-
-    std::cout << "[DedicatedThread] Folder found, starting to send..." << std::endl;
-
-    // Send folder recursively
-    sendDirectory(socketFd, std::string(STORAGE_PATH), folderName);
+    // Gửi folder đệ quy từ database
+    sendDirectoryFromDb(socketFd, folder_id, folderName, username);
 
     // Send TYPE_END
     uint8_t type = TYPE_END;

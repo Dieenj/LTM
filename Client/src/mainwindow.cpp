@@ -503,13 +503,21 @@ void MainWindow::onDownloadFolderClicked() {
         return;
     }
     
+    // Lấy folder_id từ column 4 (hidden)
+    QTableWidgetItem *idItem = currentTable->item(row, 4);
+    if (!idItem) {
+        QMessageBox::warning(this, "Download Folder", "Cannot get folder ID!");
+        return;
+    }
+    long long folderId = idItem->text().toLongLong();
+    
     QString savePath = QFileDialog::getExistingDirectory(this, 
                                                           "Select Directory to Save Folder",
                                                           QDir::homePath() + "/Downloads");
     
     if (!savePath.isEmpty()) {
         QString fullPath = savePath + "/" + folderName;
-        netManager->downloadFolder(folderName, fullPath);
+        netManager->downloadFolder(folderId, folderName, fullPath);
     }
 }
 
@@ -1201,14 +1209,26 @@ void MainWindow::onGuestDownloadClicked() {
     QString fileName = guestFileTable->item(row, 0)->text();
     QString type = guestFileTable->item(row, 1)->text();
     
-    QString savePath = QFileDialog::getSaveFileName(this, "Save File", 
-                                                    QDir::homePath() + "/Downloads/" + fileName);
-    if (savePath.isEmpty()) return;
+    QString savePath;
     
-    // Download using filename (existing API uses filename, not file_id)
+    // Download using file_id for folders, filename for files
     if (type == "Folder") {
-        netManager->downloadFolder(fileName, savePath);
+        savePath = QFileDialog::getExistingDirectory(this, "Select Directory to Save Folder",
+                                                      QDir::homePath() + "/Downloads");
+        if (savePath.isEmpty()) return;
+        
+        QTableWidgetItem *idItem = guestFileTable->item(row, 4);
+        if (!idItem) {
+            QMessageBox::warning(this, "Error", "Cannot get folder ID!");
+            return;
+        }
+        long long folderId = idItem->text().toLongLong();
+        QString fullPath = savePath + "/" + fileName;
+        netManager->downloadFolder(folderId, fileName, fullPath);
     } else {
+        savePath = QFileDialog::getSaveFileName(this, "Save File", 
+                                                QDir::homePath() + "/Downloads/" + fileName);
+        if (savePath.isEmpty()) return;
         netManager->downloadFile(fileName, savePath);
     }
 }

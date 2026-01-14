@@ -300,33 +300,29 @@ void WorkerThread::handleClientMessage(int fd) {
         }
     }
     else if (command == "DOWNLOAD_FOLDER") {
-        std::string folder_name = arg;
+        // Parse folder_id từ client (thay vì folder_name)
+        long long folder_id = 0;
+        std::stringstream ss_folder_id(arg);
+        ss_folder_id >> folder_id;
+        
         std::string username = sessions[fd].username;
         
-        std::cout << "[Worker] DOWNLOAD_FOLDER request: '" << folder_name << "' by user: " << username << std::endl;
+        std::cout << "[Worker] DOWNLOAD_FOLDER request: folder_id=" << folder_id << " by user: " << username << std::endl;
         
-        // Check if folder exists in storage
-        std::string folderPath = std::string(ServerConfig::STORAGE_PATH) + folder_name;
-        std::cout << "[Worker] Checking folder path: " << folderPath << std::endl;
+        // Kiểm tra folder tồn tại trong database
+        FileRecordEx folderInfo = DBManager::getInstance().getFileInfo(folder_id);
         
-        struct stat st;
-        int stat_result = stat(folderPath.c_str(), &st);
-        
-        if (stat_result != 0) {
-            std::cout << "[Worker] stat() failed with error: " << strerror(errno) << std::endl;
-            response = std::string(CODE_FAIL) + " Folder not found\n";
-        } else if (!S_ISDIR(st.st_mode)) {
-            std::cout << "[Worker] Path exists but is not a directory" << std::endl;
+        if (folderInfo.file_id < 0 || !folderInfo.is_folder) {
+            std::cout << "[Worker] Folder not found in database or not a folder" << std::endl;
             response = std::string(CODE_FAIL) + " Folder not found\n";
         } else {
-            std::cout << "[Worker] Folder exists, checking permissions..." << std::endl;
-            // Check if user owns the folder or has permission
-            bool hasPerm = true;
-            try {
-                hasPerm = FileIOHandler::checkDownloadPermission(sessions[fd], folder_name);
-            } catch (...) {
-                // If permission check fails, allow if folder exists in user's storage
-                hasPerm = true;
+            std::cout << "[Worker] Folder found in DB: " << folderInfo.name << ", checking permissions..." << std::endl;
+            
+            // Kiểm tra quyền - user sở hữu hoặc được share
+            bool hasPerm = (folderInfo.owner == username);
+            if (!hasPerm) {
+                // Kiểm tra shared permission
+                hasPerm = DBManager::getInstance().hasSharedAccess(folder_id, username);
             }
             
             if (!hasPerm) {
@@ -338,9 +334,9 @@ void WorkerThread::handleClientMessage(int fd) {
                 response = std::string(CODE_DATA_OPEN) + " Ready to send folder\n";
                 send(fd, response.c_str(), response.length(), 0);
                 
-                // Handle folder download
+                // Handle folder download với folder_id
                 DedicatedThread dt;
-                dt.handleFolderDownload(fd, folder_name, username);
+                dt.handleFolderDownload(fd, folder_id, folderInfo.name, username);
                 return;
             }
         }
