@@ -36,6 +36,12 @@
 #define CMD_DELETE_SHARE_CODE "DELETE_SHARE_CODE"
 #define CMD_GET_MY_SHARE_CODES "GET_MY_SHARE_CODES"
 
+// Guest mode commands
+#define CMD_GUEST_REDEEM "GUEST_REDEEM"
+#define CMD_GUEST_LIST "GUEST_LIST"
+#define CMD_GUEST_DOWNLOAD "GUEST_DOWNLOAD"
+#define CMD_GUEST_DOWNLOAD_FOLDER "GUEST_DOWNLOAD_FOLDER"
+
 #define TYPE_FILE 1
 #define TYPE_DIR  2
 #define TYPE_END  3
@@ -134,6 +140,8 @@ public:
     // Guest mode functions
     void guestRedeemShareCode(const QString &share_code);
     void guestListFolder(long long folder_id);
+    void guestDownloadFile(long long file_id, const QString &filename, const QString &savePath);
+    void guestDownloadFolder(long long folder_id, const QString &folderName, const QString &savePath);
     bool isConnected() const;
 
 signals:

@@ -661,6 +661,61 @@ void WorkerThread::handleClientMessage(int fd) {
         response = std::string(CODE_OK) + " " + data + "\n";
     }
     
+    else if (command == "GUEST_DOWNLOAD") {
+        long long file_id = 0;
+        try {
+            file_id = std::stoll(arg);
+        } catch (...) {
+            file_id = 0;
+        }
+        
+        std::cout << "[Worker] GUEST_DOWNLOAD: file_id=" << file_id << std::endl;
+        
+        FileRecordEx fileInfo = DBManager::getInstance().getFileInfo(file_id);
+        
+        if (fileInfo.file_id < 0) {
+            std::cout << "[Worker] File not found" << std::endl;
+            response = std::string(CODE_FAIL) + " File not found\n";
+        } else if (fileInfo.is_folder) {
+            std::cout << "[Worker] Target is a folder, not a file" << std::endl;
+            response = std::string(CODE_FAIL) + " Not a file\n";
+        } else {
+            std::cout << "[Worker] File found, sending..." << std::endl;
+            response = std::string(CODE_DATA_OPEN) + " " + std::to_string(fileInfo.size) + "\n";
+            send(fd, response.c_str(), response.length(), 0);
+            
+            DedicatedThread dt;
+            dt.handleDownload(fd, fileInfo.name, "guest", this);
+            return;
+        }
+    }
+    
+    else if (command == "GUEST_DOWNLOAD_FOLDER") {
+        long long folder_id = 0;
+        try {
+            folder_id = std::stoll(arg);
+        } catch (...) {
+            folder_id = 0;
+        }
+        
+        std::cout << "[Worker] GUEST_DOWNLOAD_FOLDER: folder_id=" << folder_id << std::endl;
+        
+        FileRecordEx folderInfo = DBManager::getInstance().getFileInfo(folder_id);
+        
+        if (folderInfo.file_id < 0 || !folderInfo.is_folder) {
+            std::cout << "[Worker] Folder not found" << std::endl;
+            response = std::string(CODE_FAIL) + " Folder not found\n";
+        } else {
+            std::cout << "[Worker] Folder found, sending..." << std::endl;
+            response = std::string(CODE_DATA_OPEN) + " Ready to send folder\n";
+            send(fd, response.c_str(), response.length(), 0);
+            
+            DedicatedThread dt;
+            dt.handleFolderDownload(fd, folder_id, folderInfo.name, "guest", this);
+            return;
+        }
+    }
+    
     else {
         std::cout << "[Worker] UNKNOWN COMMAND: '" << command << "'" << std::endl;
         response = "500 Unknown command\n";

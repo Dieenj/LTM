@@ -1616,3 +1616,254 @@ void NetworkManager::guestListFolder(long long folder_id) {
     
     emit guestFolderList(files);
 }
+
+void NetworkManager::guestDownloadFile(long long file_id, const QString &filename, const QString &savePath) {
+    if(socket->state() != QAbstractSocket::ConnectedState) {
+        emit downloadComplete("Not connected to server!");
+        return;
+    }
+    
+    emit downloadStarted(filename);
+    
+    disconnect(socket, &QTcpSocket::readyRead, this, &NetworkManager::onReadyRead);
+    
+    // Gửi GUEST_DOWNLOAD với file_id
+    QString cmd = QString("%1 %2\n").arg(CMD_GUEST_DOWNLOAD).arg(file_id);
+    socket->write(cmd.toUtf8());
+    socket->flush();
+    
+    if (!socket->waitForReadyRead(5000)) {
+        connect(socket, &QTcpSocket::readyRead, this, &NetworkManager::onReadyRead);
+        emit downloadComplete("Timeout: Server not responding");
+        return;
+    }
+    
+    QString response = QString::fromUtf8(socket->readLine()).trimmed();
+    
+    if (!response.startsWith(CODE_DATA_OPEN)) {
+        connect(socket, &QTcpSocket::readyRead, this, &NetworkManager::onReadyRead);
+        emit downloadComplete("Download failed: " + response);
+        return;
+    }
+    
+    // Extract file size từ response (format: "150 filesize")
+    QStringList parts = response.split(' ');
+    uint64_t fileSize = 0;
+    if (parts.size() >= 2) {
+        fileSize = parts[1].toLongLong();
+    }
+    
+    QFile file(savePath);
+    if (!file.open(QIODevice::WriteOnly)) {
+        connect(socket, &QTcpSocket::readyRead, this, &NetworkManager::onReadyRead);
+        emit downloadComplete("Cannot create file: " + savePath);
+        return;
+    }
+    
+    // Receive file data
+    uint64_t received = 0;
+    qDebug() << "[NetworkManager] Receiving guest file:" << filename << "size:" << fileSize;
+    while (received < fileSize) {
+        qint64 available = socket->bytesAvailable();
+        if (available == 0) {
+            if (!socket->waitForReadyRead(30000)) {
+                file.close();
+                connect(socket, &QTcpSocket::readyRead, this, &NetworkManager::onReadyRead);
+                qDebug() << "[NetworkManager] Timeout receiving file data, received:" << received << "of" << fileSize;
+                emit downloadComplete("Timeout receiving file data");
+                return;
+            }
+            available = socket->bytesAvailable();
+        }
+        
+        qint64 toRead = qMin(available, static_cast<qint64>(fileSize - received));
+        if (toRead <= 0) break;
+        
+        QByteArray chunk = socket->read(toRead);
+        if (chunk.isEmpty()) continue;
+        
+        file.write(chunk);
+        received += chunk.size();
+    }
+    
+    file.close();
+    
+    connect(socket, &QTcpSocket::readyRead, this, &NetworkManager::onReadyRead);
+    emit downloadComplete("File downloaded successfully: " + filename);
+}
+
+void NetworkManager::guestDownloadFolder(long long folder_id, const QString &folderName, const QString &savePath) {
+    if(socket->state() != QAbstractSocket::ConnectedState) {
+        emit downloadComplete("Not connected to server!");
+        return;
+    }
+    
+    emit downloadStarted(folderName);
+    
+    disconnect(socket, &QTcpSocket::readyRead, this, &NetworkManager::onReadyRead);
+    
+    // Gửi GUEST_DOWNLOAD_FOLDER với folder_id
+    QString cmd = QString("%1 %2\n").arg(CMD_GUEST_DOWNLOAD_FOLDER).arg(folder_id);
+    socket->write(cmd.toUtf8());
+    socket->flush();
+    
+    if (!socket->waitForReadyRead(5000)) {
+        connect(socket, &QTcpSocket::readyRead, this, &NetworkManager::onReadyRead);
+        emit downloadComplete("Timeout: Server not responding");
+        return;
+    }
+    
+    QString response = QString::fromUtf8(socket->readLine()).trimmed();
+    
+    if (!response.startsWith(CODE_DATA_OPEN)) {
+        connect(socket, &QTcpSocket::readyRead, this, &NetworkManager::onReadyRead);
+        emit downloadComplete("Download failed: " + response);
+        return;
+    }
+    
+    // Create base folder
+    QDir().mkpath(savePath);
+    
+    qDebug() << "[NetworkManager] Starting to receive guest folder structure...";
+    
+    // Receive folder structure (same format as regular download)
+    while (true) {
+        // Wait for data with timeout
+        while (socket->bytesAvailable() < 1) {
+            if (!socket->waitForReadyRead(10000)) {
+                connect(socket, &QTcpSocket::readyRead, this, &NetworkManager::onReadyRead);
+                emit downloadComplete("Timeout while receiving folder data");
+                return;
+            }
+        }
+        
+        // Read type
+        char typeChar;
+        qint64 n = socket->read(&typeChar, 1);
+        if (n != 1) {
+            connect(socket, &QTcpSocket::readyRead, this, &NetworkManager::onReadyRead);
+            emit downloadComplete("Error reading type");
+            return;
+        }
+        uint8_t type = static_cast<uint8_t>(typeChar);
+        
+        if (type == TYPE_END) {
+            qDebug() << "[NetworkManager] Received TYPE_END, download complete";
+            break;
+        }
+        
+        // Read name length
+        uint32_t nameLen;
+        qint64 bytesRead = 0;
+        while (bytesRead < 4) {
+            if (socket->bytesAvailable() == 0) {
+                if (!socket->waitForReadyRead(5000)) {
+                    connect(socket, &QTcpSocket::readyRead, this, &NetworkManager::onReadyRead);
+                    qDebug() << "[NetworkManager] Timeout reading name length";
+                    emit downloadComplete("Timeout reading name length");
+                    return;
+                }
+            }
+            qint64 n = socket->read(reinterpret_cast<char*>(&nameLen) + bytesRead, 4 - bytesRead);
+            if (n <= 0) {
+                connect(socket, &QTcpSocket::readyRead, this, &NetworkManager::onReadyRead);
+                qDebug() << "[NetworkManager] Error reading name length";
+                emit downloadComplete("Error reading name length");
+                return;
+            }
+            bytesRead += n;
+        }
+        nameLen = ntohl(nameLen);
+        
+        // Read file size if it's a file
+        uint64_t fileSize = 0;
+        if (type == TYPE_FILE) {
+            qint64 sizeRead = 0;
+            while (sizeRead < 8) {
+                if (socket->bytesAvailable() == 0) {
+                    if (!socket->waitForReadyRead(5000)) {
+                        connect(socket, &QTcpSocket::readyRead, this, &NetworkManager::onReadyRead);
+                        qDebug() << "[NetworkManager] Timeout reading file size";
+                        emit downloadComplete("Timeout reading file size");
+                        return;
+                    }
+                }
+                qint64 n = socket->read(reinterpret_cast<char*>(&fileSize) + sizeRead, 8 - sizeRead);
+                if (n <= 0) {
+                    connect(socket, &QTcpSocket::readyRead, this, &NetworkManager::onReadyRead);
+                    qDebug() << "[NetworkManager] Error reading file size";
+                    emit downloadComplete("Error reading file size");
+                    return;
+                }
+                sizeRead += n;
+            }
+            fileSize = be64toh(fileSize);
+        }
+        
+        // Read name
+        QByteArray nameData;
+        while (nameData.size() < static_cast<int>(nameLen)) {
+            qint64 remaining = nameLen - nameData.size();
+            qint64 available = socket->bytesAvailable();
+            
+            if (available > 0) {
+                nameData.append(socket->read(qMin(remaining, available)));
+            } else {
+                if (!socket->waitForReadyRead(5000)) {
+                    connect(socket, &QTcpSocket::readyRead, this, &NetworkManager::onReadyRead);
+                    qDebug() << "[NetworkManager] Timeout reading name";
+                    emit downloadComplete("Timeout reading name");
+                    return;
+                }
+            }
+        }
+        QString name = QString::fromUtf8(nameData);
+        
+        QString fullPath = savePath + "/" + name;
+        
+        if (type == TYPE_DIR) {
+            QDir().mkpath(fullPath);
+            qDebug() << "[NetworkManager] Created directory:" << fullPath;
+        } else if (type == TYPE_FILE) {
+            // Ensure parent directory exists
+            QFileInfo fileInfo(fullPath);
+            QDir().mkpath(fileInfo.absolutePath());
+            
+            QFile file(fullPath);
+            if (!file.open(QIODevice::WriteOnly)) {
+                connect(socket, &QTcpSocket::readyRead, this, &NetworkManager::onReadyRead);
+                emit downloadComplete("Cannot create file: " + fullPath);
+                return;
+            }
+            
+            // Receive file data
+            uint64_t received = 0;
+            while (received < fileSize) {
+                qint64 available = socket->bytesAvailable();
+                if (available == 0) {
+                    if (!socket->waitForReadyRead(30000)) {
+                        file.close();
+                        connect(socket, &QTcpSocket::readyRead, this, &NetworkManager::onReadyRead);
+                        emit downloadComplete("Timeout receiving file data");
+                        return;
+                    }
+                    available = socket->bytesAvailable();
+                }
+                
+                qint64 toRead = qMin(available, static_cast<qint64>(fileSize - received));
+                if (toRead <= 0) break;
+                
+                QByteArray chunk = socket->read(toRead);
+                if (chunk.isEmpty()) continue;
+                
+                file.write(chunk);
+                received += chunk.size();
+            }
+            
+            file.close();
+        }
+    }
+    
+    connect(socket, &QTcpSocket::readyRead, this, &NetworkManager::onReadyRead);
+    emit downloadComplete("Folder downloaded successfully: " + folderName);
+}

@@ -1209,27 +1209,27 @@ void MainWindow::onGuestDownloadClicked() {
     QString fileName = guestFileTable->item(row, 0)->text();
     QString type = guestFileTable->item(row, 1)->text();
     
-    QString savePath;
+    // Lấy file_id từ column 4 (hidden)
+    QTableWidgetItem *idItem = guestFileTable->item(row, 4);
+    if (!idItem) {
+        QMessageBox::warning(this, "Error", "Cannot get file ID!");
+        return;
+    }
+    long long fileId = idItem->text().toLongLong();
     
-    // Download using file_id for folders, filename for files
+    // Download using guest commands với file_id
     if (type == "Folder") {
-        savePath = QFileDialog::getExistingDirectory(this, "Select Directory to Save Folder",
-                                                      QDir::homePath() + "/Downloads");
+        QString savePath = QFileDialog::getExistingDirectory(this, "Select Directory to Save Folder",
+                                                              QDir::homePath() + "/Downloads");
         if (savePath.isEmpty()) return;
         
-        QTableWidgetItem *idItem = guestFileTable->item(row, 4);
-        if (!idItem) {
-            QMessageBox::warning(this, "Error", "Cannot get folder ID!");
-            return;
-        }
-        long long folderId = idItem->text().toLongLong();
         QString fullPath = savePath + "/" + fileName;
-        netManager->downloadFolder(folderId, fileName, fullPath);
+        netManager->guestDownloadFolder(fileId, fileName, fullPath);
     } else {
-        savePath = QFileDialog::getSaveFileName(this, "Save File", 
-                                                QDir::homePath() + "/Downloads/" + fileName);
+        QString savePath = QFileDialog::getSaveFileName(this, "Save File", 
+                                                        QDir::homePath() + "/Downloads/" + fileName);
         if (savePath.isEmpty()) return;
-        netManager->downloadFile(fileName, savePath);
+        netManager->guestDownloadFile(fileId, fileName, savePath);
     }
 }
 
